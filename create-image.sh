@@ -101,10 +101,10 @@ mount $PARTNAME1 MP1/boot
 
 cd MP1
 printf "\nbsdtar is creating the image, may take a few minutes\n"
-time bsdtar -czf /home/$USERNAME/pudges-place/images/enosLinuxARM-rpi-aarch64-latest.tar.gz *
+time bsdtar -czf /home/$USERNAME/pudges-place/exper-image/enosLinuxARM-rpi-aarch64-latest.tar.gz *
 printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
 cd ..
-sha512sum /home/$USERNAME/pudges-place/images/enosLinuxARM-rpi-aarch64-latest.tar.gz > /home/$USERNAME/pudges-place/images/enosLinuxARM-rpi-aarch64-latest.tar.gz.sha512sum
+sha512sum /home/$USERNAME/pudges-place/exper-image/enosLinuxARM-rpi-aarch64-latest.tar.gz > /home/$USERNAME/pudges-place/exper-image/enosLinuxARM-rpi-aarch64-latest.tar.gz.sha512sum
 umount MP1/boot MP1
 rm -rf MP1
 
