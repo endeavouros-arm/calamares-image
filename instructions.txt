@@ -51,6 +51,10 @@ and change 112 so it looks like this:
 # pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
 pacman -Syu --noconfirm --needed git libnewt wget networkmanager base-devel
 
+If you want to complete the image by running create-image.sh
+at the end of the script, look at the pathname that
+bsdtar uses and that you have a similar directory tree 
+
 Hoping for the best
 
 
