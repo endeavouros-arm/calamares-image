@@ -99,17 +99,17 @@ _unmount_partitions
 mount $PARTNAME2 MP1
 mount $PARTNAME1 MP1/boot
 DIR=$(pwd)
-# cd MP1
+cd MP1
 printf "\nbsdtar is creating the image, may take a few minutes\n"
-# time bsdtar -czf $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz MP1 
-# time bsdtar --options='compression-level=9' -czf $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz MP1 
-# time bsdtar --use-compress-program=pigz -cf $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz MP1 
-# time bsdtar -cf - MP1 | zstd -T0 -19 -o $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst
+# time bsdtar -czf $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz * 
+# time bsdtar --options='compression-level=9' -czf $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz *
+# time bsdtar --use-compress-program=pigz -cf $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz *
+# time bsdtar -cf - * | zstd -T0 -19 -o $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst
 
-time bsdtar --use-compress-program=zstdmt -cf $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst MP1
+time bsdtar --use-compress-program=zstdmt -cf $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst *
 
 printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-# cd ..
+cd ..
 # sha512sum $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz > $DIR/enosLinuxARM-trpi-aarch64-latest.tar.gz.sha512sum
 sha512sum $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst > $DIR/enosLinuxARM-trpi-aarch64-latest.tar.zst.sha512sum
 umount MP1/boot MP1

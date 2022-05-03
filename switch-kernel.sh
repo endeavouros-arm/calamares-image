@@ -87,7 +87,7 @@ _finish_up() {
     sed -i 's/ParallelDownloads = 8/#ParallelDownloads = 5/g' /etc/pacman.conf
     pacman -Rn --noconfirm dhcpcd
     rm /var/cache/pacman/pkg/*
-    rm switch-kernel.sh enosARM.log   
+    rm /root/switch-kernel.sh /root/enosARM.log   
     rm -rf /etc/pacman.d/gnupg
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
     # read -n 1 z
