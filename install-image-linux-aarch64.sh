@@ -134,6 +134,17 @@ _check_all_apps_closed() {
     whiptail --title "CAUTION" --msgbox "Ensure ALL apps are closed, especially any file manager such as Thunar" 8 74 3>&2 2>&1 1>&3
 }
 
+_arch_chroot(){
+    pacman -S --noconfirm --needed arch-install-scripts
+    mkdir MP1
+    sudo mount $PARTNAME2  MP1
+    sudo mount $PARTNAME1 MP1/boot
+    arch-chroot MP1 /root/switch-kernel.sh
+    rm -rf MP1/etc/pacman.d/gnupg
+    umount MP1/boot
+    umount MP1
+    rm -rf MP1
+}
 
 #################################################
 # beginning of script
@@ -159,13 +170,14 @@ Main() {
     _check_all_apps_closed
     _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
     _install_RPi4_image
-
-    printf "\n\n${CYAN}Almost done! Just a couple of minutes more for the last step.${NC}\n\n"
-
     umount MP1 MP2
     rm -rf MP1 MP2
     rm ArchLinuxARM*
     
+    printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
+
+    _arch_chroot
+
     printf "\n\n${CYAN}End of script!${NC}\n"
     printf "\n${CYAN}Be sure to use a file manager to umount the device before removing the USB SD reader${NC}\n"
 

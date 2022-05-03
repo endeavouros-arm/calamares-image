@@ -88,7 +88,7 @@ _finish_up() {
     rm -rf /etc/pacman.d/gnupg
     printf "\n\n${CYAN}Your uSD is ready for creating an image.\n\nPress Return to poweroff.${NC}\n"
     read -n 1 z
-    systemctl poweroff
+    # systemctl poweroff
 }   # end of function _finish_up
 
 ######################   Start of Script   #################################
