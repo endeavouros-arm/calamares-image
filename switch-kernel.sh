@@ -70,6 +70,9 @@ _base_addons() {
     eos-packagelist --arch arm "Systembase + Common packages" "Firefox and language package" > base-addons
     printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\n" >> base-addons
     pacman -S --noconfirm --needed - < base-addons
+    ### Install Calamares Arm
+    wget https://github.com/sravanpannala/enosarm-GUI/releases/download/v0.1.1/calamares_current-22.04.1.4-1-any.pkg.tar.xz
+    pacman -U --noconfirm calamares_current-22.04.1.4-1-any.pkg.tar.xz
 }
 
 
@@ -86,8 +89,8 @@ _finish_up() {
     rm /var/cache/pacman/pkg/*
     rm switch-kernel.sh enosARM.log   
     rm -rf /etc/pacman.d/gnupg
-    printf "\n\n${CYAN}Your uSD is ready for creating an image.\n\nPress Return to poweroff.${NC}\n"
-    read -n 1 z
+    printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
+    # read -n 1 z
     # systemctl poweroff
 }   # end of function _finish_up
 
