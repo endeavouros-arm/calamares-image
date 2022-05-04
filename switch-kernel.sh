@@ -68,11 +68,14 @@ _base_addons() {
     ### the following installs all packages needed to match the EndeavourOS base install
     printf "\n${CYAN}Installing EndeavourOS Base Addons...${NC}\n"
     eos-packagelist --arch arm "Systembase + Common packages" "Firefox and language package" > base-addons
-    printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\n" >> base-addons
+    printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\nboost\n" >> base-addons
     pacman -S --noconfirm --needed - < base-addons
     ### Install Calamares Arm
     wget https://github.com/sravanpannala/enosarm-GUI/releases/download/v0.1.1/calamares_current-22.04.1.4-1-any.pkg.tar.xz
     pacman -U --noconfirm calamares_current-22.04.1.4-1-any.pkg.tar.xz
+    wget https://github.com/sravanpannala/enosarm-GUI/releases/download/v0.1.1/calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
+    pacman -U --noconfirm calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
+    rm -rf calamares_config_default-22.04.1.4-1-any.pkg.tar.xz calamares_current-22.04.1.4-1-any.pkg.tar.xz
 }
 
 
@@ -80,8 +83,19 @@ _finish_up() {
     printf "alarm ALL=(ALL:ALL) NOPASSWD: ALL\n" >> /etc/sudoers
     gpasswd -a alarm wheel
     printf "exec openbox-session\n" >> /home/alarm/.xinitrc
+    printf "if [ -z \"\${DISPLAY}\" ] && [ \"\${XDG_VTNR}\" -eq 1 ]; then\n  exec startx\nfi\n" >> /home/alarm/.bash_profile
     chown alarm:alarm /home/alarm/.xinitrc
     chmod 644 /home/alarm/.xinitrc
+    ### Add configs
+    cd /home/alarm/
+    git clone https://github.com/sravanpannala/enosarm-GUI
+    rm -rf .config
+    mkdir .config
+    mkdir Desktop
+    cd enosarm-GUI
+    ./alarmconfig.sh
+    ./calamares.sh
+    cd /
     systemctl disable dhcpcd.service
     systemctl enable NetworkManager.service
     sed -i 's/ParallelDownloads = 8/#ParallelDownloads = 5/g' /etc/pacman.conf
