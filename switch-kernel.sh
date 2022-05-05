@@ -105,6 +105,7 @@ _finish_up() {
     chmod +x Desktop/Shutdown.sh
     # exit
     cd /
+    rm -rf /endeavouros*
     systemctl disable dhcpcd.service
     systemctl enable NetworkManager.service
     sed -i 's/ParallelDownloads = 8/#ParallelDownloads = 5/g' /etc/pacman.conf
