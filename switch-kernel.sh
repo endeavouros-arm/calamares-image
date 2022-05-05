@@ -68,12 +68,12 @@ _base_addons() {
     ### the following installs all packages needed to match the EndeavourOS base install
     printf "\n${CYAN}Installing EndeavourOS Base Addons...${NC}\n"
     eos-packagelist --arch arm "Systembase + Common packages" "Firefox and language package" > base-addons
-    printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\nboost\n" >> base-addons
+    printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\n" >> base-addons
     pacman -S --noconfirm --needed - < base-addons
     ### Install Calamares Arm
-    wget https://github.com/sravanpannala/enosarm-GUI/releases/download/v0.1.1/calamares_current-22.04.1.4-1-any.pkg.tar.xz
+    wget https://github.com/sravanpannala/enosarm-GUI/releases/download/v0.1.2/calamares_current-22.04.1.4-1-any.pkg.tar.xz
     pacman -U --noconfirm calamares_current-22.04.1.4-1-any.pkg.tar.xz
-    wget https://github.com/sravanpannala/enosarm-GUI/releases/download/v0.1.1/calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
+    wget https://github.com/sravanpannala/enosarm-GUI/releases/download/v0.1.2/calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
     pacman -U --noconfirm calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
     rm -rf calamares_config_default-22.04.1.4-1-any.pkg.tar.xz calamares_current-22.04.1.4-1-any.pkg.tar.xz
 }
