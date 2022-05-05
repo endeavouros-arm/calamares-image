@@ -505,6 +505,7 @@
   description: "Sway Community Edition."
   hidden: false
   selected: false
+  critical: true
   packages:
     - acpi
     - arc-gtk-theme-eos
@@ -558,6 +559,7 @@
   description: "Worm Community Edition."
   hidden: false
   selected: false
+  critical: true
   packages:
     - arc-gtk-theme
     - dex

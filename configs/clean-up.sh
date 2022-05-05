@@ -6,8 +6,8 @@ pacman -Rns --noconfirm calamares_current-22.04.1.4-1-any.pkg.tar.xz calamares_c
 rm -rf /etc/calamares/settings.conf
 cp -f /usr/lib/systemd/system/getty@.service.bak /usr/lib/systemd/system/getty@.service
 rm -rf /usr/lib/systemd/system/getty@.service.break
-rm /usr/local/bin/user-install.sh
-rm /etc/systemd/system/user-install.service
+rm /usr/local/bin/clean-up.sh
+rm /etc/systemd/system/clean-up.service
 # systemctl reboot
 
 exit
