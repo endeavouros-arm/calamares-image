@@ -140,7 +140,6 @@ _arch_chroot(){
     sudo mount $PARTNAME2  MP1
     sudo mount $PARTNAME1 MP1/boot
     arch-chroot MP1 /root/switch-kernel.sh
-    rm -rf MP1/etc/pacman.d/gnupg
     umount MP1/boot
     umount MP1
     rm -rf MP1
