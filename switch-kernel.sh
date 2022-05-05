@@ -96,8 +96,8 @@ _finish_up() {
     cd enosarm-GUI
     cp /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/getty@.service.bak
     cp getty@.service /usr/lib/systemd/system/getty@.service
-    cp clean-up.sh /user/local/bin/clean-up.sh
-    chmod +x /user/local/bin/clean-up.sh
+    cp clean-up.sh /usr/local/bin/clean-up.sh
+    chmod +x /usr/local/bin/clean-up.sh
     cp clean-up.service /etc/systemd/system/clean-up.service
     ./alarmconfig.sh
     ./calamares.sh
