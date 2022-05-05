@@ -75,7 +75,7 @@ _base_addons() {
     pacman -U --noconfirm calamares_current-22.04.1.4-1-any.pkg.tar.xz
     wget https://github.com/sravanpannala/enosarm-GUI/releases/download/v0.1.2/calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
     pacman -U --noconfirm calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
-    rm -rf calamares_config_default-22.04.1.4-1-any.pkg.tar.xz calamares_current-22.04.1.4-1-any.pkg.tar.xz
+    rm -rf calamares_config_default-22.04.1.4-1-any.pkg.tar.xz calamares_current-22.04.1.4-1-any.pkg.tar.xz base-addons
 }
 
 
