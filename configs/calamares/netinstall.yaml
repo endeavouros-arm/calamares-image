@@ -110,6 +110,7 @@
   description: "KDE-Plasma Desktop - Simple by default, powerful when needed."
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - ark
@@ -146,6 +147,7 @@
   description: "GNOME Desktop - designed to put you in control and get things done."
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - adwaita-icon-theme
@@ -183,6 +185,7 @@
   description: "MATE Desktop - the continuation of GNOME 2"
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - arc-gtk-theme-eos
@@ -205,6 +208,7 @@
   description: "Cinnamon Desktop - advanced innovative features and a traditional user experience."
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - arc-gtk-theme-eos
@@ -237,6 +241,7 @@
   description: "Budgie - I Tawt I Taw A Purdy Desktop"
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - arc-gtk-theme-eos
@@ -276,6 +281,7 @@
   description: "The Lightweight Qt Desktop Environment."
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - audiocd-kio
@@ -304,6 +310,7 @@
   description: "The Lightweight Desktop Environment."
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - arc-gtk-theme-eos
@@ -339,10 +346,11 @@
     - xdg-user-dirs-gtk
     - xed
 
-- name: "BSPWM Edition"
+- name: "BSPWM-Edition"
   description: "BSPWM Community Edition."
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - acpi
@@ -397,10 +405,11 @@
     - xorg-xdpyinfo
     - xorg-xsetroot
 
-- name: "Openbox Edition"
+- name: "Openbox-Edition"
   description: "Openbox Community Edition."
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - acpi
@@ -453,10 +462,11 @@
     - xorg-xbacklight
     - xorg-xdpyinfo
 
-- name: "Qtile Edition"
+- name: "Qtile-Edition"
   description: "Qtile Community Edition."
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - acpi
@@ -501,10 +511,11 @@
     - xorg-xbacklight
     - xorg-xdpyinfo
 
-- name: "Sway Edition"
+- name: "Sway-Edition"
   description: "Sway Community Edition."
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - acpi
@@ -555,10 +566,11 @@
     - xorg-xhost
     - xorg-xwayland
 
-- name: "Worm Edition"
+- name: "Worm-Edition"
   description: "Worm Community Edition."
   hidden: false
   selected: false
+  expanded: false
   critical: true
   packages:
     - arc-gtk-theme
