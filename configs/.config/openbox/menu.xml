@@ -104,5 +104,17 @@
         <action name="Exit" />
       </item>
     </menu>
+    <menu id="41" label="Shutdown">
+      <item label="Poweroff">
+        <action name="Execute">
+          <execute>sudo systemctl poweroff</execute>
+        </action>
+      </item>
+      <item label="Reboot">
+        <action name="Execute">
+          <execute>sudo systemctl reboot</execute>
+        </action>
+      </item>
+    </menu>
   </menu>
 </openbox_menu>
