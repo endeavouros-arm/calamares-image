@@ -88,13 +88,17 @@ _finish_up() {
     chmod 644 /home/alarm/.xinitrc
     ### Add configs
     cd /home/alarm/
+    su - alarm
     git clone https://github.com/sravanpannala/enosarm-GUI
     rm -rf .config
     mkdir .config
     mkdir Desktop
     cd enosarm-GUI
+    cp /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/getty@.service.bak
+    cp getty@.service /usr/lib/systemd/system/getty@.service
     ./alarmconfig.sh
     ./calamares.sh
+    exit
     cd /
     systemctl disable dhcpcd.service
     systemctl enable NetworkManager.service
