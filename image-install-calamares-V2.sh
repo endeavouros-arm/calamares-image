@@ -226,7 +226,7 @@ _partition_format_mount() {
                         mkfs.fat $PARTNAME1   2>> /root/enosARM.log
                         PARTNAME2=$DEVICENAME"2"
                         case $FILESYSTEMTYPE in
-                            ext4) mkfs.ext4 -f $PARTNAME2   2>> /root/enosARM.log ;;
+                            ext4) mkfs.ext4 $PARTNAME2   2>> /root/enosARM.log ;;
                            btrfs) mkfs.btrfs -f $PARTNAME2   2>> /root/enosARM.log ;;
                         esac
                         mkdir MP1 MP2
