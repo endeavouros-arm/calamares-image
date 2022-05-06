@@ -20,6 +20,7 @@ _install_RPi4_image() {
     sync
     mv MP2/boot/* MP1
     cp switch-kernel.sh MP2/root/
+    cp config_script.sh MP2/root/
     failed=$?
     if [[ "$failed" != "0" ]]; then
         printf "\n\n${CYAN}The switch-kernel.sh script failed to be copied to /root.${NC}\n"
@@ -140,6 +141,7 @@ _arch_chroot(){
     sudo mount $PARTNAME2  MP1
     sudo mount $PARTNAME1 MP1/boot
     arch-chroot MP1 /root/switch-kernel.sh
+    arch-chroot MP1 /root/config_script.sh
     umount MP1/boot
     umount MP1
     rm -rf MP1
