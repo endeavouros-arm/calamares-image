@@ -21,6 +21,8 @@ _install_RPi4_image() {
     mv MP2/boot/* MP1
     cp switch-kernel.sh MP2/root/
     cp config_script.sh MP2/root/
+    cp MP1/config.txt MP1/config.txt.orig
+    cp rpi4-config.txt MP1/config.txt 
     failed=$?
     if [[ "$failed" != "0" ]]; then
         printf "\n\n${CYAN}The switch-kernel.sh script failed to be copied to /root.${NC}\n"
