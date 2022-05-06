@@ -12,5 +12,7 @@ chmod +x /usr/local/bin/clean-up.sh
 cp clean-up.service /etc/systemd/system/clean-up.service
 ./alarmconfig.sh
 ./calamares.sh
+cp /boot/config.txt /boot/config.txt.orig
+cp rpi4-config.txt /boot/config.txt 
 chown -R alarm .config Desktop
 chmod +x Desktop/Shutdown.sh
