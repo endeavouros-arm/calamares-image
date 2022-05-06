@@ -4,4 +4,4 @@ pacman-key --init
 pkill haveged
 pacman-key --populate archlinuxarm endeavouros
 pacman-key --lsign-key EndeavourOS
-pacman -Syyu
+pacman -Syyu --noconfirm
