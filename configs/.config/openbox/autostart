@@ -1,0 +1,4 @@
+tint2 &
+nm-applet &
+pcmanfm --desktop & 
+sudo -E calamares
