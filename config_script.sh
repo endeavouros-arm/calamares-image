@@ -1,9 +1,8 @@
 cd /home/alarm/
-git clone https://github.com/sravanpannala/enosarm-GUI
 rm -rf .config
 mkdir .config
 mkdir Desktop
-cd enosarm-GUI
+cd configs/
 cp /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/getty@.service.bak
 cp getty@.service /usr/lib/systemd/system/getty@.service
 cp clean-up.sh /usr/local/bin/clean-up.sh

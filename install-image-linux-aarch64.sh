@@ -21,8 +21,9 @@ _install_RPi4_image() {
     mv MP2/boot/* MP1
     cp switch-kernel.sh MP2/root/
     cp config_script.sh MP2/root/
+    cp -r configs/ MP2/home/alarm/
     cp MP1/config.txt MP1/config.txt.orig
-    cp rpi4-config.txt MP1/config.txt 
+    cp configs/rpi4-config.txt MP1/config.txt 
     failed=$?
     if [[ "$failed" != "0" ]]; then
         printf "\n\n${CYAN}The switch-kernel.sh script failed to be copied to /root.${NC}\n"
@@ -105,7 +106,7 @@ _partition_format_mount() {
    PARTNAME1=$DEVICENAME"1"
    mkfs.fat $PARTNAME1   2>> /root/enosARM.log
    PARTNAME2=$DEVICENAME"2"
-   mkfs.ext4 $PARTNAME2   2>> /root/enosARM.log
+   mkfs.ext4 -F $PARTNAME2   2>> /root/enosARM.log
    mkdir MP1 MP2
    mount $PARTNAME1 MP1
    mount $PARTNAME2 MP2
@@ -175,7 +176,7 @@ Main() {
     _install_RPi4_image
     umount MP1 MP2
     rm -rf MP1 MP2
-    rm ArchLinuxARM*
+    # rm ArchLinuxARM*
     
     printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
 

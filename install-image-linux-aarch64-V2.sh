@@ -13,13 +13,13 @@ _partition_RPi4() {
 _install_RPi4_image() { 
     local failed=""   
 
-    # wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+    wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
     printf "\n\n${CYAN}Untarring the image...may take a few minutes.${NC}\n"
     bsdtar -xpf ArchLinuxARM-rpi-aarch64-latest.tar.gz -C MP2
     printf "\n\n${CYAN}syncing files...may take a few minutes.${NC}\n"
     sync
     mv MP2/boot/* MP1
-    cp switch-kernel-V2.sh MP2/root/
+    cp switch-kernel.sh MP2/root/
     failed=$?
     if [[ "$failed" != "0" ]]; then
         printf "\n\n${CYAN}The switch-kernel.sh script failed to be copied to /root.${NC}\n"
@@ -139,7 +139,7 @@ _arch_chroot(){
     mkdir MP1
     sudo mount $PARTNAME2  MP1
     sudo mount $PARTNAME1 MP1/boot
-    arch-chroot MP1 /root/switch-kernel-V2.sh
+    arch-chroot MP1 /root/switch-kernel.sh
     umount MP1/boot
     umount MP1
     rm -rf MP1

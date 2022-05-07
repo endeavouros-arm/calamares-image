@@ -111,7 +111,7 @@ time bsdtar --use-compress-program=zstdmt -cf $DIR/enosLinuxARM-rpi-aarch64-conf
 printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
 cd ..
 # sha512sum $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz > $DIR/enosLinuxARM-trpi-aarch64-latest.tar.gz.sha512sum
-sha512sum $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst > $DIR/enosLinuxARM-trpi-aarch64-config.tar.zst.sha512sum
+sha512sum $DIR/enosLinuxARM-rpi-aarch64-config.tar.zst > $DIR/enosLinuxARM-trpi-aarch64-config.tar.zst.sha512sum
 umount MP1/boot MP1
 rm -rf MP1
 

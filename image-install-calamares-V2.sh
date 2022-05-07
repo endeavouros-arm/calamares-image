@@ -226,7 +226,7 @@ _partition_format_mount() {
                         mkfs.fat $PARTNAME1   2>> /root/enosARM.log
                         PARTNAME2=$DEVICENAME"2"
                         case $FILESYSTEMTYPE in
-                            ext4) mkfs.ext4 $PARTNAME2   2>> /root/enosARM.log ;;
+                            ext4) mkfs.ext4 -F $PARTNAME2   2>> /root/enosARM.log ;;
                            btrfs) mkfs.btrfs -f $PARTNAME2   2>> /root/enosARM.log ;;
                         esac
                         mkdir MP1 MP2
@@ -277,11 +277,11 @@ _choose_device() {
 
 _arch_chroot(){
     cp config_script.sh MP2/root/config_script.sh
+    cp -r configs/ MP2/home/alarm/
     arch-chroot MP2 /root/config_script.sh
     rm -rf MP2/root/config_script.sh
     cp MP1/config.txt MP1/config.txt.orig
-    cp rpi4-config.txt MP1/config.txt 
-
+    cp configs/rpi4-config.txt MP1/config.txt
 }
 
 #################################################
