@@ -75,7 +75,7 @@ build() {
     -DINSTALL_CONFIG=OFF \
     -DSKIP_MODULES="dracut dracutlukscfg \
     dummycpp dummyprocess dummypython dummypythonqt \
-    finishedq keyboardq license localeq oemid \
+    finishedq keyboardq license localeq notesqml oemid \
     openrcdmcryptcfg packagechooserq \
     plymouthcfg plasmalnf services-openrc \
     summaryq tracking usersq webview welcomeq"

@@ -71,11 +71,13 @@ _base_addons() {
     printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\n" >> base-addons
     pacman -S --noconfirm --needed - < base-addons
     ### Install Calamares Arm
-    wget https://github.com/sravanpannala/enosarm-GUI/releases/download/v0.1.2/calamares_current-22.04.1.4-1-any.pkg.tar.xz
+    wget https://github.com/pudges-place/exper/releases/download/v0.2/calamares_current-22.04.1.4-1-any.pkg.tar.xz
     pacman -U --noconfirm calamares_current-22.04.1.4-1-any.pkg.tar.xz
-    wget https://github.com/sravanpannala/enosarm-GUI/releases/download/v0.1.2/calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
+    wget https://github.com/pudges-place/exper/releases/download/v0.2/calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
     pacman -U --noconfirm calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
-    rm -rf calamares_config_default-22.04.1.4-1-any.pkg.tar.xz calamares_current-22.04.1.4-1-any.pkg.tar.xz base-addons
+    wget https://github.com/pudges-place/exper/releases/download/v0.2/calamares_config_ce-22.04.1.4-1-any.pkg.tar.xz
+    pacman -U --noconfirm calamares_config_ce-22.04.1.4-1-any.pkg.tar.xz
+    rm -rf calamares_config_default-22.04.1.4-1-any.pkg.tar.xz calamares_current-22.04.1.4-1-any.pkg.tar.xz calamares_config_ce-22.04.1.4-1-any.pkg.tar.xz base-addons
 }
 
 
@@ -94,6 +96,7 @@ _finish_up() {
     rm /var/cache/pacman/pkg/*
     rm /root/switch-kernel.sh /root/enosARM.log   
     rm -rf /etc/pacman.d/gnupg
+    rm -rf /etc/lsb-release
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
     # read -n 1 z
     # systemctl poweroff

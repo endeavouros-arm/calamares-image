@@ -1,0 +1,24 @@
+- id: bspwm
+  hidden: true
+  selected: false
+  expanded: false
+
+- id: openbox
+  hidden: true
+  selected: false
+  expanded: false
+
+- id: qtile
+  hidden: true
+  selected: false
+  expanded: false
+
+- id: sway
+  hidden: true
+  selected: false
+  expanded: false
+
+- id: worm
+  hidden: true
+  selected: false
+  expanded: false

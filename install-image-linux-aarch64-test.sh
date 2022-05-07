@@ -13,7 +13,7 @@ _partition_RPi4() {
 _install_RPi4_image() { 
     local failed=""   
 
-    wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+    # wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
     printf "\n\n${CYAN}Untarring the image...may take a few minutes.${NC}\n"
     bsdtar -xpf ArchLinuxARM-rpi-aarch64-latest.tar.gz -C MP2
     printf "\n\n${CYAN}syncing files...may take a few minutes.${NC}\n"
@@ -102,7 +102,7 @@ _partition_format_mount() {
    PARTNAME1=$DEVICENAME"1"
    mkfs.fat $PARTNAME1   2>> /root/enosARM.log
    PARTNAME2=$DEVICENAME"2"
-   mkfs.ext4 $PARTNAME2   2>> /root/enosARM.log
+   mkfs.ext4 -F $PARTNAME2   2>> /root/enosARM.log
    mkdir MP1 MP2
    mount $PARTNAME1 MP1
    mount $PARTNAME2 MP2

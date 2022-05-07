@@ -110,7 +110,6 @@
   description: "KDE-Plasma Desktop - Simple by default, powerful when needed."
   hidden: false
   selected: false
-  expanded: false
   critical: true
   packages:
     - ark
@@ -147,7 +146,6 @@
   description: "GNOME Desktop - designed to put you in control and get things done."
   hidden: false
   selected: false
-  expanded: false
   critical: true
   packages:
     - adwaita-icon-theme
@@ -185,7 +183,6 @@
   description: "MATE Desktop - the continuation of GNOME 2"
   hidden: false
   selected: false
-  expanded: false
   critical: true
   packages:
     - arc-gtk-theme-eos
@@ -208,7 +205,6 @@
   description: "Cinnamon Desktop - advanced innovative features and a traditional user experience."
   hidden: false
   selected: false
-  expanded: false
   critical: true
   packages:
     - arc-gtk-theme-eos
@@ -241,7 +237,6 @@
   description: "Budgie - I Tawt I Taw A Purdy Desktop"
   hidden: false
   selected: false
-  expanded: false
   critical: true
   packages:
     - arc-gtk-theme-eos
@@ -281,7 +276,6 @@
   description: "The Lightweight Qt Desktop Environment."
   hidden: false
   selected: false
-  expanded: false
   critical: true
   packages:
     - audiocd-kio
@@ -310,7 +304,6 @@
   description: "The Lightweight Desktop Environment."
   hidden: false
   selected: false
-  expanded: false
   critical: true
   packages:
     - arc-gtk-theme-eos
@@ -345,261 +338,3 @@
     - network-manager-applet
     - xdg-user-dirs-gtk
     - xed
-
-- name: "BSPWM-Edition"
-  description: "BSPWM Community Edition."
-  hidden: false
-  selected: false
-  expanded: false
-  critical: true
-  packages:
-    - acpi
-    - arandr
-    - arc-gtk-theme-eos
-    - archlinux-xdg-menu
-    - bspwm
-    - dex
-    - dunst
-    - endeavouros-xfce4-terminal-colors
-    - eos-lightdm-slick-theme
-    - eos-qogir-icons
-    - eos-skel-ce-bspwm
-    - feh
-    - file-roller
-    - gtk-engine-murrine
-    - gvfs
-    - gvfs-afc
-    - gvfs-gphoto2
-    - gvfs-mtp
-    - gvfs-nfs
-    - gvfs-smb
-    - htop
-    - i3lock
-    - jq
-    - lightdm
-    - lightdm-slick-greeter
-    - lxappearance-gtk3
-    - mpv
-    - network-manager-applet
-    - nitrogen
-    - picom
-    - polkit-gnome
-    - polybar
-    - rofi
-    - scrot
-    - sxhkd
-    - sysstat
-    - thunar
-    - thunar-archive-plugin
-    - thunar-media-tags-plugin
-    - thunar-volman
-    - ttf-nerd-fonts-symbols
-    - tumbler
-    - xbindkeys
-    - xclip
-    - xcursor-neutral
-    - xdg-user-dirs-gtk
-    - xed
-    - xfce4-terminal
-    - xorg-xbacklight
-    - xorg-xdpyinfo
-    - xorg-xsetroot
-
-- name: "Openbox-Edition"
-  description: "Openbox Community Edition."
-  hidden: false
-  selected: false
-  expanded: false
-  critical: true
-  packages:
-    - acpi
-    - arandr
-    - arc-gtk-theme-eos
-    - archlinux-xdg-menu
-    - dex
-    - dmenu
-    - dunst
-    - eos-lightdm-slick-theme
-    - eos-qogir-icons
-    - eos-skel-ce-openbox
-    - feh
-    - gtk-engine-murrine
-    - gvfs
-    - gvfs-afc
-    - gvfs-gphoto2
-    - gvfs-mtp
-    - gvfs-nfs
-    - gvfs-smb
-    - jgmenu
-    - jq
-    - lightdm
-    - lightdm-slick-greeter
-    - lxappearance-gtk3
-    - mpv
-    - network-manager-applet
-    - nitrogen
-    - obconf
-    - openbox
-    - pasystray
-    - picom
-    - polkit-gnome
-    - rofi
-    - scrot
-    - slock
-    - sysstat
-    - thunar
-    - thunar-archive-plugin
-    - thunar-media-tags-plugin
-    - thunar-volman
-    - tint2
-    - ttf-nerd-fonts-symbols
-    - tumbler
-    - xbindkeys
-    - xcursor-neutral
-    - xdg-user-dirs-gtk
-    - xed
-    - xfce4-terminal
-    - xorg-xbacklight
-    - xorg-xdpyinfo
-
-- name: "Qtile-Edition"
-  description: "Qtile Community Edition."
-  hidden: false
-  selected: false
-  expanded: false
-  critical: true
-  packages:
-    - acpi
-    - arandr
-    - arc-gtk-theme-eos
-    - archlinux-xdg-menu
-    - dex
-    - eos-lightdm-slick-theme
-    - eos-qogir-icons
-    - eos-skel-ce-qtile
-    - feh
-    - gtk-engine-murrine
-    - gvfs
-    - gvfs-afc
-    - gvfs-gphoto2
-    - gvfs-mtp
-    - gvfs-nfs
-    - gvfs-smb
-    - lightdm
-    - lightdm-slick-greeter
-    - lxappearance-gtk3
-    - mpv
-    - network-manager-applet
-    - papirus-icon-theme
-    - pasystray
-    - picom
-    - polkit-gnome
-    - qtile
-    - rofi
-    - sysstat
-    - thunar
-    - thunar-archive-plugin
-    - thunar-media-tags-plugin
-    - thunar-volman
-    - ttf-cascadia-code
-    - ttf-nerd-fonts-symbols
-    - tumbler
-    - xbindkeys
-    - xcursor-neutral
-    - xdg-user-dirs-gtk
-    - xfce4-terminal
-    - xorg-xbacklight
-    - xorg-xdpyinfo
-
-- name: "Sway-Edition"
-  description: "Sway Community Edition."
-  hidden: false
-  selected: false
-  expanded: false
-  critical: true
-  packages:
-    - acpi
-    - arc-gtk-theme-eos
-    - archlinux-xdg-menu
-    - boost-libs
-    - brightnessctl
-    - dex
-    - diffuse
-    - egl-wayland
-    - endeavouros-xfce4-terminal-colors
-    - eos-qogir-icons
-    - eos-skel-ce-sway
-    - file-roller
-    - grim
-    - gtk-engine-murrine
-    - gtk-layer-shell
-    - htop
-    - imv
-    - jq
-    - lxappearance
-    - ly
-    - mako
-    - network-manager-applet
-    - oniguruma
-    - awesome-terminal-fonts
-    - polkit-gnome
-    - slurp
-    - sway
-    - swaybg
-    - swayidle
-    - swaylock
-    - sysstat
-    - thunar
-    - thunar-archive-plugin
-    - thunar-media-tags-plugin
-    - thunar-volman
-    - ttf-jetbrains-mono
-    - ttf-nerd-fonts-symbols
-    - ttf-ubuntu-font-family
-    - waybar
-    - wayland-protocols
-    - wl-clipboard
-    - wofi
-    - xdg-desktop-portal-wlr
-    - xed
-    - xfce4-terminal
-    - xorg-xhost
-    - xorg-xwayland
-
-- name: "Worm-Edition"
-  description: "Worm Community Edition."
-  hidden: false
-  selected: false
-  expanded: false
-  critical: true
-  packages:
-    - arc-gtk-theme
-    - dex
-    - dunst
-    - eos-lxdm-gtk3
-    - eos-skel-ce-worm
-    - feh
-    - file-roller
-    - gtk-engine-murrine
-    - gvfs
-    - gvfs-afc
-    - gvfs-gphoto2
-    - gvfs-mtp
-    - gvfs-nfs
-    - gvfs-smb
-    - papirus-icon-theme
-    - picom
-    - tint2
-    - rofi
-    - sxhkd
-    - thunar
-    - thunar-archive-plugin
-    - thunar-volman
-    - ttf-jetbrains-mono
-    - ttf-nerd-fonts-symbols
-    - tumbler
-    - worm
-    - xcursor-neutral
-    - xdg-user-dirs-gtk
-    - xed
-    - xfce4-terminal
