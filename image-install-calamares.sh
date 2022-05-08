@@ -111,8 +111,6 @@ _install_RPi4_image() {
     printf "\n\n${CYAN}syncing files...may take a few minutes.${NC}\n"
     sync
     mv MP2/boot/* MP1
-    # cp MP1/config.txt MP1/config.txt.orig
-    # cp configs/rpi4-config.txt MP1/config.txt
     # make /etc/fstab work with a UUID instead of a label such as /dev/sda
     printf "\n${CYAN}In /etc/fstab and /boot/cmdline.txt changing Disk labels to UUID numbers.${NC}\n"
     mv MP2/etc/fstab MP2/etc/fstab-bkup

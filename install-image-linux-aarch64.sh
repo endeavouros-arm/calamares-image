@@ -13,12 +13,12 @@ _partition_RPi4() {
 _install_RPi4_image() { 
     local failed=""   
 
-    wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+    # wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
     printf "\n\n${CYAN}Untarring the image...may take a few minutes.${NC}\n"
     bsdtar -xpf ArchLinuxARM-rpi-aarch64-latest.tar.gz -C MP2
     printf "\n\n${CYAN}syncing files...may take a few minutes.${NC}\n"
     sync
-    mv MP2/boot/* MP1
+    # mv MP2/boot/* MP1
     cp switch-kernel.sh MP2/root/
     cp config_script.sh MP2/root/
     cp -r configs/ MP2/home/alarm/
@@ -105,9 +105,11 @@ _partition_format_mount() {
    mkfs.fat $PARTNAME1   2>> /root/enosARM.log
    PARTNAME2=$DEVICENAME"2"
    mkfs.ext4 -F $PARTNAME2   2>> /root/enosARM.log
-   mkdir MP1 MP2
-   mount $PARTNAME1 MP1
+   # mkdir MP1 MP2
+   mkdir MP2
    mount $PARTNAME2 MP2
+   mkdir MP2/boot
+   mount $PARTNAME1 MP2/boot
 
 } # end of function _partition_format_mount
 
@@ -138,16 +140,18 @@ _check_all_apps_closed() {
 
 _arch_chroot(){
     pacman -S --noconfirm --needed arch-install-scripts
-    mkdir MP1
-    sudo mount $PARTNAME2  MP1
-    sudo mount $PARTNAME1 MP1/boot
-    arch-chroot MP1 /root/switch-kernel.sh
-    arch-chroot MP1 /root/config_script.sh
-    cp MP1/boot/config.txt MP1/boot/config.txt.orig
-    cp configs/rpi4-config.txt MP1/boot/config.txt 
-    umount MP1/boot
-    umount MP1
-    rm -rf MP1
+    # mkdir MP2
+    # sudo mount $PARTNAME2  MP2
+    # sudo mount $PARTNAME1 MP2/boot
+    # mount MP1 MP2/boot
+    arch-chroot MP2 /root/switch-kernel.sh
+    arch-chroot MP2 /root/config_script.sh
+    # umount MP2/boot
+    # cp MP2/boot/config.txt MP2/boot/config.txt.orig
+    # cp configs/rpi4-config.txt MP2/boot/config.txt 
+    # umount MP1/boot
+    # umount MP1
+    # rm -rf MP1
 }
 
 #################################################
@@ -174,13 +178,15 @@ Main() {
     _check_all_apps_closed
     _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
     _install_RPi4_image
-    umount MP1 MP2
-    rm -rf MP1 MP2
+    _arch_chroot
+    # umount MP1 MP2
+    # rm -rf MP1 MP2
+    umount MP2/boot MP2
+    rm -rf MP2
     # rm ArchLinuxARM*
     
     printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
 
-    _arch_chroot
 
     printf "\n\n${CYAN}End of script!${NC}\n"
     printf "\n${CYAN}Be sure to use a file manager to umount the device before removing the USB SD reader${NC}\n"

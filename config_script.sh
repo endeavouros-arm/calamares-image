@@ -3,6 +3,8 @@ rm -rf .config
 mkdir .config
 mkdir Desktop
 cd configs/
+cp /boot/config.txt /boot/config.txt.orig
+cp rpi4-config.txt /boot/config.txt
 cp /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/getty@.service.bak
 cp getty@.service /usr/lib/systemd/system/getty@.service
 cp clean-up.sh /usr/local/bin/clean-up.sh
