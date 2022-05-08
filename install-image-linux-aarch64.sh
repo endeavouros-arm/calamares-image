@@ -139,19 +139,8 @@ _check_all_apps_closed() {
 }
 
 _arch_chroot(){
-    pacman -S --noconfirm --needed arch-install-scripts
-    # mkdir MP2
-    # sudo mount $PARTNAME2  MP2
-    # sudo mount $PARTNAME1 MP2/boot
-    # mount MP1 MP2/boot
     arch-chroot MP2 /root/switch-kernel.sh
     arch-chroot MP2 /root/config_script.sh
-    # umount MP2/boot
-    # cp MP2/boot/config.txt MP2/boot/config.txt.orig
-    # cp configs/rpi4-config.txt MP2/boot/config.txt 
-    # umount MP1/boot
-    # umount MP1
-    # rm -rf MP1
 }
 
 #################################################
@@ -178,15 +167,12 @@ Main() {
     _check_all_apps_closed
     _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
     _install_RPi4_image
+
+    printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
     _arch_chroot
-    # umount MP1 MP2
-    # rm -rf MP1 MP2
     umount MP2/boot MP2
     rm -rf MP2
     # rm ArchLinuxARM*
-    
-    printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
-
 
     printf "\n\n${CYAN}End of script!${NC}\n"
     printf "\n${CYAN}Be sure to use a file manager to umount the device before removing the USB SD reader${NC}\n"
