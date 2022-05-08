@@ -82,6 +82,7 @@ _unmount_partitions() {
 ##################### Start of Scipt #################
 
 DEVICENAME=" "
+USERNAME=" "
 
 _check_if_root
 _choose_device
@@ -98,7 +99,7 @@ _unmount_partitions
 
 mount $PARTNAME2 MP1
 mount $PARTNAME1 MP1/boot
-DIR=$(pwd)
+# DIR=$(pwd)
 cd MP1
 printf "\nbsdtar is creating the image, may take a few minutes\n"
 # time bsdtar -czf $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz * 
@@ -106,12 +107,17 @@ printf "\nbsdtar is creating the image, may take a few minutes\n"
 # time bsdtar --use-compress-program=pigz -cf $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz *
 # time bsdtar -cf - * | zstd -T0 -19 -o $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst
 
-time bsdtar --use-compress-program=zstdmt -cf $DIR/enosLinuxARM-rpi-aarch64-config.tar.zst *
+time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/pudges-place/exper-image/enosLinuxARM-rpi-aarch64-config.tar.zst *
 
 printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
+
 cd ..
-# sha512sum $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz > $DIR/enosLinuxARM-trpi-aarch64-latest.tar.gz.sha512sum
-sha512sum $DIR/enosLinuxARM-rpi-aarch64-config.tar.zst > $DIR/enosLinuxARM-trpi-aarch64-config.tar.zst.sha512sum
+dir=$(pwd)
+cd /home/$USERNAME/pudges-place/exper-image/
+sha512sum enosLinuxARM-rpi-aarch64-latest.tar.zst > enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
+# sha512sum $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst > $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
+cd $dir
+
 umount MP1/boot MP1
 rm -rf MP1
 
