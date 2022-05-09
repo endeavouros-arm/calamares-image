@@ -114,7 +114,7 @@ printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512s
 cd ..
 dir=$(pwd)
 cd /home/$USERNAME/pudges-place/exper-image/
-sha512sum enosLinuxARM-rpi-aarch64-latest.tar.zst > enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
+sha512sum enosLinuxARM-rpi-aarch64-config.tar.zst > enosLinuxARM-rpi-aarch64-config.tar.zst.sha512sum
 # sha512sum $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst > $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
 cd $dir
 

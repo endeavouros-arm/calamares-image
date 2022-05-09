@@ -106,7 +106,7 @@ _install_RPi4_image() {
     fi
 
     printf "\n\n${CYAN}Untarring the image...may take a few minutes.${NC}\n"
-    bsdtar --use-compress-program=unzstd -xpf enosLinuxARM-rpi-aarch64-config.tar.zst -C MP2
+    bsdtar --use-compress-program=unzstd -xpf ../exper-image/enosLinuxARM-rpi-aarch64-config.tar.zst -C MP2
 
     printf "\n\n${CYAN}syncing files...may take a few minutes.${NC}\n"
     sync
@@ -123,6 +123,7 @@ _install_RPi4_image() {
     # make /boot/cmdline.txt work with a UUID instead of a lable such as /dev/sda
     if [[ "$FILESYSTEMTYPE" == "btrfs" ]]; then
         genfstab -U MP2 >> MP2/etc/fstab
+        sed -i 's/subvolid=\d*,//g' MP2/etc/fstab
     fi
     uuidno=$(lsblk -o UUID $PARTNAME2)
     uuidno=$(echo $uuidno | sed 's/ /=/g')
