@@ -107,12 +107,12 @@ printf "\nbsdtar is creating the image, may take a few minutes\n"
 # time bsdtar --use-compress-program=pigz -cf $DIR/enosLinuxARM-rpi-aarch64-latest.tar.gz *
 # time bsdtar -cf - * | zstd -T0 -19 -o $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst
 
-time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/pudges-place/exper-image/enosLinuxARM-rpi-aarch64-latest.tar.zst *
+time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/pudges-place/exper-images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
 
 printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
 cd ..
 dir=$(pwd)
-cd /home/$USERNAME/pudges-place/exper-image/
+cd /home/$USERNAME/pudges-place/exper-images/
 sha512sum enosLinuxARM-rpi-aarch64-latest.tar.zst > enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
 # sha512sum $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst > $DIR/enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
 cd $dir

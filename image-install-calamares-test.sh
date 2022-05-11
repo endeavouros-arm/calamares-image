@@ -77,7 +77,7 @@ _install_RPi4_image() {
     local totalurl
     local exit_status
 
-    url=$(curl https://github.com/pudges-place/images/releases | grep "enos-image-.*/enosLinuxARM-rpi-aarch64-latest.tar.gz" | sed s'#^.*pudges-place#pudges-place#'g | sed s'#latest.tar.gz.*#latest.tar.gz#'g | head -n 1)
+    url=$(curl https://github.com/pudges-place/exper-images/releases | grep "enos-image-.*/enosLinuxARM-rpi-aarch64-latest.tar.zst" | sed s'#^.*pudges-place#pudges-place#'g | sed s'#latest.tar.zst.*#latest.tar.zst#'g | head -n 1)
     # totalurl="https://github.com/"$url
     # wget $totalurl
     # exit_status=$?
@@ -106,7 +106,7 @@ _install_RPi4_image() {
     fi
 
     printf "\n\n${CYAN}Untarring the image...may take a few minutes.${NC}\n"
-    bsdtar --use-compress-program=unzstd -xpf ../exper-image/enosLinuxARM-rpi-aarch64-config.tar.zst -C MP2
+    bsdtar --use-compress-program=unzstd -xpf ../exper-images/enosLinuxARM-rpi-aarch64-config.tar.zst -C MP2
 
     printf "\n\n${CYAN}syncing files...may take a few minutes.${NC}\n"
     sync

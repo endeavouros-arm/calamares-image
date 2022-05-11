@@ -13,7 +13,7 @@ _partition_RPi4() {
 _install_RPi4_image() { 
     local failed=""   
 
-    # wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+    wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
     printf "\n\n${CYAN}Untarring the image...may take a few minutes.${NC}\n"
     bsdtar -xpf ArchLinuxARM-rpi-aarch64-latest.tar.gz -C MP2
     printf "\n\n${CYAN}syncing files...may take a few minutes.${NC}\n"
@@ -172,7 +172,7 @@ Main() {
     _arch_chroot
     umount MP2/boot MP2
     rm -rf MP2
-    # rm ArchLinuxARM*
+    rm ArchLinuxARM*
 
     printf "\n\n${CYAN}End of script!${NC}\n"
     printf "\n${CYAN}Be sure to use a file manager to umount the device before removing the USB SD reader${NC}\n"
