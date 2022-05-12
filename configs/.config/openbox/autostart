@@ -1,4 +1,4 @@
 tint2 &
 nm-applet &
 pcmanfm --desktop & 
-/home/alarm/launch.sh
+/home/alarm/configs/launch.sh
