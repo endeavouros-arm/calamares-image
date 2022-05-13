@@ -93,6 +93,9 @@ _finish_up() {
     systemctl enable NetworkManager.service
     sed -i 's/ParallelDownloads = 8/#ParallelDownloads = 5/g' /etc/pacman.conf
     pacman -Rn --noconfirm dhcpcd
+    printf "\nalias ll='ls -l --color=auto'\n" >> /etc/bash.bashrc
+    printf "alias la='ls -al --color=auto'\n" >> /etc/bash.bashrc
+    printf "alias lb='lsblk -o NAME,FSTYPE,FSSIZE,LABEL,MOUNTPOINT'\n\n" >> /etc/bash.bashrc
     rm /var/cache/pacman/pkg/*
     rm /root/switch-kernel.sh /root/enosARM.log   
     rm -rf /etc/pacman.d/gnupg
