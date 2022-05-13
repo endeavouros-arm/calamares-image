@@ -1,63 +1,63 @@
 #!/bin/bash
 
 package=xfce4
-if pacman -Qs $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm
+if pacman -Qq $package > /dev/null ; then
+  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3
 fi
 
 package=i3-gaps
-if pacman -Qs $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm
+if pacman -Qq $package > /dev/null ; then
+  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3
 fi
 
 package=plasma-dekstop
-if pacman -Qs $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm xfce4-terminal
+if pacman -Qq $package > /dev/null ; then
+  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
 fi
 
 package=gnome-shell
-if pacman -Qs $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm xfce4-terminal
+if pacman -Qq $package > /dev/null ; then
+  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
 fi
 
 package=mate
-if pacman -Qs $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm xfce4-terminal
+if pacman -Qq $package > /dev/null ; then
+  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
 fi
 
 package=budgie-dekstop
-if pacman -Qs $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm xfce4-terminal
+if pacman -Qq $package > /dev/null ; then
+  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
 fi
 
 package=lxqt
-if pacman -Qs $package > /dev/null ; then
-  pacman -Rns --noconfirm tint2 pcmanfm xfce4-terminal
+if pacman -Qq $package > /dev/null ; then
+  pacman -Rns --noconfirm tint2 pcmanfm-gtk3 xfce4-terminal
 fi
 
 package=lxde-common
-if pacman -Qs $package > /dev/null ; then
+if pacman -Qq $package > /dev/null ; then
   pacman -Rns --noconfirm tint2 xfce4-terminal
 fi
 
 package=bspwm
-if pacman -Qs $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm
+if pacman -Qq $package > /dev/null ; then
+  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3
 fi
 
 package=qtile
-if pacman -Qs $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm
+if pacman -Qq $package > /dev/null ; then
+  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3
 fi
 
 package=sway
-if pacman -Qs $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm xfce4-terminal
+if pacman -Qq $package > /dev/null ; then
+  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
 fi
 
 package=worm
-if pacman -Qs $package > /dev/null ; then
-  pacman -Rns --noconfirm tint2 pcmanfm
+if pacman -Qq $package > /dev/null ; then
+  pacman -Rns --noconfirm tint2 pcmanfm-gtk3
 fi
 
 userdel -r alarm
