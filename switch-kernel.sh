@@ -71,13 +71,8 @@ _base_addons() {
     printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\n" >> base-addons
     pacman -S --noconfirm --needed - < base-addons
     ### Install Calamares Arm
-    wget https://github.com/pudges-place/exper/releases/download/v0.2/calamares_current-22.04.1.4-1-any.pkg.tar.xz
-    pacman -U --noconfirm calamares_current-22.04.1.4-1-any.pkg.tar.xz
-    wget https://github.com/pudges-place/exper/releases/download/v0.2/calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
-    pacman -U --noconfirm calamares_config_default-22.04.1.4-1-any.pkg.tar.xz
-    wget https://github.com/pudges-place/exper/releases/download/v0.2/calamares_config_ce-22.04.1.4-1-any.pkg.tar.xz
-    pacman -U --noconfirm calamares_config_ce-22.04.1.4-1-any.pkg.tar.xz
-    rm -rf calamares_config_default-22.04.1.4-1-any.pkg.tar.xz calamares_current-22.04.1.4-1-any.pkg.tar.xz calamares_config_ce-22.04.1.4-1-any.pkg.tar.xz base-addons
+    pacman -S --noconfirm --needed calamares_current_arm calamares_config_default_arm calamares_config_ce_arm
+    rm -rf base-addons
 }
 
 
