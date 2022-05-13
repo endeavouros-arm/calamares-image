@@ -1,10 +1,10 @@
 # Maintainer: EndeavourOS <info@endeavouros.com>
 
-pkgname=calamares_config_ce
+pkgname=calamares_config_ce_arm
 pkgver=22.04.1.4
 pkgrel=1
 _repo_name=EndeavourOS-calamares
-pkgdesc='EndeavourOS calamares configuration files for Community Editions'
+pkgdesc='EndeavourOS calamares ARM configuration files for Community Editions'
 arch=('any')
 url='https://www.endeavouros.com'
 license=('GPL3')

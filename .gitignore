@@ -3,3 +3,5 @@ enosLinuxARM*
 nod*
 MP1/
 MP2/
+*.tar.gz
+*.tar.zst
