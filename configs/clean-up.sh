@@ -20,12 +20,12 @@ if pacman -Qq $package > /dev/null ; then
   pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
 fi
 
-package=mate
+package=mate-desktop
 if pacman -Qq $package > /dev/null ; then
   pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
 fi
 
-package=budgie-dekstop
+package=budgie-desktop
 if pacman -Qq $package > /dev/null ; then
   pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
 fi
