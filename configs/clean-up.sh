@@ -30,7 +30,7 @@ if pacman -Qq $package > /dev/null ; then
   pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
 fi
 
-package=lxqt
+package=lxqt-session
 if pacman -Qq $package > /dev/null ; then
   pacman -Rns --noconfirm tint2 pcmanfm-gtk3 xfce4-terminal
 fi
