@@ -57,7 +57,7 @@ fi
 
 package=worm
 if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm tint2 pcmanfm-gtk3
+  pacman -Rns --noconfirm openbox pcmanfm-gtk3
 fi
 
 userdel -r alarm
