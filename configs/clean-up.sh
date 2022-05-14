@@ -1,6 +1,6 @@
 #!/bin/bash
 
-package=xfce4
+package=xfce4-session
 if pacman -Qq $package > /dev/null ; then
   pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3
 fi
@@ -10,7 +10,7 @@ if pacman -Qq $package > /dev/null ; then
   pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3
 fi
 
-package=plasma-dekstop
+package=plasma-desktop
 if pacman -Qq $package > /dev/null ; then
   pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
 fi
