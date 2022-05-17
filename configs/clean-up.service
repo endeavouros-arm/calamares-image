@@ -1,6 +1,7 @@
 [Unit]
 Description=Script
 After=getty@tty2.service
+Before=getty.target
 
 [Service]
 Type=oneshot
