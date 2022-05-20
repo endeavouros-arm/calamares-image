@@ -1,6 +1,4 @@
 #!/bin/bash
-set -x
-trap read debug
 
 _check_if_root() {
     if [ $(id -u) -ne 0 ]

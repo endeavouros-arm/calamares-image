@@ -31,7 +31,7 @@ _copy_stuff_for_chroot() {
 _install_OdroidN2_image() {
     local user_confirm
 
-    wget http://os.archlinuxarm.org/os/ArchLinuxARM-odroid-n2-latest.tar.gz
+    # wget http://os.archlinuxarm.org/os/ArchLinuxARM-odroid-n2-latest.tar.gz
     printf "\n\n${CYAN}Untarring the image...might take a few minutes.${NC}\n"
     bsdtar -xpf ArchLinuxARM-odroid-n2-latest.tar.gz -C MP2
     # mv MP2/boot/* MP1
