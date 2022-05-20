@@ -66,8 +66,6 @@ _install_RPi4_image() {
     printf "\n\n${CYAN}syncing files...may take a few minutes.${NC}\n"
     sync
     # mv MP2/boot/* MP1
-    # cp MP2/boot/config.txt MP2/boot/config.txt.orig
-    # cp configs/rpi4-config.txt MP2/boot/config.txt
     _copy_stuff_for_chroot
     failed=$?
     if [[ "$failed" != "0" ]]; then

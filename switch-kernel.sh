@@ -130,12 +130,12 @@ Main() {
 
    case $PLATFORM_NAME in
      OdroidN2) pacman -R --noconfirm linux-odroid-n2
-               pacman -Syu --noconfirm --needed linux-odroid-516 linux-odroid-516-headers git libnewt networkmanager base-devel 
+               pacman -Syu --noconfirm --needed linux-odroid-516 linux-odroid-516-headers git libnewt networkmanager base-devel ;;
      RPi64)    pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
                pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware git libnewt  networkmanager base-devel
                printf "Copy RPi boot config"
                cp /boot/config.txt /boot/config.txt.orig
-               cp /home/alarm/configs/rpi4-config.txt /boot/config.txt;;
+               cp /home/alarm/configs/rpi4-config.txt /boot/config.txt ;;
    esac
 
    pacman -S --noconfirm --needed eos-packagelist
