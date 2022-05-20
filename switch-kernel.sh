@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x
+trap read debug
 
 _check_if_root() {
     if [ $(id -u) -ne 0 ]
@@ -35,7 +37,7 @@ _find_mirrorlist() {
     wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/$ARMARCH/$currentmirrorlist 2>> /root/enosARM.log
 
     printf "\n${CYAN}Installing endeavouros-mirrorlist...${NC}\n"
-    pacman -U --noconfirm $currentmirrorlist &>> /root/enosARM.log
+    pacman -U --noconfirm $currentmirrorlist
 
     printf "\n[endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n" >> /etc/pacman.conf
 
@@ -59,7 +61,7 @@ _find_keyring() {
     wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/$ARMARCH/$currentkeyring 2>> /root/enosARM.log
 
     printf "\n${CYAN}Installing endeavouros-keyring...${NC}\n"
-    pacman -U --noconfirm $currentkeyring &>> /root/enosARM.log
+    pacman -U --noconfirm $currentkeyring 
 
     rm keys
 }   # End of function _find_keyring
@@ -92,16 +94,16 @@ _finish_up() {
     printf "alias la='ls -al --color=auto'\n" >> /etc/bash.bashrc
     printf "alias lb='lsblk -o NAME,FSTYPE,FSSIZE,LABEL,MOUNTPOINT'\n\n" >> /etc/bash.bashrc
     rm /var/cache/pacman/pkg/*
-    rm /root/switch-kernel.sh /root/enosARM.log   
+    rm /root/switch-kernel.sh /root/enosARM.log 
     rm -rf /etc/pacman.d/gnupg
     rm -rf /etc/lsb-release
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
-    # read -n 1 z
-    # systemctl poweroff
 }   # end of function _finish_up
 
 ######################   Start of Script   #################################
 Main() {
+
+    PLATFORM_NAME=" "
 
    # Declare color variables
       GREEN='\033[0;32m'
@@ -111,17 +113,31 @@ Main() {
 
    # STARTS HERE
    dmesg -n 1 # prevent low level kernel messages from appearing during the script
+
+   # read in platformname passed by install-image-aarch64.sh 
+   file="/root/platformname"
+   read -d $'\x04' PLATFORM_NAME < "$file"
    _check_if_root
    _check_internet_connection
    sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 8/g' /etc/pacman.conf
    pacman-key --init
    pacman-key --populate archlinuxarm
    pacman -Syy
-   pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
-   pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware git libnewt wget networkmanager base-devel
+   pacman -S --noconfirm wget
    _find_mirrorlist
    _find_keyring
    pacman -Syy
+
+   case $PLATFORM_NAME in
+     OdroidN2) pacman -R --noconfirm linux-odroid-n2
+               pacman -Syu --noconfirm --needed linux-odroid-516 linux-odroid-516-headers git libnewt networkmanager base-devel 
+     RPi64)    pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
+               pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware git libnewt  networkmanager base-devel
+               printf "Copy RPi boot config"
+               cp /boot/config.txt /boot/config.txt.orig
+               cp /home/alarm/configs/rpi4-config.txt /boot/config.txt;;
+   esac
+
    pacman -S --noconfirm --needed eos-packagelist
    _base_addons
    _finish_up

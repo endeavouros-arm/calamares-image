@@ -1,6 +1,15 @@
 
 #!/bin/bash
 
+_partition_OdroidN2() {
+    parted --script -a minimal $DEVICENAME \
+    mklabel msdos \
+    unit mib \
+    mkpart primary fat32 2MiB 258MiB \
+    mkpart primary 258MiB $DEVICESIZE"MiB" \
+    quit
+}
+
 _partition_RPi4() {
     parted --script -a minimal $DEVICENAME \
     mklabel gpt \
@@ -10,18 +19,56 @@ _partition_RPi4() {
     quit
 }
 
+_copy_stuff_for_chroot() {
+    cp switch-kernel.sh MP2/root/
+    cp config_script.sh MP2/root/
+    cp -r configs/ MP2/home/alarm/
+    printf "$PLATFORM\n" > platformname
+    cp platformname MP2/root/
+    rm platformname
+}
+
+_install_OdroidN2_image() {
+    local user_confirm
+
+    wget http://os.archlinuxarm.org/os/ArchLinuxARM-odroid-n2-latest.tar.gz
+    printf "\n\n${CYAN}Untarring the image...might take a few minutes.${NC}\n"
+    bsdtar -xpf ArchLinuxARM-odroid-n2-latest.tar.gz -C MP2
+    # mv MP2/boot/* MP1
+    dd if=MP2/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
+    _copy_stuff_for_chroot
+    # for Odroid N2 ask if storage device is micro SD or eMMC or USB device
+    user_confirm=$(whiptail --title " Odroid N2 / N2+" --menu --notags "\n             Choose Storage Device or Press right arrow twice to abort" 17 100 3 \
+         "0" "micro SD card" \
+         "1" "eMMC card" \
+         "2" "USB device" \
+    3>&2 2>&1 1>&3)
+
+    case $user_confirm in
+       "") printf "\nScript aborted by user\n\n"
+           exit ;;
+        0) printf "\nN2 micro SD card\n" > /dev/null ;;
+        1) sed -i 's/mmcblk1/mmcblk0/g' MP2/etc/fstab ;;
+        2) sed -i 's/root=\/dev\/mmcblk${devno}p2/root=\/dev\/sda2/g' MP1/boot.ini
+           printf "\# Static information about the filesystems.\n# See fstab(5) for details.\n\n# <file system> <dir> <type> <options> <dump> <pass>\n" > MP2/etc/fstab
+           printf "/dev/sda1  /boot   vfat    defaults        0       0\n/dev/sda2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
+    esac
+#    cp $CONFIG_UPDATE MP2/root
+}   # End of function _install_OdroidN2_image
+
+
 _install_RPi4_image() { 
     local failed=""   
 
-    wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+    # wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
     printf "\n\n${CYAN}Untarring the image...may take a few minutes.${NC}\n"
     bsdtar -xpf ArchLinuxARM-rpi-aarch64-latest.tar.gz -C MP2
     printf "\n\n${CYAN}syncing files...may take a few minutes.${NC}\n"
     sync
     # mv MP2/boot/* MP1
-    cp switch-kernel.sh MP2/root/
-    cp config_script.sh MP2/root/
-    cp -r configs/ MP2/home/alarm/
+    # cp MP2/boot/config.txt MP2/boot/config.txt.orig
+    # cp configs/rpi4-config.txt MP2/boot/config.txt
+    _copy_stuff_for_chroot
     failed=$?
     if [[ "$failed" != "0" ]]; then
         printf "\n\n${CYAN}The switch-kernel.sh script failed to be copied to /root.${NC}\n"
@@ -90,7 +137,10 @@ _partition_format_mount() {
       done
    fi
    rm mounts
-   _partition_RPi4
+   case $PLATFORM in   
+      RPi64)    _partition_RPi4 ;;
+      OdroidN2) _partition_OdroidN2 ;;
+   esac
   
    printf "\npartition name = $DEVICENAME\n\n" >> /root/enosARM.log
    printf "\n${CYAN}Formatting storage device $DEVICENAME...${NC}\n"
@@ -132,7 +182,7 @@ _check_if_root() {
     else
          USERNAME=$SUDO_USER  
     fi
-}
+}  # end of function _check_if_root
 
 _check_all_apps_closed() {
     whiptail --title "CAUTION" --msgbox "Ensure ALL apps are closed, especially any file manager such as Thunar" 8 74 3>&2 2>&1 1>&3
@@ -141,6 +191,20 @@ _check_all_apps_closed() {
 _arch_chroot(){
     arch-chroot MP2 /root/switch-kernel.sh
     arch-chroot MP2 /root/config_script.sh
+}
+
+_choose_device() {
+    PLATFORM=$(whiptail --title " SBC Model Selection" --menu --notags "\n            Choose which SBC to install or Press right arrow twice to cancel" 17 100 4 \
+         "0" "Odroid N2 or N2+" \
+         "1" "Raspberry Pi 4b 64 bit" \
+    3>&2 2>&1 1>&3)
+
+    case $PLATFORM in
+        "") printf "\n\nScript aborted by user..${NC}\n\n"
+            exit ;;
+         0) PLATFORM="OdroidN2" ;;
+         1) PLATFORM="RPi64" ;;
+    esac
 }
 
 #################################################
@@ -165,14 +229,19 @@ Main() {
     pacman -S --noconfirm --needed libnewt &>/dev/null # for whiplash dialog
     _check_if_root
     _check_all_apps_closed
+    _choose_device
+
     _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
-    _install_RPi4_image
+    case $PLATFORM in
+       OdroidN2) _install_OdroidN2_image ;;
+       RPi64)    _install_RPi4_image ;;
+    esac
 
     printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
     _arch_chroot
     umount MP2/boot MP2
     rm -rf MP2
-    rm ArchLinuxARM*
+    # rm ArchLinuxARM*
 
     printf "\n\n${CYAN}End of script!${NC}\n"
     printf "\n${CYAN}Be sure to use a file manager to umount the device before removing the USB SD reader${NC}\n"
