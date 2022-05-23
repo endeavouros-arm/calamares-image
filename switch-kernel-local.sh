@@ -92,15 +92,29 @@ _finish_up() {
     printf "alias la='ls -al --color=auto'\n" >> /etc/bash.bashrc
     printf "alias lb='lsblk -o NAME,FSTYPE,FSSIZE,LABEL,MOUNTPOINT'\n\n" >> /etc/bash.bashrc
     rm /var/cache/pacman/pkg/*
-    rm /root/switch-kernel.sh /root/enosARM.log 
+    rm /root/switch-kernel-local.sh /root/enosARM.log
     rm -rf /etc/pacman.d/gnupg
     rm -rf /etc/lsb-release
+    printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
+}   # end of function _finish_up
+
+_switch_mirrors_local() {
+   sed -i 's/Server = http:\/\/mirror.archlinuxarm.org\/$arch\/$repo/#Server = http:\/\/mirror.archlinuxarm.org\/$arch\/$repo/g' /etc/pacman.d/mirrorlist
+   sed -i 's/Server/#Server/g' /etc/pacman.d/endeavouros-mirrorlist
+   echo "Server = http://127.0.0.1:8200" >> /etc/pacman.d/mirrorlist
+   echo "Server = http://127.0.0.1:8200" >> /etc/pacman.d/endeavouros-mirrorlist
+   # echo "Server = http://192.168.0.158:9129/repo/archlinux_\$arch/\$repo" >> /etc/pacman.d/mirrorlist
+   # echo "Server = http://192.168.0.158:9129/repo/endeavouros/endeavouros/repo/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
+}
+
+_switch_mirrors_back() {
     sed -i 's/#Server = http:\/\/mirror.archlinuxarm.org\/$arch\/$repo/Server = http:\/\/mirror.archlinuxarm.org\/$arch\/$repo/g' /etc/pacman.d/mirrorlist
     sed -i 's/Server = http:\/\/127.0.0.1:8200//g' /etc/pacman.d/mirrorlist
     sed -i 's/Server = http:\/\/127.0.0.1:8200//g' /etc/pacman.d/endeavouros-mirrorlist
+    # sed -i 's/Server = http:\/\/192.168.0.158:9129\/repo\/archlinux_$arch\/$repo//g' /etc/pacman.d/mirrorlist
+    # sed -i 's/Server = http:\/\/192.168.0.158:9129\/repo\/endeavouros\/endeavouros\/repo\/$repo\/$arch//g' /etc/pacman.d/endeavouros-mirrorlist
     sed -i 's/#Server/Server/g' /etc/pacman.d/endeavouros-mirrorlist
-    printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
-}   # end of function _finish_up
+}
 
 ######################   Start of Script   #################################
 Main() {
@@ -128,10 +142,10 @@ Main() {
    pacman -S --noconfirm wget
    _find_mirrorlist
    _find_keyring
-   sed -i 's/Server = http:\/\/mirror.archlinuxarm.org\/$arch\/$repo/#Server = http:\/\/mirror.archlinuxarm.org\/$arch\/$repo/g' /etc/pacman.d/mirrorlist
-   echo "Server = http://127.0.0.1:8200" >> /etc/pacman.d/mirrorlist
-   sed -i 's/Server/#Server/g' /etc/pacman.d/endeavouros-mirrorlist
-   echo "Server = http://127.0.0.1:8200" >> /etc/pacman.d/endeavouros-mirrorlist
+   # Switch Mirrors to Local server for faster image creation
+   # and low bandwidth usage
+   _switch_mirrors_local 
+
    pacman -Syy
 
    case $PLATFORM_NAME in
@@ -147,6 +161,9 @@ Main() {
 
    pacman -S --noconfirm --needed eos-packagelist
    _base_addons
+   # Switch Mirrors back to original
+   _switch_mirrors_back
+
    _finish_up
 }  # end of Main
 
