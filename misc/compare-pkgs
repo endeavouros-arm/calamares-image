@@ -8,7 +8,7 @@ curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/x86_64 | g
 
 
 sed -i '/akm\|eos-base\|paru\|zfs-dkms\|zfs-utils/d' x86_pkgs
-sed -i '/nvidia\|reflector\|grub/d' x86_pkgs
+sed -i '/nvidia\|reflector\|ly\|grub/d' x86_pkgs
 sed -i '/keyserver-rank\|downgrade\|mkinitcpio/d' x86_pkgs
 sed -i '/ckbcomp\|virtualbox-ext-oracle\|rate-mirrors/d' x86_pkgs
 # sed -i '/calamares_current/d' x86_pkgs
