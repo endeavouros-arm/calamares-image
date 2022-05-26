@@ -20,9 +20,9 @@ _partition_RPi4() {
 }
 
 _copy_stuff_for_chroot() {
-    cp switch-kernel.sh MP2/root/
-    # cp config_script.sh MP2/root/
-    # cp -r configs/ MP2/home/alarm/
+    cp switch-kernel-local.sh MP2/root/
+    cp config_script.sh MP2/root/
+    cp -r configs/ MP2/home/alarm/
     printf "$PLATFORM\n" > platformname
     cp platformname MP2/root/
     rm platformname
@@ -187,21 +187,21 @@ _check_all_apps_closed() {
 }
 
 _arch_chroot(){
-    arch-chroot MP2 /root/switch-kernel.sh
-    # arch-chroot MP2 /root/config_script.sh
+    arch-chroot MP2 /root/switch-kernel-local.sh
+    arch-chroot MP2 /root/config_script.sh
 }
 
 _choose_device() {
     PLATFORM=$(whiptail --title " SBC Model Selection" --menu --notags "\n            Choose which SBC to install or Press right arrow twice to cancel" 17 100 4 \
-         "0" "Odroid N2 or N2+" \
-         "1" "Raspberry Pi 4b 64 bit" \
+         "0" "Raspberry Pi 4b 64 bit" \
+         "1" "Odroid N2 or N2+" \
     3>&2 2>&1 1>&3)
 
     case $PLATFORM in
         "") printf "\n\nScript aborted by user..${NC}\n\n"
             exit ;;
-         0) PLATFORM="OdroidN2" ;;
-         1) PLATFORM="RPi64" ;;
+         0) PLATFORM="RPi64" ;;
+         1) PLATFORM="OdroidN2" ;;
     esac
 }
 
