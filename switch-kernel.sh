@@ -86,7 +86,6 @@ _finish_up() {
     rm -rf /endeavouros*
     systemctl disable dhcpcd.service
     systemctl enable NetworkManager.service
-    sed -i 's/ParallelDownloads = 8/#ParallelDownloads = 5/g' /etc/pacman.conf
     pacman -Rn --noconfirm dhcpcd
     printf "\nalias ll='ls -l --color=auto'\n" >> /etc/bash.bashrc
     printf "alias la='ls -al --color=auto'\n" >> /etc/bash.bashrc
@@ -117,7 +116,9 @@ Main() {
    read -d $'\x04' PLATFORM_NAME < "$file"
    _check_if_root
    _check_internet_connection
-   sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 8/g' /etc/pacman.conf
+   sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
+   sed -i "s|#Color|Color\nILoveCandy|g" /etc/pacman.conf
+   sed -i "s|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g" /etc/pacman.conf
    pacman-key --init
    pacman-key --populate archlinuxarm
    pacman -Syy
