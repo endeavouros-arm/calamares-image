@@ -154,8 +154,9 @@ Main() {
    pacman -Syy
 
    case $PLATFORM_NAME in
-     OdroidN2) pacman -R --noconfirm linux-odroid-n2
-               pacman -Syu --noconfirm --needed linux-odroid linux-odroid-headers git libnewt networkmanager base-devel
+     OdroidN2) pacman -R --noconfirm linux-odroid-n2 uboot-odroid-n2
+               pacman -Syu --noconfirm --needed linux-odroid linux-odroid-headers uboot-odroid-n2plus git libnewt networkmanager base-devel
+               # pacman -U --noconfirm /home/alarm/configs/uboot-odroid-n2plus-2015.01.189-1-aarch64.pkg.tar.zst
                # pacman -U --noconfirm /home/alarm/configs/linux-odroid-517-5.17.4-1-aarch64.pkg.tar.zst /home/alarm/configs/linux-odroid-517-headers-5.17.4-1-aarch64.pkg.tar.zst
                # pacman -Syu --noconfirm --needed git libnewt networkmanager base-devel
                cp /home/alarm/configs/n2-boot.ini /boot/boot.ini ;;
