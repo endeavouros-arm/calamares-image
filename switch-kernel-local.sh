@@ -98,21 +98,25 @@ _finish_up() {
 }   # end of function _finish_up
 
 _switch_mirrors_local() {
-   sed -i 's/Server = http:\/\/mirror.archlinuxarm.org\/$arch\/$repo/#Server = http:\/\/mirror.archlinuxarm.org\/$arch\/$repo/g' /etc/pacman.d/mirrorlist
-   sed -i 's/Server/#Server/g' /etc/pacman.d/endeavouros-mirrorlist
-   echo "Server = http://127.0.0.1:8200" >> /etc/pacman.d/mirrorlist
-   echo "Server = http://127.0.0.1:8200" >> /etc/pacman.d/endeavouros-mirrorlist
+   sed -i 's|Server = http://mirror.archlinuxarm.org/$arch/$repo|#Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
+   sed -i 's|Server|#Server/g' /etc/pacman.d/endeavouros-mirrorlist
+   # echo "Server = http://127.0.0.1:8200" >> /etc/pacman.d/mirrorlist
+   # echo "Server = http://127.0.0.1:8200" >> /etc/pacman.d/endeavouros-mirrorlist
+   echo "Server = http://127.0.0.1:9129/repo/archlinux_\$arch/\$repo" >> /etc/pacman.d/mirrorlist
+   echo "Server = http://127.0.0.1:9129/repo/endeavouros/endeavouros/repo/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
    # echo "Server = http://192.168.0.158:9129/repo/archlinux_\$arch/\$repo" >> /etc/pacman.d/mirrorlist
    # echo "Server = http://192.168.0.158:9129/repo/endeavouros/endeavouros/repo/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
 }
 
 _switch_mirrors_back() {
-    sed -i 's/#Server = http:\/\/mirror.archlinuxarm.org\/$arch\/$repo/Server = http:\/\/mirror.archlinuxarm.org\/$arch\/$repo/g' /etc/pacman.d/mirrorlist
-    sed -i 's/Server = http:\/\/127.0.0.1:8200//g' /etc/pacman.d/mirrorlist
-    sed -i 's/Server = http:\/\/127.0.0.1:8200//g' /etc/pacman.d/endeavouros-mirrorlist
-    # sed -i 's/Server = http:\/\/192.168.0.158:9129\/repo\/archlinux_$arch\/$repo//g' /etc/pacman.d/mirrorlist
-    # sed -i 's/Server = http:\/\/192.168.0.158:9129\/repo\/endeavouros\/endeavouros\/repo\/$repo\/$arch//g' /etc/pacman.d/endeavouros-mirrorlist
-    sed -i 's/#Server/Server/g' /etc/pacman.d/endeavouros-mirrorlist
+    sed -i 's|#Server = http://mirror.archlinuxarm.org/$arch/$repo|Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
+    # sed -i 's|Server = http://127.0.0.1:8200||g' /etc/pacman.d/mirrorlist
+    # sed -i 's|Server = http://127.0.0.1:8200||g' /etc/pacman.d/endeavouros-mirrorlist
+    sed -i 's|Server = http://127.0.0.1:9129/repo/archlinux_$arch/$repo||g' /etc/pacman.d/mirrorlist
+    sed -i 's|Server = http://127.0.0.1:9129/repo/endeavouros/endeavouros/repo/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
+    # sed -i 's|Server = http://192.168.0.158:9129/repo/archlinux_$arch/$repo||g' /etc/pacman.d/mirrorlist
+    # sed -i 's|Server = http://192.168.0.158:9129/repo/endeavouros/endeavouros/repo/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
+    sed -i 's|#Server|Server|g' /etc/pacman.d/endeavouros-mirrorlist
 }
 
 ######################   Start of Script   #################################
@@ -151,7 +155,9 @@ Main() {
 
    case $PLATFORM_NAME in
      OdroidN2) pacman -R --noconfirm linux-odroid-n2
-               pacman -Syu --noconfirm --needed linux-odroid-516 linux-odroid-516-headers git libnewt networkmanager base-devel
+               pacman -Syu --noconfirm --needed linux-odroid linux-odroid-headers git libnewt networkmanager base-devel
+               # pacman -U --noconfirm /home/alarm/configs/linux-odroid-517-5.17.4-1-aarch64.pkg.tar.zst /home/alarm/configs/linux-odroid-517-headers-5.17.4-1-aarch64.pkg.tar.zst
+               # pacman -Syu --noconfirm --needed git libnewt networkmanager base-devel
                cp /home/alarm/configs/n2-boot.ini /boot/boot.ini ;;
      RPi64)    pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
                pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware git libnewt  networkmanager base-devel
