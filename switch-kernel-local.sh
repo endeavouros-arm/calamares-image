@@ -158,7 +158,7 @@ Main() {
                #pacman -Syu --noconfirm --needed linux-odroid linux-odroid-headers uboot-odroid-n2plus git libnewt networkmanager base-devel
                # pacman -U --noconfirm /home/alarm/configs/uboot-odroid-n2plus-2015.01.189-1-aarch64.pkg.tar.zst
                pacman -U --noconfirm /home/alarm/configs/linux-odroid-518-5.18-8-aarch64.pkg.tar.zst /home/alarm/configs/linux-odroid-518-headers-5.18-8-aarch64.pkg.tar.zst
-               pacman -Syu --noconfirm --needed uboot-odroid-n2plus git libnewt networkmanager base-devel
+               pacman -Syu --noconfirm --needed uboot-odroid-n2plus git libnewt networkmanager base-devel ;;
                # cp /home/alarm/configs/n2-boot.ini /boot/boot.ini ;;
      RPi64)    pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
                pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware git libnewt  networkmanager base-devel
