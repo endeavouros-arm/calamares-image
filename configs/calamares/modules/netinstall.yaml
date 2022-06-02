@@ -338,3 +338,46 @@
     - network-manager-applet
     - xdg-user-dirs-gtk
     - xed
+- name: "Printing-Support"
+  description: "Support for printing (Cups)"
+  hidden: false
+  selected: false
+  critical: true
+  packages:
+    - cups
+    - cups-filters
+    - cups-pdf
+    - foomatic-db
+    - foomatic-db-engine
+    - foomatic-db-gutenprint-ppds
+    - foomatic-db-nonfree
+    - foomatic-db-nonfree-ppds
+    - foomatic-db-ppds
+    - ghostscript
+    - gsfonts
+    - gutenprint
+    - splix
+    - system-config-printer
+- name: "Support for HP Printer/Scanner"
+  description: "Extra Packages for HP Printer/Scanner"
+  hidden: false
+  selected: false
+  critical: true
+  packages:
+    - hplip
+    - python-pyqt5
+    - python-reportlab
+    - xsane
+    - cups
+    - cups-filters
+    - cups-pdf
+- name: "Accessibility Tools"
+  description: "Screen reader and mouse tweaks (impaired vision)"
+  hidden: false
+  selected: false
+  critical: true
+  packages:
+    - espeak-ng
+    - mousetweaks
+    - orca
+

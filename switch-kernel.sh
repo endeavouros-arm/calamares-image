@@ -95,6 +95,7 @@ _finish_up() {
     rm -rf /etc/pacman.d/gnupg
     rm -rf /etc/lsb-release
     cp /home/alarm/configs/ORION-sky-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
+    cp /home/alarm/configs/EOS-PLANETS-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-calamares-wallpaper.png
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
 }   # end of function _finish_up
 
