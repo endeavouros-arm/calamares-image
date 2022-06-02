@@ -91,7 +91,7 @@ _finish_up() {
     printf "alias la='ls -al --color=auto'\n" >> /etc/bash.bashrc
     printf "alias lb='lsblk -o NAME,FSTYPE,FSSIZE,LABEL,MOUNTPOINT'\n\n" >> /etc/bash.bashrc
     rm /var/cache/pacman/pkg/*
-    rm /root/switch-kernel-* 
+    rm /root/switch-kernel* 
     rm /root/enosARM.log
     rm -rf /etc/pacman.d/gnupg
     rm -rf /etc/lsb-release
