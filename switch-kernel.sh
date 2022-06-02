@@ -67,7 +67,7 @@ _find_keyring() {
 _base_addons() {
     ### the following installs all packages needed to match the EndeavourOS base install
     printf "\n${CYAN}Installing EndeavourOS Base Addons...${NC}\n"
-    eos-packagelist --arch arm "Systembase + Common packages" "Firefox and language package" > base-addons
+    eos-packagelist --arch arm "Desktop-Base + Common packages" "Firefox and language package" > base-addons
     printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\n" >> base-addons
     pacman -S --noconfirm --needed - < base-addons
     ### Install Calamares Arm
@@ -91,7 +91,8 @@ _finish_up() {
     printf "alias la='ls -al --color=auto'\n" >> /etc/bash.bashrc
     printf "alias lb='lsblk -o NAME,FSTYPE,FSSIZE,LABEL,MOUNTPOINT'\n\n" >> /etc/bash.bashrc
     rm /var/cache/pacman/pkg/*
-    rm /root/switch-kernel-* /root/enosARM.log
+    rm /root/switch-kernel-* 
+    rm /root/enosARM.log
     rm -rf /etc/pacman.d/gnupg
     rm -rf /etc/lsb-release
     cp /home/alarm/configs/ORION-sky-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
