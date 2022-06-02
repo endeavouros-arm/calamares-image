@@ -91,7 +91,7 @@ _finish_up() {
     printf "alias la='ls -al --color=auto'\n" >> /etc/bash.bashrc
     printf "alias lb='lsblk -o NAME,FSTYPE,FSSIZE,LABEL,MOUNTPOINT'\n\n" >> /etc/bash.bashrc
     rm /var/cache/pacman/pkg/*
-    rm /root/switch-kernel.sh /root/enosARM.log 
+    rm /root/switch-kernel-* /root/enosARM.log
     rm -rf /etc/pacman.d/gnupg
     rm -rf /etc/lsb-release
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
@@ -129,11 +129,10 @@ Main() {
 
    case $PLATFORM_NAME in
      OdroidN2) pacman -R --noconfirm linux-odroid-n2 uboot-odroid-n2
-               pacman -Syu --noconfirm --needed linux-odroid linux-odroid-headers uboot-odroid-n2plus git libnewt networkmanager base-devel
-               # pacman -U --noconfirm /home/alarm/configs/uboot-odroid-n2plus-2015.01.189-1-aarch64.pkg.tar.zst
-               # pacman -U --noconfirm /home/alarm/configs/linux-odroid-517-5.17.4-1-aarch64.pkg.tar.zst /home/alarm/configs/linux-odroid-517-headers-5.17.4-1-aarch64.pkg.tar.zst
-               # pacman -Syu --noconfirm --needed git libnewt networkmanager base-devel
-               cp /home/alarm/configs/n2-boot.ini /boot/boot.ini ;;
+               pacman -Syu --noconfirm --needed linux-odroid linux-odroid-headers uboot-odroid-n2plus git libnewt networkmanager base-deve;;l
+               #pacman -U --noconfirm /home/alarm/configs/linux-odroid-518-5.18-8-aarch64.pkg.tar.zst /home/alarm/configs/linux-odroid-518-headers-5.18-8-aarch64.pkg.tar.zst
+               #pacman -Syu --noconfirm --needed uboot-odroid-n2plus git libnewt networkmanager base-devel ;;
+               # cp /home/alarm/configs/n2-boot.ini /boot/boot.ini ;;
      RPi64)    pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
                pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware git libnewt  networkmanager base-devel
                printf "Copy RPi boot config"
