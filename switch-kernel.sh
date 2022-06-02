@@ -94,6 +94,7 @@ _finish_up() {
     rm /root/switch-kernel-* /root/enosARM.log
     rm -rf /etc/pacman.d/gnupg
     rm -rf /etc/lsb-release
+    cp /home/alarm/configs/ORION-sky-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
 }   # end of function _finish_up
 
