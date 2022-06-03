@@ -18,6 +18,7 @@
         description: "XFCE4 needed packages"
         selected: false
         packages:
+         - blueberry
          - file-roller
          - galculator
          - gvfs
@@ -114,6 +115,7 @@
   packages:
     - ark
     - audiocd-kio
+    - bluedevil
     - breeze-gtk
     - dolphin
     - dragon
@@ -242,6 +244,7 @@
     - arc-gtk-theme-eos
     - eos-lightdm-slick-theme
     - eos-qogir-icons
+    - budgie-control-center
     - budgie-desktop
     - budgie-desktop-view
     - budgie-extras
@@ -250,14 +253,9 @@
     - evince
     - file-roller
     - gedit
-    - budgie-control-center
-    - gnome-disk-utility
     - gnome-keyring
-    - gnome-nettool
-    - gnome-power-manager
+    - gnome-screenshot
     - gnome-terminal
-    - gnome-themes-extra
-    - gnome-usage
     - gvfs
     - gvfs-afc
     - gvfs-gphoto2
@@ -332,6 +330,7 @@
     - lxsession-gtk3
     - lxtask-gtk3
     - lxterminal
+    - notification-daemon
     - openbox
     - pcmanfm-gtk3
     - lxmusic
@@ -380,4 +379,3 @@
     - espeak-ng
     - mousetweaks
     - orca
-
