@@ -1,16 +1,13 @@
 [Unit]
-Description=Script
-After=getty@tty2.service
-Before=getty.target
+Description=Clean-up Script
+After=multi-user.target
+Before=shutdown.target
 
 [Service]
 Type=oneshot
 ExecStart=/usr/local/bin/clean-up.sh
-StandardInput=tty
-TTYPath=/dev/tty2
-TTYReset=yes
-TTYVHangup=yes
+RemainAfterExit=yes
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
 
