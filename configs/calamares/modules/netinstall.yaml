@@ -120,6 +120,7 @@
     - dolphin
     - dragon
     - elisa
+    - endeavouros-skel-plasma-git
     - eos-plasma-sddm-config
     - gwenview
     - kcalc
@@ -152,6 +153,7 @@
   packages:
     - adwaita-icon-theme
     - arc-gtk-theme-eos
+    - endeavouros-gschema-gnome-git
     - eos-qogir-icons
     - eog
     - evince
@@ -188,6 +190,7 @@
   critical: true
   packages:
     - arc-gtk-theme-eos
+    - endeavouros-skel-mate-git
     - eos-lightdm-slick-theme
     - eos-qogir-icons
     - celluloid
@@ -242,6 +245,7 @@
   critical: true
   packages:
     - arc-gtk-theme-eos
+    - endeavouros-gschema-budgie-git
     - eos-lightdm-slick-theme
     - eos-qogir-icons
     - budgie-control-center
@@ -280,6 +284,7 @@
     - baka-mplayer
     - breeze
     - breeze-gtk
+    - endeavouros-skel-lxqt-git
     - eos-sddm-theme
     - featherpad
     - gvfs
@@ -305,6 +310,7 @@
   critical: true
   packages:
     - arc-gtk-theme-eos
+    - endeavouros-skel-lxde-git
     - eos-lxdm-gtk3
     - eos-qogir-icons
     - celluloid
