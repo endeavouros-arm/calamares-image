@@ -1,5 +1,8 @@
 #!/bin/bash
 
+sed -i 's/alarm ALL=(ALL:ALL) NOPASSWD: ALL/ /g' /etc/sudoers
+userdel -rf alarm
+
 package=xfce4-session
 if pacman -Qq $package > /dev/null ; then
   pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3
@@ -65,8 +68,6 @@ if pacman -Qq $package > /dev/null ; then
   pacman -Rns --noconfirm openbox pcmanfm-gtk3
 fi
 
-userdel -r alarm
-sed -i 's/alarm ALL=(ALL:ALL) NOPASSWD: ALL/ /g' /etc/sudoers
 pacman -Rns --noconfirm calamares_current_arm calamares_config_default_arm calamares_config_ce_arm
 rm -rf /etc/calamares/
 rm /usr/local/bin/clean-up.sh

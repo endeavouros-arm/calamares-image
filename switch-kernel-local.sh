@@ -68,7 +68,7 @@ _base_addons() {
     ### the following installs all packages needed to match the EndeavourOS base install
     printf "\n${CYAN}Installing EndeavourOS Base Addons...${NC}\n"
     eos-packagelist --arch arm "Desktop-Base + Common packages" "Firefox and language package" > base-addons
-    printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\n" >> base-addons
+    printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\nbtrfs-progs" >> base-addons
     pacman -S --noconfirm --needed - < base-addons
     ### Install Calamares Arm
     pacman -S --noconfirm --needed calamares_current_arm calamares_config_default_arm calamares_config_ce_arm
@@ -102,23 +102,17 @@ _finish_up() {
 
 _switch_mirrors_local() {
    sed -i 's|Server = http://mirror.archlinuxarm.org/$arch/$repo|#Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
-   sed -i 's|Server|#Server/g' /etc/pacman.d/endeavouros-mirrorlist
-   # echo "Server = http://127.0.0.1:8200" >> /etc/pacman.d/mirrorlist
-   # echo "Server = http://127.0.0.1:8200" >> /etc/pacman.d/endeavouros-mirrorlist
+   sed -i 's|Server|#Server|g' /etc/pacman.d/endeavouros-mirrorlist
    echo "Server = http://127.0.0.1:9129/repo/archlinux_\$arch/\$repo" >> /etc/pacman.d/mirrorlist
    echo "Server = http://127.0.0.1:9129/repo/endeavouros/endeavouros/repo/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
-   # echo "Server = http://192.168.0.158:9129/repo/archlinux_\$arch/\$repo" >> /etc/pacman.d/mirrorlist
-   # echo "Server = http://192.168.0.158:9129/repo/endeavouros/endeavouros/repo/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
+   # echo "Server = https://github.com/endeavouros-arm/repo/raw/master/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
 }
 
 _switch_mirrors_back() {
     sed -i 's|#Server = http://mirror.archlinuxarm.org/$arch/$repo|Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
-    # sed -i 's|Server = http://127.0.0.1:8200||g' /etc/pacman.d/mirrorlist
-    # sed -i 's|Server = http://127.0.0.1:8200||g' /etc/pacman.d/endeavouros-mirrorlist
     sed -i 's|Server = http://127.0.0.1:9129/repo/archlinux_$arch/$repo||g' /etc/pacman.d/mirrorlist
     sed -i 's|Server = http://127.0.0.1:9129/repo/endeavouros/endeavouros/repo/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
-    # sed -i 's|Server = http://192.168.0.158:9129/repo/archlinux_$arch/$repo||g' /etc/pacman.d/mirrorlist
-    # sed -i 's|Server = http://192.168.0.158:9129/repo/endeavouros/endeavouros/repo/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
+    # sed -i 's|Server = https://github.com/endeavouros-arm/repo/raw/master/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
     sed -i 's|#Server|Server|g' /etc/pacman.d/endeavouros-mirrorlist
 }
 
