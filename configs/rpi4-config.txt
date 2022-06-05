@@ -1,11 +1,7 @@
 # See /boot/overlays/README for all available options
 
+dtparam=audio=on
 dtoverlay=vc4-kms-v3d
-
-# Uncomment next two lines for 3.5 mm jack audio output
-#dtparam=audio=on
-#dtoverlay=vc4-kms-v3d,cma-512,noaudio
-
 display_auto_detect=1
 disable_overscan=1
 initramfs initramfs-linux.img followkernel
