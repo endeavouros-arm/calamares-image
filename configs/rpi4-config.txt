@@ -1,8 +1,8 @@
 # See /boot/overlays/README for all available options
 
-# dtoverlay=vc4-kms-v3d
-dtparam=audio=on
-dtoverlay=vc4-kms-v3d,cma-512,noaudio
+dtoverlay=vc4-kms-v3d
+# dtparam=audio=on
+# dtoverlay=vc4-kms-v3d,cma-512,noaudio
 display_auto_detect=1
 disable_overscan=1
 initramfs initramfs-linux.img followkernel
