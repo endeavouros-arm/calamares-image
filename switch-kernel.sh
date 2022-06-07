@@ -68,7 +68,7 @@ _base_addons() {
     ### the following installs all packages needed to match the EndeavourOS base install
     printf "\n${CYAN}Installing EndeavourOS Base Addons...${NC}\n"
     eos-packagelist --arch arm "Desktop-Base + Common packages" "Firefox and language package" > base-addons
-    printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\n" >> base-addons
+    printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\nbtrfs-progs" >> base-addons
     pacman -S --noconfirm --needed - < base-addons
     ### Install Calamares Arm
     pacman -S --noconfirm --needed calamares_current_arm calamares_config_default_arm calamares_config_ce_arm
