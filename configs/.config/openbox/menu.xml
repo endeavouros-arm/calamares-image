@@ -12,6 +12,11 @@
           <execute>xfce4-terminal -e vi</execute>
         </action>
       </item>
+      <item label="Xed">
+        <action name="Execute">
+          <execute>xed</execute>
+        </action>
+      </item>
     </menu>
     <menu id="5" label="Network">
       <item label="FireFox">
