@@ -67,6 +67,7 @@ _find_keyring() {
 _base_addons() {
     ### the following installs all packages needed to match the EndeavourOS base install
     printf "\n${CYAN}Installing EndeavourOS Base Addons...${NC}\n"
+    pacman -U --noconfirm /home/alarm/configs/xkeyboard-config-2.35.1-1-any.pkg.tar.xz
     eos-packagelist --arch arm "Desktop-Base + Common packages" "Firefox and language package" > base-addons
     printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\nbtrfs-progs\nxed\nflameshot" >> base-addons
     pacman -S --noconfirm --needed - < base-addons
