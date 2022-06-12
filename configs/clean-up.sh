@@ -1,5 +1,6 @@
 #!/bin/bash
 
+## Function to remove calamares openbox environment packages
 _remove_packages_ob () {
   local OPENBOX=true
   local TINT=true
@@ -34,6 +35,8 @@ _remove_packages_ob () {
   elif pacman -Qq worm > /dev/null ; then
     XFCETERM=false
     TINT=false
+  else
+    true
   fi
   
   if $OPENBOX ; then
@@ -57,7 +60,6 @@ Main() {
   sed -i 's/alarm ALL=(ALL:ALL) NOPASSWD: ALL/ /g' /etc/sudoers
   userdel -rf alarm
   _remove_packages_ob
-
   pacman -Rns --noconfirm calamares_current_arm calamares_config_default_arm calamares_config_ce_arm
   pacman -Rns flameshot
   rm -rf /etc/calamares/
