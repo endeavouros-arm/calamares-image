@@ -36,7 +36,9 @@ _remove_packages_ob () {
     XFCETERM=false
     TINT=false
   else
-    true
+    OPENBOX=false
+    XFCETERM=false
+    TINT=false
   fi
   
   if $OPENBOX ; then
