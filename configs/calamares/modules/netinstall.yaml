@@ -139,6 +139,7 @@
     - plasma-disks
     - plasma-nm
     - plasma-pa
+    - plasma-wayland-session
     - powerdevil
     - print-manager
     - sddm-kcm
