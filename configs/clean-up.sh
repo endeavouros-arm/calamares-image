@@ -1,76 +1,69 @@
 #!/bin/bash
 
-sed -i 's/alarm ALL=(ALL:ALL) NOPASSWD: ALL/ /g' /etc/sudoers
-userdel -rf alarm
+_remove_packages_ob () {
+  local OPENBOX=true
+  local TINT=true
+  local XFCETERM=true
+  local PCMANFM=true
+  
+  if pacman -Qq xfce4-session > /dev/null ; then
+    XFCETERM=false
+  elif pacman -Qq i3-gaps > /dev/null ; then
+    XFCETERM=false
+  elif pacman -Qq plasma-desktop > /dev/null ; then
+    true
+  elif pacman -Qq gnome-shell > /dev/null ; then
+    true
+  elif pacman -Qq mate-desktop > /dev/null ; then
+    true
+  elif pacman -Qq cinnamon-desktop > /dev/null ; then
+    true
+  elif pacman -Qq budgie-desktop > /dev/null ; then
+    true
+  elif pacman -Qq lxqt-session > /dev/null ; then
+    OPENBOX=false
+  elif pacman -Qq lxde-common > /dev/null ; then
+    OPENBOX=false
+    PCMANFM=false
+  elif pacman -Qq bspwm > /dev/null ; then
+    XFCETERM=false
+  elif pacman -Qq qtile > /dev/null ; then
+    XFCETERM=false
+  elif pacman -Qq sway > /dev/null ; then
+    true
+  elif pacman -Qq worm > /dev/null ; then
+    XFCETERM=false
+    TINT=false
+  fi
+  
+  if $OPENBOX ; then
+    pacman -Rns --noconfirm openbox
+  fi
 
-package=xfce4-session
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3
-fi
+  if $XFCETERM ; then
+    pacman -Rns --noconfirm xfce4-terminal
+  fi
 
-package=i3-gaps
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3
-fi
+  if $TINT ; then
+    pacman -Rns --noconfirm tint2
+  fi
 
-package=plasma-desktop
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
-fi
+  if $PCMANFM ; then
+    pacman -Rns --noconfirm pcmanfm-gtk3
+  fi
+}
 
-package=gnome-shell
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
-fi
+Main() {
+  sed -i 's/alarm ALL=(ALL:ALL) NOPASSWD: ALL/ /g' /etc/sudoers
+  userdel -rf alarm
+  _remove_packages_ob
 
-package=mate-desktop
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
-fi
+  pacman -Rns --noconfirm calamares_current_arm calamares_config_default_arm calamares_config_ce_arm
+  pacman -Rns flameshot
+  rm -rf /etc/calamares/
+  rm /usr/local/bin/clean-up.sh
+  rm /etc/systemd/system/clean-up.service
+  exit
+}
 
-package=cinnamon-desktop
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
-fi
-
-package=budgie-desktop
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
-fi
-
-package=lxqt-session
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm tint2 pcmanfm-gtk3 xfce4-terminal
-fi
-
-package=lxde-common
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm tint2 xfce4-terminal
-fi
-
-package=bspwm
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3
-fi
-
-package=qtile
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3
-fi
-
-package=sway
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox tint2 pcmanfm-gtk3 xfce4-terminal
-fi
-
-package=worm
-if pacman -Qq $package > /dev/null ; then
-  pacman -Rns --noconfirm openbox pcmanfm-gtk3
-fi
-
-pacman -Rns --noconfirm calamares_current_arm calamares_config_default_arm calamares_config_ce_arm
-rm -rf /etc/calamares/
-rm /usr/local/bin/clean-up.sh
-rm /etc/systemd/system/clean-up.service
-
-exit
+Main "$@"
