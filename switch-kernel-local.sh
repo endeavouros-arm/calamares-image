@@ -104,18 +104,18 @@ _finish_up() {
 
 _switch_mirrors_local() {
    sed -i 's|Server = http://mirror.archlinuxarm.org/$arch/$repo|#Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
-   # sed -i 's|Server|#Server|g' /etc/pacman.d/endeavouros-mirrorlist
+   sed -i 's|Server|#Server|g' /etc/pacman.d/endeavouros-mirrorlist
    echo "Server = http://10.42.0.1:9129/repo/archlinux_\$arch/\$repo" >> /etc/pacman.d/mirrorlist
-   # echo "Server = http://127.0.0.1:9129/repo/endeavouros/endeavouros/repo/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
+   echo "Server = http://10.42.0.1:9129/repo/endeavouros/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
    # echo "Server = https://github.com/endeavouros-arm/repo/raw/master/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
 }
 
 _switch_mirrors_back() {
     sed -i 's|#Server = http://mirror.archlinuxarm.org/$arch/$repo|Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
     sed -i 's|Server = http://10.42.0.1:9129/repo/archlinux_$arch/$repo||g' /etc/pacman.d/mirrorlist
-    # sed -i 's|Server = http://127.0.0.1:9129/repo/endeavouros/endeavouros/repo/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
+    sed -i 's|Server = http://10.42.0.1:9129/repo/endeavouros/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
     # sed -i 's|Server = https://github.com/endeavouros-arm/repo/raw/master/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
-    # sed -i 's|#Server|Server|g' /etc/pacman.d/endeavouros-mirrorlist
+    sed -i 's|#Server|Server|g' /etc/pacman.d/endeavouros-mirrorlist
 }
 
 ######################   Start of Script   #################################
