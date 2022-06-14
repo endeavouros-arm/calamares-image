@@ -109,18 +109,18 @@ cd MP1
 printf "\nbsdtar is creating the image, may take a few minutes\n"
 
 case $PLATFORM_NAME in
-   OdroidN2) time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/pudges-place/exper-images/enosLinuxARM-odroid-n2-latest.tar.zst *
+   OdroidN2) time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.tar.zst *
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
           cd ..
           dir=$(pwd)
-          cd /home/$USERNAME/pudges-place/exper-images/
+          cd /home/$USERNAME/endeavouros-arm/images/
           sha512sum enosLinuxARM-odroid-n2-latest.tar.zst > enosLinuxARM-odroid-n2-latest.tar.zst.sha512sum
           cd $dir ;;
-   RPi64) time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/pudges-place/exper-images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
+   RPi64) time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
           cd ..
           dir=$(pwd)
-          cd /home/$USERNAME/pudges-place/exper-images/
+          cd /home/$USERNAME/endeavouros-arm/images/
           sha512sum enosLinuxARM-rpi-aarch64-latest.tar.zst > enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
           cd $dir ;;
 esac
