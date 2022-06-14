@@ -1,0 +1,5 @@
+tint2 &
+nm-applet &
+pcmanfm --desktop & 
+/home/alarm/configs/launch.sh &
+flameshot &
