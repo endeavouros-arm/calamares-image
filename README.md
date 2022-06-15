@@ -1,9 +1,7 @@
-<<<<<<< HEAD
+
 # calamares-image
-Files necessary to compile Calamares for ARM devices
+Files necessary to compile Calamares for Raspberry Pi 4 and Odroid N2 ARM devices
 =======
-# exper
-RPi 4b experimental scripts and images
 
 # File Description
 ## Normal Image Creation
@@ -18,4 +16,4 @@ This method creates images using local pacman cache
 - switch-kernel-local.sh : Has additional functions to use local pacman cache server
 ## Configs
 These are stored in the configs folder
->>>>>>> exper/main
+
