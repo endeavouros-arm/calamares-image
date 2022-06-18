@@ -66,16 +66,18 @@ _find_keyring() {
 
 _base_addons() {
     ### the following installs all packages needed to match the EndeavourOS base install
+    set -x
     printf "\n${CYAN}Installing EndeavourOS Base Addons...${NC}\n"
-    pacman -U --noconfirm /home/alarm/configs/xkeyboard-config-2.35.1-1-any.pkg.tar.xz
     # pacman -U --noconfirm /home/alarm/configs/ckbcomp-1.207-1-any.pkg.tar.zst
     eos-packagelist --arch arm "Desktop-Base + Common packages" "Firefox and language package" > base-addons
     printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\nbtrfs-progs\nxed\nflameshot\npipewire-media-session" >> base-addons
     sed -i "/wireplumber/d" base-addons
     pacman -S --noconfirm --needed - < base-addons
     ### Install Calamares Arm
+    pacman -U --noconfirm /home/alarm/configs/xkeyboard-config-2.35.1-1-any.pkg.tar.xz
     pacman -S --noconfirm --needed calamares_current_arm calamares_config_default_arm calamares_config_ce_arm
     rm -rf base-addons
+    set +x
 }
 
 

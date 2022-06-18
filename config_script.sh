@@ -13,7 +13,7 @@ cp clean-up.service /etc/systemd/system/clean-up.service
 ./alarmconfig.sh
 ./calamares.sh
 cd ..
-chown -R alarm .config Desktop
+chown -R alarm .config Desktop .Xauthority
 printf "[Match]\nName=wlan*\n\n[Network]\nDHCP=yes\nDNSSEC=no\n" > /etc/systemd/network/wlan.network
 timedatectl set-ntp true
 timedatectl timesync-status
