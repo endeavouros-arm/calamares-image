@@ -22,22 +22,15 @@
         selected: false
         packages:
           - xf86-video-amdgpu
-          - xf86-video-ati
-          - xf86-video-intel
       - name: "Network"
         description: "Network apps drivers and tools"
         selected: false
         packages:
           - b43-fwcutter
-          - broadcom-wl-dkms
           - dhclient
-          - dialog
           - dnsmasq
-          - dnsutils
           - ethtool
           - gnu-netcat
-          - ipw2100-fw
-          - ipw2200-fw
           - iwd
           - modemmanager
           - nbd
@@ -70,11 +63,9 @@
         description: "Packages tools"
         selected: false
         packages:
-          - downgrade
           - pacman-contrib
           - pkgfile
           - rebuild-detector
-          - reflector
           - yay
       - name: "desktop integration"
         description: "Useful helper tools and libs for desktop usage"
@@ -100,7 +91,6 @@
         description: "Filesystem tools and apps"
         selected: false
         packages:
-          - efitools
           - haveged
           - nfs-utils
           - nilfs-utils
@@ -140,15 +130,11 @@
         description: "Hardware support libs and firmware"
         selected: false
         packages:
-          - amd-ucode
           - dmidecode
           - dmraid
           - hdparm
           - hwdetect
-          - intel-ucode
-          - lsscsi
           - mtools
-          - sg3_utils
           - sof-firmware
       - name: "power"
         description: "Powermanagement support"
@@ -168,8 +154,6 @@
           - eos-quickstart
           - eos-rankmirrors
           - eos-update-notifier
-          - grub-tools
-          - reflector-simple
           - welcome
           - yad-eos
       - name: "EndeavourOS applications selection"
@@ -181,7 +165,6 @@
           - fsarchiver
           - git
           - glances
-          - hwinfo
           - inxi
           - meld
           - nano-syntax-highlighting
@@ -202,24 +185,6 @@
   packages:
     - firefox
     - firefox-i18n-$LOCALE
-- name: "LTS Kernel in addition"
-  description: "Adding Long Term Supported Kernel in addition to main one"
-  hidden: true
-  selected: false
-  expanded: false
-  critical: false
-  packages:
-    - linux-lts
-    - linux-lts-headers
-- name: "Zen Kernel in addition"
-  description: "Adding ZEN kernel in addition to main one"
-  hidden: true
-  selected: false
-  expanded: false
-  critical: false
-  packages:
-    - linux-zen
-    - linux-zen-headers
 - name: "XFCE4-Desktop"
   description: "XFCE4 - lightweight desktop fast and low on system resources, visually appealing and user friendly."
   hidden: false
