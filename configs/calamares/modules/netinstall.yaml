@@ -6,7 +6,7 @@
   subgroups:
       - name: "X-system"
         description: "Default X-system"
-        selected: true
+        selected: false
         packages:
            - libwnck3
            - mesa-utils
@@ -19,14 +19,14 @@
            - xorg-xrandr
       - name: "GPU drivers"
         description: "Graphics hardware drivers"
-        selected: true
+        selected: false
         packages:
           - xf86-video-amdgpu
           - xf86-video-ati
           - xf86-video-intel
       - name: "Network"
         description: "Network apps drivers and tools"
-        selected: true
+        selected: false
         packages:
           - b43-fwcutter
           - broadcom-wl-dkms
@@ -61,14 +61,14 @@
           - xl2tpd
       - name: "firewall"
         description: "Firewall support"
-        selected: true
+        selected: false
         packages:
           - firewalld
           - python-pyqt5
           - python-capng
       - name: "packages management"
         description: "Packages tools"
-        selected: true
+        selected: false
         packages:
           - downgrade
           - pacman-contrib
@@ -78,7 +78,7 @@
           - yay
       - name: "desktop integration"
         description: "Useful helper tools and libs for desktop usage"
-        selected: true
+        selected: false
         packages:
           - accountsservice
           - bash-completion
@@ -98,7 +98,7 @@
           - xdg-utils
       - name: "filesystem"
         description: "Filesystem tools and apps"
-        selected: true
+        selected: false
         packages:
           - efitools
           - haveged
@@ -111,7 +111,7 @@
           - xz
       - name: "fonts"
         description: "EndeavourOS font selection"
-        selected: true
+        selected: false
         packages:
           - adobe-source-han-sans-cn-fonts
           - adobe-source-han-sans-jp-fonts
@@ -125,7 +125,7 @@
           - ttf-opensans
       - name: "audio"
         description: "Audio handling tools apps and libs"
-        selected: true
+        selected: false
         packages:
           - alsa-firmware
           - alsa-plugins
@@ -138,7 +138,7 @@
           - rtkit
       - name: "hardware"
         description: "Hardware support libs and firmware"
-        selected: true
+        selected: false
         packages:
           - amd-ucode
           - dmidecode
@@ -152,13 +152,13 @@
           - sof-firmware
       - name: "power"
         description: "Powermanagement support"
-        selected: true
+        selected: false
         packages:
           - power-profiles-daemon
           - upower
       - name: "EndeavourOS Apps"
         description: "EndeavourOS tools and applications"
-        selected: true
+        selected: false
         packages:
           - endeavouros-theming
           - eos-apps-info
@@ -174,7 +174,7 @@
           - yad-eos
       - name: "EndeavourOS applications selection"
         description: "General tools and applications"
-        selected: true
+        selected: false
         packages:
           - duf
           - findutils
@@ -197,7 +197,7 @@
 - name: "Firefox and language package"
   description: "Add firefox and language pack if possible"
   hidden: false
-  selected: true
+  selected: false
   critical: false
   packages:
     - firefox
