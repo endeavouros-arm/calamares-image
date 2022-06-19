@@ -196,7 +196,7 @@
           - wget
 - name: "Firefox and language package"
   description: "Add firefox and language pack if possible"
-  hidden: false
+  hidden: true
   selected: false
   critical: false
   packages:
@@ -204,19 +204,19 @@
     - firefox-i18n-$LOCALE
 - name: "LTS Kernel in addition"
   description: "Adding Long Term Supported Kernel in addition to main one"
-  hidden: false
+  hidden: true
   selected: false
   expanded: false
-  critical: true
+  critical: false
   packages:
     - linux-lts
     - linux-lts-headers
 - name: "Zen Kernel in addition"
   description: "Adding ZEN kernel in addition to main one"
-  hidden: false
+  hidden: true
   selected: false
   expanded: false
-  critical: true
+  critical: false
   packages:
     - linux-zen
     - linux-zen-headers
