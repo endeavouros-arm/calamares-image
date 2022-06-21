@@ -109,20 +109,22 @@ cd MP1
 printf "\nbsdtar is creating the image, may take a few minutes\n"
 
 case $PLATFORM_NAME in
-   OdroidN2) time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.tar.zst *
-          printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-          cd ..
-          dir=$(pwd)
-          cd /home/$USERNAME/endeavouros-arm/images/
-          sha512sum enosLinuxARM-odroid-n2-latest.tar.zst > enosLinuxARM-odroid-n2-latest.tar.zst.sha512sum
-          cd $dir ;;
-   RPi64) time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
-          printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-          cd ..
-          dir=$(pwd)
-          cd /home/$USERNAME/endeavouros-arm/images/
-          sha512sum enosLinuxARM-rpi-aarch64-latest.tar.zst > enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
-          cd $dir ;;
+   OdroidN2)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.tar.zst *
+      time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.tar.zst
+      printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
+      cd ..
+      dir=$(pwd)
+      cd /home/$USERNAME/endeavouros-arm/images/
+      sha512sum enosLinuxARM-odroid-n2-latest.tar.zst > enosLinuxARM-odroid-n2-latest.tar.zst.sha512sum
+      cd $dir ;;
+   RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
+      time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.tar.zst
+      printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
+      cd ..
+      dir=$(pwd)
+      cd /home/$USERNAME/endeavouros-arm/images/
+      sha512sum enosLinuxARM-rpi-aarch64-latest.tar.zst > enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
+      cd $dir ;;
 esac
 umount MP1/boot MP1
 rm -rf MP1
