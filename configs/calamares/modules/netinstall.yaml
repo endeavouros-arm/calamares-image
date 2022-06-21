@@ -155,6 +155,7 @@
           - eos-quickstart
           - eos-rankmirrors
           - eos-update-notifier
+          - pahis
           - welcome
           - yad-eos
       - name: "EndeavourOS applications selection"
@@ -176,6 +177,7 @@
           - rsync
           - tldr
           - sed
+          - sudo
           - vi
           - wget
 - name: "Firefox and language package"
