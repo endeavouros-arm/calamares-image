@@ -91,12 +91,12 @@
         description: "Filesystem tools and apps"
         selected: false
         packages:
-          - btrfs-progs
           - haveged
           - nfs-utils
           - nilfs-utils
           - ntp
           - smartmontools
+          - udisks2
           - unrar
           - unzip
           - xz
