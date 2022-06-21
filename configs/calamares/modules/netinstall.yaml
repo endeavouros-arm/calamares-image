@@ -91,6 +91,7 @@
         description: "Filesystem tools and apps"
         selected: false
         packages:
+          - btrfs-progs
           - haveged
           - nfs-utils
           - nilfs-utils
@@ -122,7 +123,7 @@
           - alsa-utils
           - pavucontrol
           - pipewire-pulse
-          - wireplumber
+          - pipewire-media-session
           - pipewire-alsa
           - pipewire-jack
           - rtkit
