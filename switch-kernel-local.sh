@@ -26,7 +26,7 @@ _find_mirrorlist() {
 
     printf "\n${CYAN}Find current endeavouros-mirrorlist...${NC}\n\n"
     sleep 1
-    curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/$ARMARCH | grep "endeavouros-mirrorlist" |sed s'/^.*endeavouros-mirrorlist/endeavouros-mirrorlist/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g |tail -1 > mirrors
+    curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/$ARMARCH | grep "endeavouros-mirrorlist" | sed s'/^.*endeavouros-mirrorlist/endeavouros-mirrorlist/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | tail -1 > mirrors
 
     tmpfile="mirrors"
     read -d $'\x04' currentmirrorlist < "$tmpfile"
@@ -50,7 +50,7 @@ _find_keyring() {
 
     printf "\n${CYAN}Find current endeavouros-keyring...${NC}\n\n"
     sleep 1
-    curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/$ARMARCH |grep endeavouros-keyring |sed s'/^.*endeavouros-keyring/endeavouros-keyring/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | tail -1 > keys
+    curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/$ARMARCH | grep endeavouros-keyring | sed s'/^.*endeavouros-keyring/endeavouros-keyring/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | tail -1 > keys
 
     tmpfile="keys"
     read -d $'\04' currentkeyring < "$tmpfile"
@@ -66,9 +66,7 @@ _find_keyring() {
 
 _base_addons() {
     ### the following installs all packages needed to match the EndeavourOS base install
-    set -x
     printf "\n${CYAN}Installing EndeavourOS Base Addons...${NC}\n"
-    # pacman -U --noconfirm /home/alarm/configs/ckbcomp-1.207-1-any.pkg.tar.zst
     eos-packagelist --arch arm "Desktop-Base + Common packages" "Firefox and language package" > base-addons
     printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\nbtrfs-progs\nxed\nflameshot\npipewire-media-session" >> base-addons
     sed -i "/wireplumber/d" base-addons
@@ -77,7 +75,6 @@ _base_addons() {
     pacman -U --noconfirm /home/alarm/configs/xkeyboard-config-2.35.1-1-any.pkg.tar.xz
     pacman -S --noconfirm --needed calamares_current_arm calamares_config_default_arm calamares_config_ce_arm
     rm -rf base-addons
-    set +x
 }
 
 
@@ -157,10 +154,10 @@ Main() {
 
    case $PLATFORM_NAME in
      OdroidN2) pacman -R --noconfirm linux-odroid-n2 uboot-odroid-n2
-               pacman -Syu --noconfirm --needed linux-odroid linux-odroid-headers uboot-odroid-n2plus odroid-n2-post-install git libnewt networkmanager base-devel ;;
+               pacman -Syu --noconfirm --needed linux-odroid linux-odroid-headers uboot-odroid-n2plus odroid-n2-post-install ;;
                # cp /home/alarm/configs/n2-boot.ini /boot/boot.ini ;;
      RPi64)    pacman -R --noconfirm linux-aarch64 uboot-raspberrypi
-               pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware git libnewt  networkmanager base-devel
+               pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware
                cp /boot/config.txt /boot/config.txt.orig
                cp /home/alarm/configs/rpi4-config.txt /boot/config.txt ;;
    esac
