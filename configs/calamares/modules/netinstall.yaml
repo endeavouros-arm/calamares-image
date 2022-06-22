@@ -63,6 +63,7 @@
         description: "Packages tools"
         selected: false
         packages:
+          - base-devel
           - pacman-contrib
           - pkgfile
           - rebuild-detector
