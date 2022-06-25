@@ -169,6 +169,7 @@
           - git
           - glances
           - inxi
+          - lsb-release
           - meld
           - nano-syntax-highlighting
           - neofetch
