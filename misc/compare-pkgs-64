@@ -14,7 +14,11 @@ sed -i '/virtualbox-ext-oracle\|rate-mirrors/d' x86_pkgs
 sed -i '/linux-odroid\|linux-odroid-headers\|mesa-devel-git\|odroid-alsa/d' aarch64_pkgs
 
 
-meld x86_pkgs aarch64_pkgs
+if pacman -Qq neovim > /dev/null ; then
+  nvim -d aarch64_pkgs x86_pkgs
+else
+  meld aarch64_pkgs x86_pkgs
+fi
 
 rm x86_pkgs aarch64_pkgs
 
