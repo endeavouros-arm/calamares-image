@@ -1,10 +1,10 @@
 #!/bin/bash
 
-curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/aarch64 | grep "pkg.tar.zst\|pkg.tar.xz" | grep -v ".sig" | awk '{print $10}' | sed s'/href="\/endeavouros-team\/repo\/blob\/master\/endeavouros\/aarch64\///'g | sed 's/">.*//g' | sed 's/-any.*//g' | sed 's/-aarch64.*//g' > aarch64_pkgs
+curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/aarch64 | grep "pkg.tar.zst\|pkg.tar.xz" | grep -v ".sig" | awk '{print $8}' | sed s'/href="\/endeavouros-team\/repo\/blob\/master\/endeavouros\/aarch64\///'g | sed 's/title="//g' | sed 's/-any.*//g' | sed 's/-aarch64.*//g' > aarch64_pkgs
 
-curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/armv7h | grep "pkg.tar.zst\|pkg.tar.xz" | grep -v ".sig" | awk '{print $10}' | sed s'/href="\/endeavouros-team\/repo\/blob\/master\/endeavouros\/armv7h\///'g | sed 's/">.*//g' | sed 's/-any.*//g' | sed 's/-armv7h.*//g' > armv7h_pkgs
+curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/armv7h | grep "pkg.tar.zst\|pkg.tar.xz" | grep -v ".sig" | awk '{print $8}' | sed s'/href="\/endeavouros-team\/repo\/blob\/master\/endeavouros\/armv7h\///'g | sed 's/title="//g' | sed 's/-any.*//g' | sed 's/-armv7h.*//g' > armv7h_pkgs
 
-curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/x86_64 | grep "pkg.tar.zst\|pkg.tar.xz" | grep -v ".sig" | awk '{print $10}' | sed s'/href="\/endeavouros-team\/repo\/blob\/master\/endeavouros\/x86_64\///'g | sed 's/">.*//g' | sed 's/-any.*//g' | sed 's/-x86_64.*//g' > x86_pkgs
+curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/x86_64 | grep "pkg.tar.zst\|pkg.tar.xz" | grep -v ".sig" | awk '{print $8}' | sed s'/href="\/endeavouros-team\/repo\/blob\/master\/endeavouros\/x86_64\///'g | sed 's/title="//g' | sed 's/-any.*//g' | sed 's/-x86_64.*//g' > x86_pkgs
 
 
 sed -i '/akm\|eos-base\|paru\|zfs-dkms\|zfs-utils/d' x86_pkgs
