@@ -124,10 +124,10 @@
           - alsa-utils
           - pavucontrol
           - pipewire-pulse
-          - pipewire-media-session
           - pipewire-alsa
           - pipewire-jack
           - rtkit
+          - wireplumber
       - name: "hardware"
         description: "Hardware support libs and firmware"
         selected: false
