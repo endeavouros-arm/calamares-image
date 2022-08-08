@@ -236,6 +236,8 @@ Main() {
     esac
 
     printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
+
+    # exit
     _arch_chroot
     umount MP2/boot MP2
     rm -rf MP2

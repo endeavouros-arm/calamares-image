@@ -124,8 +124,11 @@ Main() {
    sed -i "s|#Color|Color\nILoveCandy|g" /etc/pacman.conf
    sed -i "s|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g" /etc/pacman.conf
    pacman-key --init
-   pacman-key --populate archlinuxarm
+   pacman-key --populate archlinux
+   pacman-key --lsign-key builder@archlinuxarm.org
    pacman -Syy
+   pacman -S --noconfirm wget
+   pacman-key --lsign-key builder@archlinuxarm.org
    pacman -S --noconfirm wget
    _find_mirrorlist
    _find_keyring
