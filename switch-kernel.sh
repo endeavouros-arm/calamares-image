@@ -125,7 +125,10 @@ Main() {
    sed -i "s|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g" /etc/pacman.conf
    pacman-key --init
    pacman-key --populate archlinux
-   pacman-key --lsign-key builder@archlinuxarm.org
+   case $PLATFORM_NAME in
+       Pinebook) pacman-key --populate archlinuxarm archlinuxarm-pbp
+                 pacman -Syu ;;
+   esac
    pacman -Syy
    pacman -S --noconfirm wget
    pacman-key --lsign-key builder@archlinuxarm.org

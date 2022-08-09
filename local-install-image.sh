@@ -10,6 +10,18 @@ _partition_OdroidN2() {
     quit
 }
 
+_partition_PineBook() {
+    dd if=/dev/zero of=$DEVICENAME bs=1M count=32
+    parted --script -a minimal $DEVICENAME \
+    mklabel msdos \
+    unit mib \
+    mkpart primary fat32 32MiB 432MiB \
+    mkpart primary 432MiB $DEVICESIZE"MiB" \
+    # mkpart primary fat32 32768 442367 \
+    # mkpart primary 442367 $DEVICESIZE"MiB" \
+    quit
+}
+
 _partition_RPi4() {
     parted --script -a minimal $DEVICENAME \
     mklabel gpt \
@@ -56,6 +68,32 @@ _install_OdroidN2_image() {
 #    cp $CONFIG_UPDATE MP2/root
 }   # End of function _install_OdroidN2_image
 
+_install_Pinebook_image() {
+    local user_confirm
+    # wget https://github.com/SvenKiljan/archlinuxarm-pbp/releases/latest/download/ArchLinuxARM-pbp-latest.tar.gz  
+    printf "\n\n${CYAN}Untarring the image...might take a few minutes.${NC}\n"
+    bsdtar -xpf ArchLinuxARM-pbp-latest.tar.gz -C MP2
+    # mv MP2/boot/* MP1
+    dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME conv=fsync,notrunc seek=64
+    _copy_stuff_for_chroot
+    # for Odroid N2 ask if storage device is micro SD or eMMC or USB device
+    user_confirm=$(whiptail --title " Odroid N2 / N2+" --menu --notags "\n             Choose Storage Device or Press right arrow twice to abort" 17 100 3 \
+         "0" "micro SD card" \
+         "1" "eMMC card" \
+         "2" "USB device" \
+    3>&2 2>&1 1>&3)
+
+    case $user_confirm in
+       "") printf "\nScript aborted by user\n\n"
+           exit ;;
+        0) printf "\nN2 micro SD card\n" > /dev/null ;;
+        1) sed -i 's/mmcblk1/mmcblk0/g' MP2/etc/fstab ;;
+        2) sed -i 's/root=\/dev\/mmcblk${devno}p2/root=\/dev\/sda2/g' MP1/boot.ini
+           printf "\# Static information about the filesystems.\n# See fstab(5) for details.\n\n# <file system> <dir> <type> <options> <dump> <pass>\n" > MP2/etc/fstab
+           printf "/dev/sda1  /boot   vfat    defaults        0       0\n/dev/sda2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
+    esac
+#    cp $CONFIG_UPDATE MP2/root
+}   # End of function _install_OdroidN2_image
 
 _install_RPi4_image() { 
     local failed=""   
@@ -138,6 +176,7 @@ _partition_format_mount() {
    case $PLATFORM in   
       RPi64)    _partition_RPi4 ;;
       OdroidN2) _partition_OdroidN2 ;;
+      Pinebook) _partition_PineBook ;;
    esac
   
    printf "\npartition name = $DEVICENAME\n\n" >> /root/enosARM.log
@@ -195,6 +234,7 @@ _choose_device() {
     PLATFORM=$(whiptail --title " SBC Model Selection" --menu --notags "\n            Choose which SBC to install or Press right arrow twice to cancel" 17 100 4 \
          "0" "Raspberry Pi 4b 64 bit" \
          "1" "Odroid N2 or N2+" \
+         "2" "Pinebook Pro" \
     3>&2 2>&1 1>&3)
 
     case $PLATFORM in
@@ -202,6 +242,7 @@ _choose_device() {
             exit ;;
          0) PLATFORM="RPi64" ;;
          1) PLATFORM="OdroidN2" ;;
+         2) PLATFORM="Pinebook" ;;
     esac
 }
 
@@ -231,8 +272,9 @@ Main() {
 
     _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
     case $PLATFORM in
-       OdroidN2) _install_OdroidN2_image ;;
        RPi64)    _install_RPi4_image ;;
+       OdroidN2) _install_OdroidN2_image ;;
+       Pinebook) _install_Pinebook_image ;;
     esac
 
     printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
