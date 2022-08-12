@@ -108,6 +108,8 @@ _switch_mirrors_local() {
    echo "Server = http://10.42.0.1:9129/repo/archlinux_\$arch/\$repo" >> /etc/pacman.d/mirrorlist
    echo "Server = http://10.42.0.1:9129/repo/endeavouros/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
    # echo "Server = https://github.com/endeavouros-arm/repo/raw/master/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
+   printf "\n[sar]\nSigLevel = PackageRequired\nServer = http://127.0.0.1:22122\n\n" >> /etc/pacman.conf
+
 }
 
 _switch_mirrors_back() {
@@ -117,6 +119,9 @@ _switch_mirrors_back() {
     sed -i 's|Server = http://10.42.0.1:9129/repo/endeavouros/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
     # sed -i 's|Server = https://github.com/endeavouros-arm/repo/raw/master/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
     sed -i 's|#Server|Server|g' /etc/pacman.d/endeavouros-mirrorlist
+    sed -i 's|\[sar\]||g' /etc/pacman.conf
+    sed -i 's|SigLevel = PackageRequired||g' /etc/pacman.conf
+    sed -i 's|Server = http://127.0.01:22122||g' /etc/pacman.conf
 }
 
 ######################   Start of Script   #################################
@@ -142,14 +147,15 @@ Main() {
    sed -i "s|#Color|Color\nILoveCandy|g" /etc/pacman.conf
    sed -i "s|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g" /etc/pacman.conf
    pacman-key --init
-   pacman-key --populate archlinux
+   pacman-key --populate archlinuxarm
    case $PLATFORM_NAME in
        Pinebook) pacman-key --populate archlinuxarm archlinuxarm-pbp
                  pacman -Syu ;;
    esac
    pacman -Syy
-   pacman -S --noconfirm wget
-   pacman-key --lsign-key builder@archlinuxarm.org
+   # pacman -S --noconfirm wget
+   # pacman-key --recv-keys 68B3537F39A313B3E574D06777193F152BDBE6A6
+   # pacman-key --lsign-key 68B3537F39A313B3E574D06777193F152BDBE6A6
    pacman -S --noconfirm wget
    _find_mirrorlist
    _find_keyring
@@ -167,6 +173,8 @@ Main() {
                pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware
                cp /boot/config.txt /boot/config.txt.orig
                cp /home/alarm/configs/rpi4-config.txt /boot/config.txt ;;
+     # Pinebook) pacman -R --noconfirm  linux-aarch64
+     #           pacman -Syu --noconfirm ap6256-firmware libdrm-pinebookpro linux-manjaro pinebookpro-audio pinebookpro-post-install towboot-pinebookpro-bin  
    esac
 
    pacman -S --noconfirm --needed eos-packagelist
