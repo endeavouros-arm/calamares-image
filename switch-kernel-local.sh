@@ -148,9 +148,11 @@ Main() {
    sed -i "s|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g" /etc/pacman.conf
    pacman-key --init
    pacman-key --populate archlinuxarm
+   _switch_mirrors_local
    case $PLATFORM_NAME in
        Pinebook) pacman-key --populate archlinuxarm archlinuxarm-pbp
-                 pacman -Syu ;;
+                 pacman -Syu --noconfirm
+                 exit ;;
    esac
    pacman -Syy
    # pacman -S --noconfirm wget
@@ -161,7 +163,6 @@ Main() {
    _find_keyring
    # Switch Mirrors to Local server for faster image creation
    # and low bandwidth usage
-   _switch_mirrors_local 
 
    pacman -Syy
 

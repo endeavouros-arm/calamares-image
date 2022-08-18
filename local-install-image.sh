@@ -17,8 +17,6 @@ _partition_Pinebook() {
     unit mib \
     mkpart primary fat32 16MiB 216MiB \
     mkpart primary 216MiB $DEVICESIZE"MiB" \
-    # mkpart primary fat32 32768 442367 \
-    # mkpart primary 442367 $DEVICESIZE"MiB" \
     quit
 }
 
@@ -43,7 +41,7 @@ _copy_stuff_for_chroot() {
 _install_OdroidN2_image() {
     local user_confirm
 
-    wget http://os.archlinuxarm.org/os/ArchLinuxARM-odroid-n2-latest.tar.gz
+    # wget http://os.archlinuxarm.org/os/ArchLinuxARM-odroid-n2-latest.tar.gz
     printf "\n\n${CYAN}Untarring the image...might take a few minutes.${NC}\n"
     bsdtar -xpf ArchLinuxARM-odroid-n2-latest.tar.gz -C MP2
     # mv MP2/boot/* MP1
@@ -73,8 +71,8 @@ _install_Pinebook_image() {
     # wget https://github.com/SvenKiljan/archlinuxarm-pbp/releases/latest/download/ArchLinuxARM-pbp-latest.tar.gz  
     # wget http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
     printf "\n\n${CYAN}Untarring the image...might take a few minutes.${NC}\n"
-    # bsdtar -xpf ArchLinuxARM-pbp-latest.tar.gz -C MP2
-    bsdtar -xpf ArchLinuxARM-aarch64-latest.tar.gz -C MP2
+    bsdtar -xpf ArchLinuxARM-pbp-latest.tar.gz -C MP2
+    # bsdtar -xpf ArchLinuxARM-aarch64-latest.tar.gz -C MP2
     # mv MP2/boot/* MP1
     _copy_stuff_for_chroot
     # for Odroid N2 ask if storage device is micro SD or eMMC or USB device
@@ -88,8 +86,9 @@ _install_Pinebook_image() {
        "") printf "\nScript aborted by user\n\n"
            exit ;;
         0) printf "\nN2 micro SD card\n" > /dev/null ;;
-        # 1) printf "/dev/mmcblk2p1  /boot   vfat    defaults        0       0\n/dev/mmcblk2p2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
-        1) printf "\nN2 micro SD card\n" > /dev/null ;;
+        1) rm -rf MP2/etc/fstab
+           printf "/dev/mmcblk2p1  /boot   vfat    defaults        0       0\n/dev/mmcblk2p2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
+        # 1) printf "\nN2 micro SD card\n" > /dev/null ;;
         2) printf "\nN2 micro SD card\n" > /dev/null ;;
     esac
 #    cp $CONFIG_UPDATE MP2/root
@@ -98,7 +97,7 @@ _install_Pinebook_image() {
 _install_RPi4_image() { 
     local failed=""   
 
-    wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+    # wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
     printf "\n\n${CYAN}Untarring the image...may take a few minutes.${NC}\n"
     bsdtar -xpf ArchLinuxARM-rpi-aarch64-latest.tar.gz -C MP2
     printf "\n\n${CYAN}syncing files...may take a few minutes.${NC}\n"
@@ -283,7 +282,7 @@ Main() {
     _arch_chroot
 
     case $PLATFORM in
-       Pinebook)     dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME conv=fsync,notrunc seek=64 ;;
+       Pinebook)     dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
     esac
 
     umount MP2/boot MP2
