@@ -71,8 +71,8 @@ _install_Pinebook_image() {
     # wget https://github.com/SvenKiljan/archlinuxarm-pbp/releases/latest/download/ArchLinuxARM-pbp-latest.tar.gz  
     # wget http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
     printf "\n\n${CYAN}Untarring the image...might take a few minutes.${NC}\n"
-    bsdtar -xpf ArchLinuxARM-pbp-latest.tar.gz -C MP2
-    # bsdtar -xpf ArchLinuxARM-aarch64-latest.tar.gz -C MP2
+    # bsdtar -xpf ArchLinuxARM-pbp-latest.tar.gz -C MP2
+    bsdtar -xpf ArchLinuxARM-aarch64-latest.tar.gz -C MP2
     # mv MP2/boot/* MP1
     _copy_stuff_for_chroot
     # for Odroid N2 ask if storage device is micro SD or eMMC or USB device

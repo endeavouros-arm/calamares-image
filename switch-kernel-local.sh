@@ -148,22 +148,13 @@ Main() {
    sed -i "s|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g" /etc/pacman.conf
    pacman-key --init
    pacman-key --populate archlinuxarm
-   _switch_mirrors_local
-   case $PLATFORM_NAME in
-       Pinebook) pacman-key --populate archlinuxarm archlinuxarm-pbp
-                 pacman -Syu --noconfirm
-                 exit ;;
-   esac
    pacman -Syy
-   # pacman -S --noconfirm wget
-   # pacman-key --recv-keys 68B3537F39A313B3E574D06777193F152BDBE6A6
-   # pacman-key --lsign-key 68B3537F39A313B3E574D06777193F152BDBE6A6
    pacman -S --noconfirm wget
    _find_mirrorlist
    _find_keyring
    # Switch Mirrors to Local server for faster image creation
    # and low bandwidth usage
-
+   _switch_mirrors_local
    pacman -Syy
 
    case $PLATFORM_NAME in
@@ -174,8 +165,8 @@ Main() {
                pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware
                cp /boot/config.txt /boot/config.txt.orig
                cp /home/alarm/configs/rpi4-config.txt /boot/config.txt ;;
-     # Pinebook) pacman -R --noconfirm  linux-aarch64
-     #           pacman -Syu --noconfirm ap6256-firmware libdrm-pinebookpro linux-manjaro pinebookpro-audio pinebookpro-post-install towboot-pinebookpro-bin  
+     Pinebook) pacman -R --noconfirm  linux-aarch64
+               pacman -Syu --noconfirm linux-manjaro ap6256-firmware libdrm-pinebookpro pinebookpro-audio pinebookpro-post-install towboot-pinebookpro-bin 
    esac
 
    pacman -S --noconfirm --needed eos-packagelist
