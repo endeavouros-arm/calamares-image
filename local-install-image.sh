@@ -290,8 +290,10 @@ Main() {
     case $PLATFORM in
        Pinebook)
            case $DEVICETYPE in
-               uSD) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
-               eMMC) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
+               uSD) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
+               eMMC) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
+               # uSD) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
+               # eMMC) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
            esac
            # u-boot
            dd if=MP2/boot/idbloader.img of=$DEVICENAME seek=64 conv=notrunc,fsync
