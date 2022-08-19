@@ -15,8 +15,8 @@ _partition_Pinebook() {
     parted --script -a minimal $DEVICENAME \
     mklabel msdos \
     unit mib \
-    mkpart primary fat32 16MiB 216MiB \
-    mkpart primary 216MiB $DEVICESIZE"MiB" \
+    mkpart primary fat32 32MiB 288MiB \
+    mkpart primary 288MiB $DEVICESIZE"MiB" \
     quit
 }
 
@@ -37,6 +37,38 @@ _copy_stuff_for_chroot() {
     cp platformname MP2/root/
     rm platformname
 }
+
+_install_Pinebook_image() {
+    local user_confirm
+    # wget https://github.com/SvenKiljan/archlinuxarm-pbp/releases/latest/download/ArchLinuxARM-pbp-latest.tar.gz
+    # wget http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
+    printf "\n\n${CYAN}Untarring the image...might take a few minutes.${NC}\n"
+    # bsdtar -xpf ArchLinuxARM-pbp-latest.tar.gz -C MP2
+    bsdtar -xpf ArchLinuxARM-aarch64-latest.tar.gz -C MP2
+    # mv MP2/boot/* MP1
+    _copy_stuff_for_chroot
+    # for Odroid N2 ask if storage device is micro SD or eMMC or USB device
+    user_confirm=$(whiptail --title " Odroid N2 / N2+" --menu --notags "\n             Choose Storage Device or Press right arrow twice to abort" 17 100 3 \
+         "0" "micro SD card" \
+         "1" "eMMC card" \
+         "2" "USB device" \
+    3>&2 2>&1 1>&3)
+
+    case $user_confirm in
+       "") printf "\nScript aborted by user\n\n"
+           exit ;;
+        0) rm -rf MP2/etc/fstab
+           DEVICETYPE="uSD"
+           printf "/dev/mmcblk1p1  /boot   vfat    defaults        0       0\n/dev/mmcblk1p2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
+        1) rm -rf MP2/etc/fstab
+           DEVICETYPE="eMMC"
+           printf "/dev/mmcblk2p1  /boot   vfat    defaults        0       0\n/dev/mmcblk2p2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
+        # 1) printf "\nN2 micro SD card\n" > /dev/null ;;
+        2) DEVICETYPE="USB"
+           printf "\nN2 micro SD card\n" > /dev/null ;;
+    esac
+#    cp $CONFIG_UPDATE MP2/root
+}   # End of function _install_OdroidN2_image
 
 _install_OdroidN2_image() {
     local user_confirm
@@ -66,33 +98,6 @@ _install_OdroidN2_image() {
 #    cp $CONFIG_UPDATE MP2/root
 }   # End of function _install_OdroidN2_image
 
-_install_Pinebook_image() {
-    local user_confirm
-    # wget https://github.com/SvenKiljan/archlinuxarm-pbp/releases/latest/download/ArchLinuxARM-pbp-latest.tar.gz  
-    # wget http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
-    printf "\n\n${CYAN}Untarring the image...might take a few minutes.${NC}\n"
-    # bsdtar -xpf ArchLinuxARM-pbp-latest.tar.gz -C MP2
-    bsdtar -xpf ArchLinuxARM-aarch64-latest.tar.gz -C MP2
-    # mv MP2/boot/* MP1
-    _copy_stuff_for_chroot
-    # for Odroid N2 ask if storage device is micro SD or eMMC or USB device
-    user_confirm=$(whiptail --title " Odroid N2 / N2+" --menu --notags "\n             Choose Storage Device or Press right arrow twice to abort" 17 100 3 \
-         "0" "micro SD card" \
-         "1" "eMMC card" \
-         "2" "USB device" \
-    3>&2 2>&1 1>&3)
-
-    case $user_confirm in
-       "") printf "\nScript aborted by user\n\n"
-           exit ;;
-        0) printf "\nN2 micro SD card\n" > /dev/null ;;
-        1) rm -rf MP2/etc/fstab
-           printf "/dev/mmcblk2p1  /boot   vfat    defaults        0       0\n/dev/mmcblk2p2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
-        # 1) printf "\nN2 micro SD card\n" > /dev/null ;;
-        2) printf "\nN2 micro SD card\n" > /dev/null ;;
-    esac
-#    cp $CONFIG_UPDATE MP2/root
-}   # End of function _install_OdroidN2_image
 
 _install_RPi4_image() { 
     local failed=""   
@@ -257,6 +262,7 @@ Main() {
     PARTNAME1=" "
     PARTNAME2=" "
     USERNAME=" "
+    DEVICETYPE=" "
 
     # Declare color variables
     GREEN='\033[0;32m'
@@ -282,7 +288,16 @@ Main() {
     _arch_chroot
 
     case $PLATFORM in
-       Pinebook)     dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
+       Pinebook)
+           case $DEVICETYPE in
+               uSD) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
+               eMMC) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
+           esac
+           # u-boot
+           dd if=MP2/boot/idbloader.img of=$DEVICENAME seek=64 conv=notrunc,fsync
+           dd if=MP2/boot/u-boot.itb of=$DEVICENAME seek=16384 conv=notrunc,fsync
+           # Tow-Boot
+           # dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
     esac
 
     umount MP2/boot MP2

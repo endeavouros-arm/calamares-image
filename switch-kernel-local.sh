@@ -121,7 +121,7 @@ _switch_mirrors_back() {
     sed -i 's|#Server|Server|g' /etc/pacman.d/endeavouros-mirrorlist
     sed -i 's|\[sar\]||g' /etc/pacman.conf
     sed -i 's|SigLevel = PackageRequired||g' /etc/pacman.conf
-    sed -i 's|Server = http://127.0.01:22122||g' /etc/pacman.conf
+    sed -i 's|Server = http://127.0.0.1:22122||g' /etc/pacman.conf
 }
 
 ######################   Start of Script   #################################
@@ -166,7 +166,9 @@ Main() {
                cp /boot/config.txt /boot/config.txt.orig
                cp /home/alarm/configs/rpi4-config.txt /boot/config.txt ;;
      Pinebook) pacman -R --noconfirm  linux-aarch64
-               pacman -Syu --noconfirm linux-manjaro ap6256-firmware libdrm-pinebookpro pinebookpro-audio pinebookpro-post-install towboot-pinebookpro-bin 
+               pacman -Syu --noconfirm linux-manjaro linux-manjaro-headers ap6256-firmware pinebookpro-audio pinebookpro-post-install #libdrm-pinebookpro
+               # pacman -S --noconfirm towboot-pinebookpro-bin ;;
+               pacman -S --noconfirm uboot-pinebookpro ;;
    esac
 
    pacman -S --noconfirm --needed eos-packagelist
