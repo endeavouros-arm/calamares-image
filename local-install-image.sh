@@ -11,12 +11,12 @@ _partition_OdroidN2() {
 }
 
 _partition_Pinebook() {
-    dd if=/dev/zero of=$DEVICENAME bs=1M count=32
+    dd if=/dev/zero of=$DEVICENAME bs=1M count=16
     parted --script -a minimal $DEVICENAME \
     mklabel msdos \
     unit mib \
-    mkpart primary fat32 32MiB 288MiB \
-    mkpart primary 288MiB $DEVICESIZE"MiB" \
+    mkpart primary fat32 16MiB 216MiB \
+    mkpart primary 216MiB $DEVICESIZE"MiB" \
     quit
 }
 
@@ -290,16 +290,16 @@ Main() {
     case $PLATFORM in
        Pinebook)
            case $DEVICETYPE in
-               uSD) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
-               eMMC) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
-               # uSD) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
-               # eMMC) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
+               # uSD) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
+               # eMMC) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
+               uSD) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
+               eMMC) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
            esac
            # u-boot
-           dd if=MP2/boot/idbloader.img of=$DEVICENAME seek=64 conv=notrunc,fsync
-           dd if=MP2/boot/u-boot.itb of=$DEVICENAME seek=16384 conv=notrunc,fsync
+           # dd if=MP2/boot/idbloader.img of=$DEVICENAME seek=64 conv=notrunc,fsync
+           # dd if=MP2/boot/u-boot.itb of=$DEVICENAME seek=16384 conv=notrunc,fsync
            # Tow-Boot
-           # dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
+           dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
     esac
 
     umount MP2/boot MP2

@@ -166,9 +166,10 @@ Main() {
                cp /boot/config.txt /boot/config.txt.orig
                cp /home/alarm/configs/rpi4-config.txt /boot/config.txt ;;
      Pinebook) pacman -R --noconfirm  linux-aarch64
-               pacman -Syu --noconfirm linux-manjaro linux-manjaro-headers ap6256-firmware pinebookpro-audio pinebookpro-post-install #libdrm-pinebookpro
-               # pacman -S --noconfirm towboot-pinebookpro-bin ;;
-               pacman -S --noconfirm uboot-pinebookpro ;;
+               pacman -Syu --noconfirm linux-eos-arm linux-eos-arm-headers ap6256-firmware pinebookpro-audio pinebookpro-post-install libdrm-pinebookpro
+               ln -s /lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.txt /lib/firmware/brcm/brcmfmac43455-sdio.txt
+               pacman -S --noconfirm towboot-pinebookpro-bin ;;
+               # pacman -S --noconfirm uboot-pinebookpro ;;
    esac
 
    pacman -S --noconfirm --needed eos-packagelist
