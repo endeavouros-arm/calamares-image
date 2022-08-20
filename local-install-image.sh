@@ -1,14 +1,4 @@
-
 #!/bin/bash
-
-_partition_OdroidN2() {
-    parted --script -a minimal $DEVICENAME \
-    mklabel msdos \
-    unit mib \
-    mkpart primary fat32 2MiB 258MiB \
-    mkpart primary 258MiB $DEVICESIZE"MiB" \
-    quit
-}
 
 _partition_Pinebook() {
     dd if=/dev/zero of=$DEVICENAME bs=1M count=16
@@ -17,6 +7,15 @@ _partition_Pinebook() {
     unit mib \
     mkpart primary fat32 16MiB 216MiB \
     mkpart primary 216MiB $DEVICESIZE"MiB" \
+    quit
+}
+
+_partition_OdroidN2() {
+    parted --script -a minimal $DEVICENAME \
+    mklabel msdos \
+    unit mib \
+    mkpart primary fat32 2MiB 258MiB \
+    mkpart primary 258MiB $DEVICESIZE"MiB" \
     quit
 }
 
