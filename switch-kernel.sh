@@ -124,14 +124,8 @@ Main() {
    sed -i "s|#Color|Color\nILoveCandy|g" /etc/pacman.conf
    sed -i "s|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g" /etc/pacman.conf
    pacman-key --init
-   pacman-key --populate archlinux
-   case $PLATFORM_NAME in
-       Pinebook) pacman-key --populate archlinuxarm archlinuxarm-pbp
-                 pacman -Syu ;;
-   esac
+   pacman-key --populate archlinuxarm
    pacman -Syy
-   pacman -S --noconfirm wget
-   pacman-key --lsign-key builder@archlinuxarm.org
    pacman -S --noconfirm wget
    _find_mirrorlist
    _find_keyring
@@ -145,6 +139,12 @@ Main() {
                pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware
                cp /boot/config.txt /boot/config.txt.orig
                cp /home/alarm/configs/rpi4-config.txt /boot/config.txt ;;
+     Pinebook) pacman -R --noconfirm  linux-aarch64
+               pacman -Syu --noconfirm linux-eos-arm linux-eos-arm-headers ap6256-firmware pinebookpro-audio pinebookpro-post-install libdrm-pinebookpro
+               ln -s /lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.txt /lib/firmware/brcm/brcmfmac43455-sdio.txt
+               sed -i 's|^MODULES=(|MODULES=(btrfs |' /etc/mkinitcpio.conf
+               pacman -S --noconfirm towboot-pinebookpro-bin ;;
+               # pacman -S --noconfirm uboot-pinebookpro ;;
    esac
 
    pacman -S --noconfirm --needed eos-packagelist

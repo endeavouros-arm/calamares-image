@@ -37,6 +37,7 @@ _find_mirrorlist() {
     printf "\n${CYAN}Installing endeavouros-mirrorlist...${NC}\n"
     pacman -U --noconfirm $currentmirrorlist
 
+    printf "\n[sar]\nSigLevel = PackageRequired\nServer = http://127.0.0.1:22122\n\n" >> /etc/pacman.conf
     printf "\n[endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n" >> /etc/pacman.conf
 
     rm mirrors
@@ -108,7 +109,7 @@ _switch_mirrors_local() {
    echo "Server = http://10.42.0.1:9129/repo/archlinux_\$arch/\$repo" >> /etc/pacman.d/mirrorlist
    echo "Server = http://10.42.0.1:9129/repo/endeavouros/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
    # echo "Server = https://github.com/endeavouros-arm/repo/raw/master/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
-   printf "\n[sar]\nSigLevel = PackageRequired\nServer = http://127.0.0.1:22122\n\n" >> /etc/pacman.conf
+   # printf "\n[sar]\nSigLevel = PackageRequired\nServer = http://127.0.0.1:22122\n\n" >> /etc/pacman.conf
 
 }
 
@@ -168,7 +169,7 @@ Main() {
      Pinebook) pacman -R --noconfirm  linux-aarch64
                pacman -Syu --noconfirm linux-eos-arm linux-eos-arm-headers ap6256-firmware pinebookpro-audio pinebookpro-post-install libdrm-pinebookpro
                ln -s /lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.txt /lib/firmware/brcm/brcmfmac43455-sdio.txt
-               sed -i 's|MODULES=(|MODULES=(btrfs |g' /etc/mkinitcpio.conf
+               sed -i 's|^MODULES=(|MODULES=(btrfs |' /etc/mkinitcpio.conf
                pacman -S --noconfirm towboot-pinebookpro-bin ;;
                # pacman -S --noconfirm uboot-pinebookpro ;;
    esac
