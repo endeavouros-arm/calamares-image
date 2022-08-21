@@ -168,6 +168,7 @@ Main() {
      Pinebook) pacman -R --noconfirm  linux-aarch64
                pacman -Syu --noconfirm linux-eos-arm linux-eos-arm-headers ap6256-firmware pinebookpro-audio pinebookpro-post-install libdrm-pinebookpro
                ln -s /lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.txt /lib/firmware/brcm/brcmfmac43455-sdio.txt
+               sed -i 's|MODULES=(|MODULES=(btrfs |g' /etc/mkinitcpio.conf
                pacman -S --noconfirm towboot-pinebookpro-bin ;;
                # pacman -S --noconfirm uboot-pinebookpro ;;
    esac
