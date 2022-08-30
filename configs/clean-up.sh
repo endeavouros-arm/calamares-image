@@ -60,6 +60,7 @@ _remove_packages_ob () {
 
 Main() {
   sed -i 's/alarm ALL=(ALL:ALL) NOPASSWD: ALL/ /g' /etc/sudoers
+  cp /home/alarm/endeavour-install.log /var/log/
   userdel -rf alarm
   _remove_packages_ob
   pacman -Rns --noconfirm calamares_current_arm calamares_config_default_arm calamares_config_ce_arm

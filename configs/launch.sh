@@ -4,13 +4,13 @@ source /usr/share/endeavouros/scripts/eos-script-lib-yad
 
 calamares-official() {
     sudo cp /home/alarm/configs/calamares/settings_online.conf /etc/calamares/settings.conf
-    sudo -E calamares -D 8 >> /home/alarm/endeavour-arm-calamares.log
+    sudo -E calamares -D 8 >> /home/alarm/endeavour-install.log
 }
 export -f calamares-official
 
 calamares-community() {
     sudo cp /home/alarm/configs/calamares/settings_community.conf /etc/calamares/settings.conf
-    sudo -E calamares -D 8 >> /home/alarm/endeavour-arm-calamares.log
+    sudo -E calamares -D 8 >> /home/alarm/endeavour-install.log
 }
 export -f calamares-community
 

@@ -98,6 +98,8 @@ _finish_up() {
     # rm -rf /etc/lsb-release
     cp /home/alarm/configs/ORION-sky-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
     cp /home/alarm/configs/EOS-PLANETS-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-calamares-wallpaper.png
+    usermod -u 2001 alarm
+    groupmod -g 2001 alarm
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
 }   # end of function _finish_up
 
@@ -139,6 +141,12 @@ Main() {
                pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware
                cp /boot/config.txt /boot/config.txt.orig
                cp /home/alarm/configs/rpi4-config.txt /boot/config.txt ;;
+     Pinebook) pacman -R --noconfirm  linux-aarch64
+               pacman -Syu --noconfirm linux-eos-arm linux-eos-arm-headers ap6256-firmware pinebookpro-audio pinebookpro-post-install libdrm-pinebookpro
+               ln -s /lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.txt /lib/firmware/brcm/brcmfmac43455-sdio.txt
+               sed -i 's|^MODULES=(|MODULES=(btrfs |' /etc/mkinitcpio.conf
+               pacman -S --noconfirm towboot-pinebookpro-bin ;;
+               # pacman -S --noconfirm uboot-pinebookpro ;;
    esac
 
    pacman -S --noconfirm --needed eos-packagelist

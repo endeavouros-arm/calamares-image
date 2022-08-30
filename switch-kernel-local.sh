@@ -37,6 +37,7 @@ _find_mirrorlist() {
     printf "\n${CYAN}Installing endeavouros-mirrorlist...${NC}\n"
     pacman -U --noconfirm $currentmirrorlist
 
+    # printf "\n[sar]\nSigLevel = PackageRequired\nServer = http://127.0.0.1:22122\n\n" >> /etc/pacman.conf
     printf "\n[endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n" >> /etc/pacman.conf
 
     rm mirrors
@@ -98,6 +99,8 @@ _finish_up() {
     # rm -rf /etc/lsb-release
     cp /home/alarm/configs/ORION-sky-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
     cp /home/alarm/configs/EOS-PLANETS-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-calamares-wallpaper.png
+    usermod -u 2001 alarm
+    groupmod -g 2001 alarm
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
 }   # end of function _finish_up
 
@@ -108,15 +111,20 @@ _switch_mirrors_local() {
    echo "Server = http://10.42.0.1:9129/repo/archlinux_\$arch/\$repo" >> /etc/pacman.d/mirrorlist
    echo "Server = http://10.42.0.1:9129/repo/endeavouros/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
    # echo "Server = https://github.com/endeavouros-arm/repo/raw/master/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
+   # printf "\n[sar]\nSigLevel = PackageRequired\nServer = http://127.0.0.1:22122\n\n" >> /etc/pacman.conf
+
 }
 
 _switch_mirrors_back() {
     sed -i 's|#Server = http://mirror.archlinuxarm.org/$arch/$repo|Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
-    sed -i 's|Server = http://127.0.01:21212||g' /etc/pacman.d/mirrorlist
+    sed -i 's|Server = http://127.0.0.1:21212||g' /etc/pacman.d/mirrorlist
     sed -i 's|Server = http://10.42.0.1:9129/repo/archlinux_$arch/$repo||g' /etc/pacman.d/mirrorlist
     sed -i 's|Server = http://10.42.0.1:9129/repo/endeavouros/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
     # sed -i 's|Server = https://github.com/endeavouros-arm/repo/raw/master/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
     sed -i 's|#Server|Server|g' /etc/pacman.d/endeavouros-mirrorlist
+    sed -i 's|\[sar\]||g' /etc/pacman.conf
+    sed -i 's|SigLevel = PackageRequired||g' /etc/pacman.conf
+    sed -i 's|Server = http://127.0.0.1:22122||g' /etc/pacman.conf
 }
 
 ######################   Start of Script   #################################
@@ -149,8 +157,7 @@ Main() {
    _find_keyring
    # Switch Mirrors to Local server for faster image creation
    # and low bandwidth usage
-   _switch_mirrors_local 
-
+   _switch_mirrors_local
    pacman -Syy
 
    case $PLATFORM_NAME in
@@ -161,6 +168,12 @@ Main() {
                pacman -Syu --noconfirm --needed linux-rpi raspberrypi-bootloader raspberrypi-firmware
                cp /boot/config.txt /boot/config.txt.orig
                cp /home/alarm/configs/rpi4-config.txt /boot/config.txt ;;
+     Pinebook) pacman -R --noconfirm  linux-aarch64
+               pacman -Syu --noconfirm linux-eos-arm linux-eos-arm-headers ap6256-firmware pinebookpro-audio pinebookpro-post-install libdrm-pinebookpro
+               ln -s /lib/firmware/brcm/brcmfmac43455-sdio.raspberrypi,4-model-b.txt /lib/firmware/brcm/brcmfmac43455-sdio.txt
+               sed -i 's|^MODULES=(|MODULES=(btrfs |' /etc/mkinitcpio.conf
+               pacman -S --noconfirm towboot-pinebookpro-bin ;;
+               # pacman -S --noconfirm uboot-pinebookpro ;;
    esac
 
    pacman -S --noconfirm --needed eos-packagelist

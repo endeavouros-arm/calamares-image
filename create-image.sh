@@ -103,6 +103,7 @@ mount $PARTNAME1 MP1/boot
    # read in platformname passed by install-image-aarch64.sh to /mnt/root
    file="MP1/root/platformname"
    read -d $'\x04' PLATFORM_NAME < "$file"
+   echo $PLATFORM_NAME
    rm MP1/root/platformname
 cd MP1
 
@@ -116,6 +117,14 @@ case $PLATFORM_NAME in
       dir=$(pwd)
       cd /home/$USERNAME/endeavouros-arm/images/
       sha512sum enosLinuxARM-odroid-n2-latest.tar.zst > enosLinuxARM-odroid-n2-latest.tar.zst.sha512sum
+      cd $dir ;;
+   Pinebook)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-pbp-latest.tar.zst *
+      time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-pbp-latest.tar.zst
+      printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
+      cd ..
+      dir=$(pwd)
+      cd /home/$USERNAME/endeavouros-arm/images/
+      sha512sum enosLinuxARM-pbp-latest.tar.zst > enosLinuxARM-pbp-latest.tar.zst.sha512sum
       cd $dir ;;
    RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
       time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.tar.zst
