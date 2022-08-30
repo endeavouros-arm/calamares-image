@@ -37,7 +37,7 @@ _find_mirrorlist() {
     printf "\n${CYAN}Installing endeavouros-mirrorlist...${NC}\n"
     pacman -U --noconfirm $currentmirrorlist
 
-    printf "\n[sar]\nSigLevel = PackageRequired\nServer = http://127.0.0.1:22122\n\n" >> /etc/pacman.conf
+    # printf "\n[sar]\nSigLevel = PackageRequired\nServer = http://127.0.0.1:22122\n\n" >> /etc/pacman.conf
     printf "\n[endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n" >> /etc/pacman.conf
 
     rm mirrors
@@ -99,6 +99,8 @@ _finish_up() {
     # rm -rf /etc/lsb-release
     cp /home/alarm/configs/ORION-sky-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
     cp /home/alarm/configs/EOS-PLANETS-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-calamares-wallpaper.png
+    usermod -u 2001 alarm
+    groupmod -g 2001 alarm
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
 }   # end of function _finish_up
 
@@ -180,7 +182,6 @@ Main() {
    _switch_mirrors_back
 
    _finish_up
-   cat /etc/enosARM.log
 }  # end of Main
 
 Main "$@"
