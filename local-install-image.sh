@@ -28,15 +28,6 @@ _partition_RPi4() {
     quit
 }
 
-_copy_stuff_for_chroot() {
-    cp switch-kernel-local.sh MP2/root/
-    cp config_script.sh MP2/root/
-    cp -r configs/ MP2/home/alarm/
-    printf "$PLATFORM\n" > platformname
-    cp platformname MP2/root/
-    rm platformname
-}
-
 _install_Pinebook_image() {
     local user_confirm
     # wget https://github.com/SvenKiljan/archlinuxarm-pbp/releases/latest/download/ArchLinuxARM-pbp-latest.tar.gz
@@ -67,7 +58,7 @@ _install_Pinebook_image() {
            printf "\nN2 micro SD card\n" > /dev/null ;;
     esac
 #    cp $CONFIG_UPDATE MP2/root
-}   # End of function _install_OdroidN2_image
+}   # End of function _install_Pinebook_image
 
 _install_OdroidN2_image() {
     local user_confirm
@@ -97,7 +88,6 @@ _install_OdroidN2_image() {
 #    cp $CONFIG_UPDATE MP2/root
 }   # End of function _install_OdroidN2_image
 
-
 _install_RPi4_image() { 
     local failed=""   
 
@@ -116,7 +106,6 @@ _install_RPi4_image() {
     fi
     sed -i 's/mmcblk0/mmcblk1/' MP2/etc/fstab
 }  # End of function _install_RPi4_image
-
 
 _partition_format_mount() {
    local finished
@@ -228,6 +217,15 @@ _check_all_apps_closed() {
     whiptail --title "CAUTION" --msgbox "Ensure ALL apps are closed, especially any file manager such as Thunar" 8 74 3>&2 2>&1 1>&3
 }
 
+_copy_stuff_for_chroot() {
+    cp switch-kernel-local.sh MP2/root/
+    cp config_script.sh MP2/root/
+    cp -r configs/ MP2/home/alarm/
+    printf "$PLATFORM\n" > platformname
+    cp platformname MP2/root/
+    rm platformname
+}
+
 _arch_chroot(){
     arch-chroot MP2 /root/switch-kernel-local.sh
     arch-chroot MP2 /root/config_script.sh
@@ -269,7 +267,7 @@ Main() {
     CYAN='\033[0;36m'
     NC='\033[0m' # No Color
 
-    pacman -S --noconfirm --needed libnewt &>/dev/null # for whiplash dialog
+    pacman -S --noconfirm --needed libnewt arch-install-scripts time &>/dev/null # for whiplash dialog
     _check_if_root
     _check_all_apps_closed
     _choose_device
@@ -282,8 +280,6 @@ Main() {
     esac
 
     printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
-
-    # exit
     _arch_chroot
 
     case $PLATFORM in

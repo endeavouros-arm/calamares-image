@@ -28,84 +28,57 @@ _partition_RPi4() {
     quit
 }
 
+_copy_stuff_for_chroot() {
+    cp switch-kernel-local.sh MP2/root/
+    cp config_script.sh MP2/root/
+    cp -r configs/ MP2/home/alarm/
+    printf "$PLATFORM\n" > platformname
+    cp platformname MP2/root/
+    rm platformname
+}
+
 _install_Pinebook_image() {
     local user_confirm
-    # wget https://github.com/SvenKiljan/archlinuxarm-pbp/releases/latest/download/ArchLinuxARM-pbp-latest.tar.gz
-    wget http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
+    if $LOCAL ; then
+        # wget https://github.com/SvenKiljan/archlinuxarm-pbp/releases/latest/download/ArchLinuxARM-pbp-latest.tar.gz
+        wget http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
+    fi
     printf "\n\n${CYAN}Untarring the image...might take a few minutes.${NC}\n"
     # bsdtar -xpf ArchLinuxARM-pbp-latest.tar.gz -C MP2
     bsdtar -xpf ArchLinuxARM-aarch64-latest.tar.gz -C MP2
     # mv MP2/boot/* MP1
     _copy_stuff_for_chroot
-    # for Odroid N2 ask if storage device is micro SD or eMMC or USB device
-    user_confirm=$(whiptail --title " Odroid N2 / N2+" --menu --notags "\n             Choose Storage Device or Press right arrow twice to abort" 17 100 3 \
-         "0" "micro SD card" \
-         "1" "eMMC card" \
-         "2" "USB device" \
-    3>&2 2>&1 1>&3)
-
-    case $user_confirm in
-       "") printf "\nScript aborted by user\n\n"
-           exit ;;
-        0) rm -rf MP2/etc/fstab
-           DEVICETYPE="uSD"
-           printf "/dev/mmcblk1p1  /boot   vfat    defaults        0       0\n/dev/mmcblk1p2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
-        1) rm -rf MP2/etc/fstab
-           DEVICETYPE="eMMC"
-           printf "/dev/mmcblk2p1  /boot   vfat    defaults        0       0\n/dev/mmcblk2p2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
-        # 1) printf "\nN2 micro SD card\n" > /dev/null ;;
-        2) DEVICETYPE="USB"
-           printf "\nN2 micro SD card\n" > /dev/null ;;
-    esac
-#    cp $CONFIG_UPDATE MP2/root
-}   # End of function _install_OdroidN2_image
+    rm -rf MP2/etc/fstab
+    printf "/dev/mmcblk1p1  /boot   vfat    defaults        0       0\n/dev/mmcblk1p2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
+}   # End of function _install_Pinebook_image
 
 _install_OdroidN2_image() {
     local user_confirm
-
-    wget http://os.archlinuxarm.org/os/ArchLinuxARM-odroid-n2-latest.tar.gz
+    if $LOCAL ; then
+        wget http://os.archlinuxarm.org/os/ArchLinuxARM-odroid-n2-latest.tar.gz
+    fi
     printf "\n\n${CYAN}Untarring the image...might take a few minutes.${NC}\n"
     bsdtar -xpf ArchLinuxARM-odroid-n2-latest.tar.gz -C MP2
     # mv MP2/boot/* MP1
     dd if=MP2/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
     _copy_stuff_for_chroot
-    # for Odroid N2 ask if storage device is micro SD or eMMC or USB device
-    user_confirm=$(whiptail --title " Odroid N2 / N2+" --menu --notags "\n             Choose Storage Device or Press right arrow twice to abort" 17 100 3 \
-         "0" "micro SD card" \
-         "1" "eMMC card" \
-         "2" "USB device" \
-    3>&2 2>&1 1>&3)
-
-    case $user_confirm in
-       "") printf "\nScript aborted by user\n\n"
-           exit ;;
-        0) printf "\nN2 micro SD card\n" > /dev/null ;;
-        1) sed -i 's/mmcblk1/mmcblk0/g' MP2/etc/fstab ;;
-        2) sed -i 's/root=\/dev\/mmcblk${devno}p2/root=\/dev\/sda2/g' MP1/boot.ini
-           printf "\# Static information about the filesystems.\n# See fstab(5) for details.\n\n# <file system> <dir> <type> <options> <dump> <pass>\n" > MP2/etc/fstab
-           printf "/dev/sda1  /boot   vfat    defaults        0       0\n/dev/sda2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
-    esac
-#    cp $CONFIG_UPDATE MP2/root
 }   # End of function _install_OdroidN2_image
+
 
 _install_RPi4_image() { 
     local failed=""   
-
-    wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+    if $LOCAL ; then
+        wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
+    fi
     printf "\n\n${CYAN}Untarring the image...may take a few minutes.${NC}\n"
     bsdtar -xpf ArchLinuxARM-rpi-aarch64-latest.tar.gz -C MP2
     printf "\n\n${CYAN}syncing files...may take a few minutes.${NC}\n"
     sync
     # mv MP2/boot/* MP1
     _copy_stuff_for_chroot
-    failed=$?
-    if [[ "$failed" != "0" ]]; then
-        printf "\n\n${CYAN}The switch-kernel.sh script failed to be copied to /root.${NC}\n"
-    else
-        printf "\n\n${CYAN}The switch-kernel.sh script was copied to /root.${NC}\n"
-    fi
     sed -i 's/mmcblk0/mmcblk1/' MP2/etc/fstab
 }  # End of function _install_RPi4_image
+
 
 _partition_format_mount() {
    local finished
@@ -217,28 +190,13 @@ _check_all_apps_closed() {
     whiptail --title "CAUTION" --msgbox "Ensure ALL apps are closed, especially any file manager such as Thunar" 8 74 3>&2 2>&1 1>&3
 }
 
-_copy_stuff_for_chroot() {
-    cp switch-kernel.sh MP2/root/
-    cp config_script.sh MP2/root/
-    cp -r configs/ MP2/home/alarm/
-    printf "$PLATFORM\n" > platformname
-    cp platformname MP2/root/
-    rm platformname
-}
-
 _arch_chroot(){
-    arch-chroot MP2 /root/switch-kernel.sh
+    arch-chroot MP2 /root/build-chroot.sh
     arch-chroot MP2 /root/config_script.sh
 }
 
 _choose_device() {
-    PLATFORM=$(whiptail --title " SBC Model Selection" --menu --notags "\n            Choose which SBC to install or Press right arrow twice to cancel" 17 100 4 \
-         "0" "Raspberry Pi 4b 64 bit" \
-         "1" "Odroid N2 or N2+" \
-         "2" "Pinebook Pro" \
-    3>&2 2>&1 1>&3)
-
-    case $PLATFORM in
+    case $PLAT in
         "") printf "\n\nScript aborted by user..${NC}\n\n"
             exit ;;
          0) PLATFORM="RPi64" ;;
@@ -247,13 +205,16 @@ _choose_device() {
     esac
 }
 
+
 #################################################
 # beginning of script
 #################################################
 
 Main() {
     # VARIABLES
+    PLAT=""
     PLATFORM=" "     # e.g. OdroidN2, RPi4b, etc.
+    DEVICE=""
     DEVICENAME=" "   # storage device name e.g. /dev/sda
     DEVICESIZE="1"
     PARTNAME1=" "
@@ -267,7 +228,7 @@ Main() {
     CYAN='\033[0;36m'
     NC='\033[0m' # No Color
 
-    pacman -S --noconfirm --needed libnewt arch-install-scripts time &>/dev/null # for whiplash dialog
+    pacman -S --noconfirm --needed libnewt &>/dev/null # for whiplash dialog
     _check_if_root
     _check_all_apps_closed
     _choose_device
@@ -280,6 +241,8 @@ Main() {
     esac
 
     printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
+
+    # exit
     _arch_chroot
 
     case $PLATFORM in
@@ -311,3 +274,4 @@ Main() {
 }
 
 Main "$@"
+
