@@ -144,11 +144,11 @@ _check_if_root() {
 }  # end of function _check_if_root
 
 _copy_stuff_for_chroot() {
-    cp switch-kernel-local.sh MP2/root/
+    cp build-image-chroot.sh MP2/root/
     cp config_script.sh MP2/root/
     cp -r configs/ MP2/home/alarm/
     printf "$PLATFORM\n" > platformname
-    printf "$MIRRORS\n" > mirrors
+    printf "$LOCAL\n" > mirrors
     cp platformname MP2/root/
     cp mirrors MP2/root/
     rm platformname
@@ -156,8 +156,37 @@ _copy_stuff_for_chroot() {
 }
 
 _arch_chroot(){
-    arch-chroot MP2 /root/build-chroot.sh
+    arch-chroot MP2 /root/build-image-chroot.sh
     arch-chroot MP2 /root/config_script.sh
+}
+
+_create_image(){
+    case $PLATFORM in
+       OdroidN2)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.tar.zst *
+          time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.tar.zst
+          printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
+          cd ..
+          dir=$(pwd)
+          cd /home/$USERNAME/endeavouros-arm/images/
+          sha512sum enosLinuxARM-odroid-n2-latest.tar.zst > enosLinuxARM-odroid-n2-latest.tar.zst.sha512sum
+          cd $dir ;;
+       Pinebook)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-pbp-latest.tar.zst *
+          time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-pbp-latest.tar.zst
+          printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
+          cd ..
+          dir=$(pwd)
+          cd /home/$USERNAME/endeavouros-arm/images/
+          sha512sum enosLinuxARM-pbp-latest.tar.zst > enosLinuxARM-pbp-latest.tar.zst.sha512sum
+          cd $dir ;;
+       RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
+          time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.tar.zst
+          printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
+          cd ..
+          dir=$(pwd)
+          cd /home/$USERNAME/endeavouros-arm/images/
+          sha512sum enosLinuxARM-rpi-aarch64-latest.tar.zst > enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
+          cd $dir ;;
+    esac
 }
 
 _help() {
@@ -177,8 +206,15 @@ _help() {
 
 _read_options() {
     # Available options
-    opt=":d:f:b:h"
+    opt=":d:p:i:c:l:h:"
+    local OPTIND
 
+    if [[ ! $@ =~ ^\-.+ ]]
+    then
+      echo "The script requires an argument, aborting"
+      _help
+      exit 1
+    fi
 
     while getopts "${opt}" arg; do
       case $arg in
@@ -213,6 +249,7 @@ _read_options() {
           ;;
       esac
     done
+    shift $((OPTIND-1))
 
 case $PLAT in
      rpi) PLATFORM="RPi64" ;;
@@ -261,7 +298,7 @@ Main() {
     CREATE=" "
     LOC=" "
     LOCAL=" "
-
+    
     # Declare color variables
     GREEN='\033[0;32m'
     RED='\033[0;31m'
@@ -270,44 +307,41 @@ Main() {
 
     pacman -S --noconfirm --needed libnewt arch-install-scripts time &>/dev/null # for whiplash dialog
     _check_if_root
-    _read_options
+    _read_options "$@"
 
-    # _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
-    # case $PLATFORM in
-    #    RPi64)    _install_RPi4_image ;;
-    #    OdroidN2) _install_OdroidN2_image ;;
-    #    Pinebook) _install_Pinebook_image ;;
-    # esac
-    #
-    # printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
-    # _arch_chroot
-    #
-    # case $PLATFORM in
-    #    Pinebook)
-    #        case $DEVICETYPE in
-    #            # uSD) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
-    #            # eMMC) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
-    #            uSD) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
-    #            eMMC) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
-    #        esac
-    #        # u-boot
-    #        # dd if=MP2/boot/idbloader.img of=$DEVICENAME seek=64 conv=notrunc,fsync
-    #        # dd if=MP2/boot/u-boot.itb of=$DEVICENAME seek=16384 conv=notrunc,fsync
-    #        # Tow-Boot
-    #        dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
-    # esac
-    #
-    # umount MP2/boot MP2
-    # rm -rf MP2
-    # # rm ArchLinuxARM*
-    #
-    # printf "\n\n${CYAN}End of script!${NC}\n"
-    # printf "\n${CYAN}Be sure to use a file manager to umount the device before removing the USB SD reader${NC}\n"
-    #
-    # printf "\n${CYAN}The default user is ${NC}alarm${CYAN} with the password ${NC}alarm\n"
-    # printf "${CYAN}The default root password is ${NC}root\n\n\n"
-    #
-    # exit
+    _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
+    case $PLATFORM in
+       RPi64)    _install_RPi4_image ;;
+       OdroidN2) _install_OdroidN2_image ;;
+       Pinebook) _install_Pinebook_image ;;
+    esac
+
+    printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
+    _arch_chroot
+
+    case $PLATFORM in
+       Pinebook)
+           sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf
+           # u-boot
+           # dd if=MP2/boot/idbloader.img of=$DEVICENAME seek=64 conv=notrunc,fsync
+           # dd if=MP2/boot/u-boot.itb of=$DEVICENAME seek=16384 conv=notrunc,fsync
+           # Tow-Boot
+           dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync
+           ;;
+    esac
+
+    if $CREATE ; then
+        printf "\n\n${CYAN}Creating Image${NC}\n\n"
+        cd MP2
+        _create_image
+        printf "\n\n${CYAN}Created Image${NC}\n\n"
+    fi
+
+    umount MP2/boot MP2
+    rm -rf MP2
+    # rm ArchLinuxARM*
+
+    exit
 }
 
 Main "$@"
