@@ -199,6 +199,7 @@ _read_options() {
           ;;
         \?)
           echo "Option -${OPTARG} is not valid, aborting"
+          _help
           exit 1
           ;;
         h|?)
@@ -207,6 +208,7 @@ _read_options() {
           ;;
         :)
           echo "Option -${OPTARG} requires an argument, aborting"
+          _help
           exit 1
           ;;
       esac
@@ -268,68 +270,7 @@ Main() {
 
     pacman -S --noconfirm --needed libnewt arch-install-scripts time &>/dev/null # for whiplash dialog
     _check_if_root
-    # _read_options
-
-    # Available options
-    opt=":d:f:b:h"
-
-
-    while getopts "${opt}" arg; do
-      case $arg in
-        d)
-          DEVICENAME="/dev/${OPTARG}"
-          ;;
-        p)
-          PLAT="${OPTARG}"
-          ;;
-        i)
-          DOWN="${OPTARG}"
-          ;;
-        c)
-          CRE="${OPTARG}"
-          ;;
-        l)
-          LOC="${OPTARG}"
-          ;;
-        \?)
-          echo "Option -${OPTARG} is not valid, aborting"
-          exit 1
-          ;;
-        h|?)
-          _help
-          exit 1
-          ;;
-        :)
-          echo "Option -${OPTARG} requires an argument, aborting"
-          exit 1
-          ;;
-      esac
-    done
-
-case $PLAT in
-     rpi) PLATFORM="RPi64" ;;
-     odn) PLATFORM="OdroidN2" ;;
-     pbp) PLATFORM="Pinebook" ;;
-       *) PLAT1=true;;
-esac
-
-case $DOWN in
-     y) DOWNLOAD=true ;;
-     n) DOWNLOAD=false ;;
-     *) DOWNLOAD=true ;;
-esac
-
-case $CRE in
-     y) CREATE=true ;;
-     n) CREATE=false ;;
-     *) CREATE=true ;;
-esac
-
-case $LOC in
-     y) LOCAL=true ;;
-     n) LOCAL=false ;;
-     *) LOCAL=false ;;
-esac
+    _read_options
 
     # _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
     # case $PLATFORM in
