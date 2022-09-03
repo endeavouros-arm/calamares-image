@@ -28,18 +28,9 @@ _partition_RPi4() {
     quit
 }
 
-_copy_stuff_for_chroot() {
-    cp switch-kernel-local.sh MP2/root/
-    cp config_script.sh MP2/root/
-    cp -r configs/ MP2/home/alarm/
-    printf "$PLATFORM\n" > platformname
-    cp platformname MP2/root/
-    rm platformname
-}
-
 _install_Pinebook_image() {
     local user_confirm
-    if $LOCAL ; then
+    if $DOWNLOAD ; then
         # wget https://github.com/SvenKiljan/archlinuxarm-pbp/releases/latest/download/ArchLinuxARM-pbp-latest.tar.gz
         wget http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
     fi
@@ -54,7 +45,7 @@ _install_Pinebook_image() {
 
 _install_OdroidN2_image() {
     local user_confirm
-    if $LOCAL ; then
+    if $DOWNLOAD ; then
         wget http://os.archlinuxarm.org/os/ArchLinuxARM-odroid-n2-latest.tar.gz
     fi
     printf "\n\n${CYAN}Untarring the image...might take a few minutes.${NC}\n"
@@ -67,7 +58,7 @@ _install_OdroidN2_image() {
 
 _install_RPi4_image() { 
     local failed=""   
-    if $LOCAL ; then
+    if $DOWNLOAD ; then
         wget http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-aarch64-latest.tar.gz
     fi
     printf "\n\n${CYAN}Untarring the image...may take a few minutes.${NC}\n"
@@ -79,46 +70,12 @@ _install_RPi4_image() {
     sed -i 's/mmcblk0/mmcblk1/' MP2/etc/fstab
 }  # End of function _install_RPi4_image
 
-
 _partition_format_mount() {
-   local finished
-   local base_dialog_content
-   local dialog_content
-   local exit_status
    local count
    local i
    local u
    local x
 
-   base_dialog_content="\nThe following storage devices were found\n\n$(lsblk -o NAME,MODEL,FSTYPE,SIZE,FSUSED,FSAVAIL,MOUNTPOINT)\n\n \
-   Enter target device name without a partition designation (e.g. /dev/sda or /dev/mmcblk0):"
-   dialog_content="$base_dialog_content"
-   finished=1
-   while [ $finished -ne 0 ]
-   do
-       DEVICENAME=$(whiptail --title "EndeavourOS ARM Setup - micro SD Configuration" --inputbox "$dialog_content" 27 115 3>&2 2>&1 1>&3)
-      exit_status=$?
-      if [[ "$exit_status" == "1" ]]; then           
-         printf "\nScript aborted by user\n\n"
-         exit
-      fi
-      if [[ ! -b "$DEVICENAME" ]]; then
-         dialog_content="$base_dialog_content\n    Not a listed block device, or not prefaced by /dev/ Try again."
-      else   
-         case $DEVICENAME in
-            /dev/sd*)     if [[ ${#DEVICENAME} -eq 8 ]]; then
-                             finished=0
-                          else
-                             dialog_content="$base_dialog_content\n    Input improperly formatted. Try again."   
-                          fi ;;
-            /dev/mmcblk*) if [[ ${#DEVICENAME} -eq 12 ]]; then
-                             finished=0
-                          else
-                             dialog_content="$base_dialog_content\n    Input improperly formatted. Try again."   
-                          fi ;;
-         esac
-      fi      
-   done
    ##### Determine data device size in MiB and partition ###
    printf "\n${CYAN}Partitioning, & formatting storage device...${NC}\n"
    DEVICESIZE=$(fdisk -l | grep "Disk $DEVICENAME" | awk '{print $5}')
@@ -190,6 +147,18 @@ _check_all_apps_closed() {
     whiptail --title "CAUTION" --msgbox "Ensure ALL apps are closed, especially any file manager such as Thunar" 8 74 3>&2 2>&1 1>&3
 }
 
+_copy_stuff_for_chroot() {
+    cp switch-kernel-local.sh MP2/root/
+    cp config_script.sh MP2/root/
+    cp -r configs/ MP2/home/alarm/
+    printf "$PLATFORM\n" > platformname
+    printf "$MIRRORS\n" > mirrors
+    cp platformname MP2/root/
+    cp mirrors MP2/root/
+    rm platformname
+    rm mirrors
+}
+
 _arch_chroot(){
     arch-chroot MP2 /root/build-chroot.sh
     arch-chroot MP2 /root/config_script.sh
@@ -205,6 +174,66 @@ _choose_device() {
     esac
 }
 
+_help() {
+   # Display Help
+   printf "\nHELP\n"
+   printf "Build EndeavourOS ARM Images\n"
+   printf "options:\n"
+   printf " -h  Print this Help.\n\n"
+   printf "All these options are required\n"
+   printf " -d  enter device name for ex: sda\n"
+   printf " -p  enter platform: rpi or odn or pbp\n"
+   printf " -i  download base image: y or n\n"
+   printf " -c  create image: y or n\n"
+   printf " -m  pacman mirrors: l or o (local or online)\n"
+   printf "example: sudo ./build-image-eos -d sda -p rpi -i y -c y -m l\n\n"
+}
+
+_read_options() {
+    # Available options
+    opt=":d:f:b:h"
+
+
+    while getopts "${opt}" arg; do
+      case $arg in
+        d)
+          DEVICENAME="/dev/${OPTARG}"
+          ;;
+        p)
+          PLAT="${OPTARG}"
+          ;;
+        i)
+          DOWN="${OPTARG}"
+          ;;
+        c)
+          CRE="${OPTARG}"
+          ;;
+        m)
+          MIRR="${OPTARG}"
+          ;;
+        \?)
+          echo "Option -${OPTARG} is not valid, aborting"
+          exit 1
+          ;;
+        h|?)
+          _help
+          exit 1
+          ;;
+        :)
+          echo "Option -${OPTARG} requires an argument, aborting"
+          exit 1
+          ;;
+      esac
+    done
+
+case $PLAT in
+     rpi) PLATFORM="RPi64" ;;
+     odn) PLATFORM="OdroidN2" ;;
+     pbp) PLATFORM="Pinebook" ;;
+       *) PLAT1=true;;
+esac
+
+}
 
 #################################################
 # beginning of script
@@ -214,13 +243,15 @@ Main() {
     # VARIABLES
     PLAT=""
     PLATFORM=" "     # e.g. OdroidN2, RPi4b, etc.
-    DEVICE=""
     DEVICENAME=" "   # storage device name e.g. /dev/sda
     DEVICESIZE="1"
     PARTNAME1=" "
     PARTNAME2=" "
     USERNAME=" "
     DEVICETYPE=" "
+    MIRRORS=" "
+    DOWN=" "
+    DOWNLOAD=" "
 
     # Declare color variables
     GREEN='\033[0;32m'
@@ -228,9 +259,10 @@ Main() {
     CYAN='\033[0;36m'
     NC='\033[0m' # No Color
 
-    pacman -S --noconfirm --needed libnewt &>/dev/null # for whiplash dialog
+    pacman -S --noconfirm --needed libnewt arch-install-scripts time &>/dev/null # for whiplash dialog
     _check_if_root
     _check_all_apps_closed
+    _read_options
     _choose_device
 
     _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
@@ -241,8 +273,6 @@ Main() {
     esac
 
     printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
-
-    # exit
     _arch_chroot
 
     case $PLATFORM in
@@ -274,4 +304,3 @@ Main() {
 }
 
 Main "$@"
-
