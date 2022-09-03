@@ -40,7 +40,7 @@ _install_Pinebook_image() {
     # mv MP2/boot/* MP1
     _copy_stuff_for_chroot
     rm -rf MP2/etc/fstab
-    printf "/dev/mmcblk1p1  /boot   vfat    defaults        0       0\n/dev/mmcblk1p2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab ;;
+    printf "/dev/mmcblk1p1  /boot   vfat    defaults        0       0\n/dev/mmcblk1p2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab
 }   # End of function _install_Pinebook_image
 
 _install_OdroidN2_image() {
@@ -143,10 +143,6 @@ _check_if_root() {
     fi
 }  # end of function _check_if_root
 
-_check_all_apps_closed() {
-    whiptail --title "CAUTION" --msgbox "Ensure ALL apps are closed, especially any file manager such as Thunar" 8 74 3>&2 2>&1 1>&3
-}
-
 _copy_stuff_for_chroot() {
     cp switch-kernel-local.sh MP2/root/
     cp config_script.sh MP2/root/
@@ -164,16 +160,6 @@ _arch_chroot(){
     arch-chroot MP2 /root/config_script.sh
 }
 
-_choose_device() {
-    case $PLAT in
-        "") printf "\n\nScript aborted by user..${NC}\n\n"
-            exit ;;
-         0) PLATFORM="RPi64" ;;
-         1) PLATFORM="OdroidN2" ;;
-         2) PLATFORM="Pinebook" ;;
-    esac
-}
-
 _help() {
    # Display Help
    printf "\nHELP\n"
@@ -185,7 +171,7 @@ _help() {
    printf " -p  enter platform: rpi or odn or pbp\n"
    printf " -i  download base image: y or n\n"
    printf " -c  create image: y or n\n"
-   printf " -m  pacman mirrors: l or o (local or online)\n"
+   printf " -l  use local pacman mirrors: y or n\n"
    printf "example: sudo ./build-image-eos -d sda -p rpi -i y -c y -m l\n\n"
 }
 
@@ -208,8 +194,8 @@ _read_options() {
         c)
           CRE="${OPTARG}"
           ;;
-        m)
-          MIRR="${OPTARG}"
+        l)
+          LOC="${OPTARG}"
           ;;
         \?)
           echo "Option -${OPTARG} is not valid, aborting"
@@ -233,6 +219,25 @@ case $PLAT in
        *) PLAT1=true;;
 esac
 
+case $DOWN in
+     y) DOWNLOAD=true ;;
+     n) DOWNLOAD=false ;;
+     *) DOWNLOAD=true ;;
+esac
+
+case $CRE in
+     y) CREATE=true ;;
+     n) CREATE=false ;;
+     *) CREATE=true ;;
+esac
+
+case $LOC in
+     y) LOCAL=true ;;
+     n) LOCAL=false ;;
+     *) LOCAL=false ;;
+esac
+
+
 }
 
 #################################################
@@ -249,9 +254,11 @@ Main() {
     PARTNAME2=" "
     USERNAME=" "
     DEVICETYPE=" "
-    MIRRORS=" "
     DOWN=" "
     DOWNLOAD=" "
+    CREATE=" "
+    LOC=" "
+    LOCAL=" "
 
     # Declare color variables
     GREEN='\033[0;32m'
@@ -261,46 +268,105 @@ Main() {
 
     pacman -S --noconfirm --needed libnewt arch-install-scripts time &>/dev/null # for whiplash dialog
     _check_if_root
-    _check_all_apps_closed
-    _read_options
-    _choose_device
+    # _read_options
 
-    _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
-    case $PLATFORM in
-       RPi64)    _install_RPi4_image ;;
-       OdroidN2) _install_OdroidN2_image ;;
-       Pinebook) _install_Pinebook_image ;;
-    esac
+    # Available options
+    opt=":d:f:b:h"
 
-    printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
-    _arch_chroot
 
-    case $PLATFORM in
-       Pinebook)
-           case $DEVICETYPE in
-               # uSD) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
-               # eMMC) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
-               uSD) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
-               eMMC) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
-           esac
-           # u-boot
-           # dd if=MP2/boot/idbloader.img of=$DEVICENAME seek=64 conv=notrunc,fsync
-           # dd if=MP2/boot/u-boot.itb of=$DEVICENAME seek=16384 conv=notrunc,fsync
-           # Tow-Boot
-           dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
-    esac
+    while getopts "${opt}" arg; do
+      case $arg in
+        d)
+          DEVICENAME="/dev/${OPTARG}"
+          ;;
+        p)
+          PLAT="${OPTARG}"
+          ;;
+        i)
+          DOWN="${OPTARG}"
+          ;;
+        c)
+          CRE="${OPTARG}"
+          ;;
+        l)
+          LOC="${OPTARG}"
+          ;;
+        \?)
+          echo "Option -${OPTARG} is not valid, aborting"
+          exit 1
+          ;;
+        h|?)
+          _help
+          exit 1
+          ;;
+        :)
+          echo "Option -${OPTARG} requires an argument, aborting"
+          exit 1
+          ;;
+      esac
+    done
 
-    umount MP2/boot MP2
-    rm -rf MP2
-    # rm ArchLinuxARM*
+case $PLAT in
+     rpi) PLATFORM="RPi64" ;;
+     odn) PLATFORM="OdroidN2" ;;
+     pbp) PLATFORM="Pinebook" ;;
+       *) PLAT1=true;;
+esac
 
-    printf "\n\n${CYAN}End of script!${NC}\n"
-    printf "\n${CYAN}Be sure to use a file manager to umount the device before removing the USB SD reader${NC}\n"
+case $DOWN in
+     y) DOWNLOAD=true ;;
+     n) DOWNLOAD=false ;;
+     *) DOWNLOAD=true ;;
+esac
 
-    printf "\n${CYAN}The default user is ${NC}alarm${CYAN} with the password ${NC}alarm\n"
-    printf "${CYAN}The default root password is ${NC}root\n\n\n"
+case $CRE in
+     y) CREATE=true ;;
+     n) CREATE=false ;;
+     *) CREATE=true ;;
+esac
 
-    exit
+case $LOC in
+     y) LOCAL=true ;;
+     n) LOCAL=false ;;
+     *) LOCAL=false ;;
+esac
+
+    # _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
+    # case $PLATFORM in
+    #    RPi64)    _install_RPi4_image ;;
+    #    OdroidN2) _install_OdroidN2_image ;;
+    #    Pinebook) _install_Pinebook_image ;;
+    # esac
+    #
+    # printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
+    # _arch_chroot
+    #
+    # case $PLATFORM in
+    #    Pinebook)
+    #        case $DEVICETYPE in
+    #            # uSD) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
+    #            # eMMC) sed -i "s|root=LABEL=ROOT_MNJRO|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
+    #            uSD) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf ;;
+    #            eMMC) sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk2p2|g" MP2/boot/extlinux/extlinux.conf ;;
+    #        esac
+    #        # u-boot
+    #        # dd if=MP2/boot/idbloader.img of=$DEVICENAME seek=64 conv=notrunc,fsync
+    #        # dd if=MP2/boot/u-boot.itb of=$DEVICENAME seek=16384 conv=notrunc,fsync
+    #        # Tow-Boot
+    #        dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync ;;
+    # esac
+    #
+    # umount MP2/boot MP2
+    # rm -rf MP2
+    # # rm ArchLinuxARM*
+    #
+    # printf "\n\n${CYAN}End of script!${NC}\n"
+    # printf "\n${CYAN}Be sure to use a file manager to umount the device before removing the USB SD reader${NC}\n"
+    #
+    # printf "\n${CYAN}The default user is ${NC}alarm${CYAN} with the password ${NC}alarm\n"
+    # printf "${CYAN}The default root password is ${NC}root\n\n\n"
+    #
+    # exit
 }
 
 Main "$@"
