@@ -1,82 +1,8 @@
 #!/bin/bash
 
-_check_if_root() {
-    if [ $(id -u) -ne 0 ]
-    then
-      printf "\n\n${RED}PLEASE RUN THIS SCRIPT AS ROOT OR WITH SUDO${NC}\n\n"
-      exit
-    fi
-}   # end of function _check_if_root
-
-_check_internet_connection() {
-    printf "\n${CYAN}Checking Internet Connection...${NC}\n\n"
-    ping -c 3 endeavouros.com -W 5
-    if [ "$?" != "0" ]
-    then
-       printf "\n\n${RED}No Internet Connection was detected\nFix your Internet Connectin and try again${NC}\n\n"
-       exit
-    fi
-}   # end of function _check_internet_connection
-
-_find_mirrorlist() {
-    # find and install current endevouros-arm-mirrorlist
-    local tmpfile
-    local currentmirrorlist
-    local ARMARCH="aarch64"
-
-    printf "\n${CYAN}Find current endeavouros-mirrorlist...${NC}\n\n"
-    sleep 1
-    curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/$ARMARCH | grep "endeavouros-mirrorlist" | sed s'/^.*endeavouros-mirrorlist/endeavouros-mirrorlist/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | tail -1 > mirrors
-
-    tmpfile="mirrors"
-    read -d $'\x04' currentmirrorlist < "$tmpfile"
-
-    printf "\n${CYAN}Downloading endeavouros-mirrorlist...${NC}"
-    wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/$ARMARCH/$currentmirrorlist 2>> /root/enosARM.log
-
-    printf "\n${CYAN}Installing endeavouros-mirrorlist...${NC}\n"
-    pacman -U --noconfirm $currentmirrorlist
-
-    # printf "\n[sar]\nSigLevel = PackageRequired\nServer = http://127.0.0.1:22122\n\n" >> /etc/pacman.conf
-    printf "\n[endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n" >> /etc/pacman.conf
-
-    rm mirrors
-}  # end of function _find_mirrorlist
-
-
-_find_keyring() {
-    local tmpfile
-    local currentkeyring
-    local ARMARCH="aarch64"
-
-    printf "\n${CYAN}Find current endeavouros-keyring...${NC}\n\n"
-    sleep 1
-    curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/$ARMARCH | grep endeavouros-keyring | sed s'/^.*endeavouros-keyring/endeavouros-keyring/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | tail -1 > keys
-
-    tmpfile="keys"
-    read -d $'\04' currentkeyring < "$tmpfile"
-
-    printf "\n${CYAN}Downloading endeavouros-keyring...${NC}"
-    wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/$ARMARCH/$currentkeyring 2>> /root/enosARM.log
-
-    printf "\n${CYAN}Installing endeavouros-keyring...${NC}\n"
-    pacman -U --noconfirm $currentkeyring
-
-    rm keys
-}   # End of function _find_keyring
-
 _base_addons() {
-    ### the following installs all packages needed to match the EndeavourOS base install
-    printf "\n${CYAN}Installing EndeavourOS Base Addons...${NC}\n"
-    eos-packagelist --arch arm "Desktop-Base + Common packages" "Firefox and language package" > base-addons
-    printf "openbox\npcmanfm-gtk3\ntint2\nnetwork-manager-applet\nxfce4-terminal\nflameshot" >> base-addons
-    pacman -S --noconfirm --needed - < base-addons
-    ### Install Calamares Arm
     pacman -U --noconfirm /home/alarm/configs/xkeyboard-config-2.35.1-1-any.pkg.tar.xz
-    pacman -S --noconfirm --needed calamares_current_arm calamares_config_default_arm calamares_config_ce_arm
-    rm -rf base-addons
 }
-
 
 _finish_up() {
     printf "alarm ALL=(ALL:ALL) NOPASSWD: ALL\n" >> /etc/sudoers
@@ -99,33 +25,29 @@ _finish_up() {
     # rm -rf /etc/lsb-release
     cp /home/alarm/configs/ORION-sky-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
     cp /home/alarm/configs/EOS-PLANETS-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-calamares-wallpaper.png
-    usermod -u 2001 alarm
-    groupmod -g 2001 alarm
+    # from old config_script.sh
+    cd /home/alarm/
+    rm -rf .config
+    mkdir .config
+    mkdir Desktop
+    cd configs/
+    # cp /boot/config.txt /boot/config.txt.orig
+    # cp rpi4-config.txt /boot/config.txt
+    cp /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/getty@.service.bak
+    cp getty@.service /usr/lib/systemd/system/getty@.service
+    cp clean-up.sh /usr/local/bin/clean-up.sh
+    chmod +x /usr/local/bin/clean-up.sh
+    cp clean-up.service /etc/systemd/system/clean-up.service
+    ./alarmconfig.sh
+    ./calamares.sh
+    cd ..
+    chown -R alarm .config Desktop .Xauthority
+    printf "[Match]\nName=wlan*\n\n[Network]\nDHCP=yes\nDNSSEC=no\n" > /etc/systemd/network/wlan.network
+    timedatectl set-ntp true
+    timedatectl timesync-status
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
 }   # end of function _finish_up
 
-_switch_mirrors_local() {
-   sed -i 's|Server = http://mirror.archlinuxarm.org/$arch/$repo|#Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
-   sed -i 's|Server|#Server|g' /etc/pacman.d/endeavouros-mirrorlist
-   echo "Server = http://127.0.0.1:21212" >> /etc/pacman.d/mirrorlist
-   echo "Server = http://10.42.0.1:9129/repo/archlinux_\$arch/\$repo" >> /etc/pacman.d/mirrorlist
-   echo "Server = http://10.42.0.1:9129/repo/endeavouros/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
-   # echo "Server = https://github.com/endeavouros-arm/repo/raw/master/\$repo/\$arch" >> /etc/pacman.d/endeavouros-mirrorlist
-   # printf "\n[sar]\nSigLevel = PackageRequired\nServer = http://127.0.0.1:22122\n\n" >> /etc/pacman.conf
-
-}
-
-_switch_mirrors_back() {
-    sed -i 's|#Server = http://mirror.archlinuxarm.org/$arch/$repo|Server = http://mirror.archlinuxarm.org/$arch/$repo|g' /etc/pacman.d/mirrorlist
-    sed -i 's|Server = http://127.0.0.1:21212||g' /etc/pacman.d/mirrorlist
-    sed -i 's|Server = http://10.42.0.1:9129/repo/archlinux_$arch/$repo||g' /etc/pacman.d/mirrorlist
-    sed -i 's|Server = http://10.42.0.1:9129/repo/endeavouros/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
-    # sed -i 's|Server = https://github.com/endeavouros-arm/repo/raw/master/$repo/$arch||g' /etc/pacman.d/endeavouros-mirrorlist
-    sed -i 's|#Server|Server|g' /etc/pacman.d/endeavouros-mirrorlist
-    sed -i 's|\[sar\]||g' /etc/pacman.conf
-    sed -i 's|SigLevel = PackageRequired||g' /etc/pacman.conf
-    sed -i 's|Server = http://127.0.0.1:22122||g' /etc/pacman.conf
-}
 
 ######################   Start of Script   #################################
 Main() {
@@ -146,25 +68,12 @@ Main() {
    read -d $'\x04' PLATFORM_NAME < "$file"
    file="/root/mirrors"
    read -d $'\x04' LOCAL < "$file"
-   _check_if_root
-   _check_internet_connection
    sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
    sed -i "s|#Color|Color\nILoveCandy|g" /etc/pacman.conf
    sed -i "s|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g" /etc/pacman.conf
-   pacman-key --init
-   pacman-key --populate archlinuxarm
-   pacman -Syy
-   pacman -S --noconfirm wget
-   _find_mirrorlist
-   _find_keyring
-   # Switch Mirrors to Local server for faster image creation
-   # and low bandwidth usage
-   if $LOCAL ; then
-        _switch_mirrors_local
-        pacman -Syy
-   fi
+   printf "\n[endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n" >> /etc/pacman.conf
 
-   useradd -m "alarm" -p "alarm"
+   useradd -m "alarm" -p "alarm" -u 2001
    cp -r /root/configs/ /home/alarm/
 
    case $PLATFORM_NAME in
@@ -175,13 +84,7 @@ Main() {
                ;;
    esac
 
-   pacman -S --noconfirm --needed eos-packagelist
    _base_addons
-
-   if $LOCAL ; then
-       # Switch Mirrors back to original
-       _switch_mirrors_back
-   fi
 
    _finish_up
 }  # end of Main

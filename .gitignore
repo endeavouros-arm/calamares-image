@@ -5,4 +5,4 @@ MP1/
 MP2/
 *.tar.*
 platformname
-*.img
+*img*

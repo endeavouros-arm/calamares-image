@@ -101,6 +101,26 @@ _finish_up() {
     cp /home/alarm/configs/EOS-PLANETS-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-calamares-wallpaper.png
     usermod -u 2001 alarm
     groupmod -g 2001 alarm
+    # from old config_script.sh
+    cd /home/alarm/
+    rm -rf .config
+    mkdir .config
+    mkdir Desktop
+    cd configs/
+    # cp /boot/config.txt /boot/config.txt.orig
+    # cp rpi4-config.txt /boot/config.txt
+    cp /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/getty@.service.bak
+    cp getty@.service /usr/lib/systemd/system/getty@.service
+    cp clean-up.sh /usr/local/bin/clean-up.sh
+    chmod +x /usr/local/bin/clean-up.sh
+    cp clean-up.service /etc/systemd/system/clean-up.service
+    ./alarmconfig.sh
+    ./calamares.sh
+    cd ..
+    chown -R alarm .config Desktop .Xauthority
+    printf "[Match]\nName=wlan*\n\n[Network]\nDHCP=yes\nDNSSEC=no\n" > /etc/systemd/network/wlan.network
+    timedatectl set-ntp true
+    timedatectl timesync-status
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
 }   # end of function _finish_up
 

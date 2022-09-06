@@ -48,15 +48,18 @@ _install_RPi4_image() {
 }  # End of function _install_RPi4_image
 
 _partition_format_mount() {
-
+   # truncate -s 6G test.img
    fallocate -l 6G test.img
-   losetup -f test.img 
+   fallocate -d test.img
+   # dd if=/dev/zero of=./test.img bs=4MiB count=1500 conv=sparse,sync,noerror
+   # dd conv=sparse bs=1MiB count=6000 if=/dev/zero of=./test.img
+   losetup --find --show test.img
    DEVICENAME="/dev/loop0"
    ##### Determine data device size in MiB and partition ###
    printf "\n${CYAN}Partitioning, & formatting storage device...${NC}\n"
    DEVICESIZE=$(fdisk -l | grep "Disk $DEVICENAME" | awk '{print $5}')
    ((DEVICESIZE=$DEVICESIZE/1048576))
-   ((DEVICESIZE=$DEVICESIZE-1))  # for some reason, necessary for USB thumb drives
+   ((DEVICESIZE=$DEVICESIZE-10))  # for some reason, necessary for USB thumb drives
    printf "\n${CYAN}Partitioning storage device $DEVICENAME...${NC}\n"
    printf "\ndevicename = $DEVICENAME     devicesize = $DEVICESIZE\n" >> /root/enosARM.log
    # umount partitions before partitioning and formatting
@@ -120,7 +123,7 @@ _copy_stuff_for_chroot() {
 
 _arch_chroot(){
     arch-chroot MP2 /root/img-chroot-eos.sh
-    arch-chroot MP2 /root/config_script.sh
+    # arch-chroot MP2 /root/config_script.sh
 }
 
 _create_image(){
@@ -263,14 +266,13 @@ Main() {
     _check_if_root
     _read_options "$@"
 
+    rm -rf test.img
     _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
     case $PLATFORM in
        RPi64)    _install_RPi4_image ;;
        OdroidN2) _install_OdroidN2_image ;;
        Pinebook) _install_Pinebook_image ;;
     esac
-    dd if=MP2/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
-
 
     printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
     _arch_chroot

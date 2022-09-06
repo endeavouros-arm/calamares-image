@@ -157,7 +157,7 @@ _copy_stuff_for_chroot() {
 
 _arch_chroot(){
     arch-chroot MP2 /root/build-image-chroot.sh
-    arch-chroot MP2 /root/config_script.sh
+    # arch-chroot MP2 /root/config_script.sh
 }
 
 _create_image(){
