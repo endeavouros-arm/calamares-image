@@ -1,0 +1,16 @@
+ap6256-firmware
+archlinuxarm-keyring
+base
+dhcpcd
+libdrm-pinebookpro
+linux-eos-arm
+linux-eos-arm-headers
+nano
+net-tools
+netctl
+pinebookpro-audio
+pinebookpro-post-install
+openssh
+towboot-pinebookpro-bin
+vi
+which

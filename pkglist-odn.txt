@@ -1,0 +1,13 @@
+archlinuxarm-keyring
+base
+dhcpcd
+linux-odroid
+linux-odroid-headers
+nano
+net-tools
+netctl
+odroid-n2-post-install
+openssh
+vi
+uboot-odroid-n2plus
+which

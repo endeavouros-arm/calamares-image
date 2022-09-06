@@ -1,0 +1,13 @@
+archlinuxarm-keyring
+base
+dhcpcd
+linux-rpi
+linux-rpi-headers
+nano
+net-tools
+netctl
+openssh
+raspberrypi-bootloader
+raspberrypi-firmware
+vi
+which
