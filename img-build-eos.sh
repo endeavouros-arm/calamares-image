@@ -29,22 +29,22 @@ _partition_RPi4() {
 }
 
 _install_Pinebook_image() {
-    pacstrap -cGM MP2 - < pkglist-pbp.txt
+    pacstrap -cGM MP - < pkglist-pbp.txt
     _copy_stuff_for_chroot
-    rm -rf MP2/etc/fstab
-    printf "/dev/mmcblk1p1  /boot   vfat    defaults        0       0\n/dev/mmcblk1p2  /   ext4   defaults     0    0\n" >> MP2/etc/fstab
+    rm -rf MP/etc/fstab
+    printf "/dev/mmcblk1p1  /boot   vfat    defaults        0       0\n/dev/mmcblk1p2  /   ext4   defaults     0    0\n" >> MP/etc/fstab
 }   # End of function _install_Pinebook_image
 
 _install_OdroidN2_image() {
-    pacstrap -cGM MP2 - < pkglist-odn.txt
+    pacstrap -cGM MP - < pkglist-odn.txt
     _copy_stuff_for_chroot
 }   # End of function _install_OdroidN2_image
 
 
 _install_RPi4_image() { 
-    pacstrap -cGM MP2 - < pkglist-rpi.txt
+    pacstrap -cGM MP - < pkglist-rpi.txt
     _copy_stuff_for_chroot
-    sed -i 's/mmcblk0/mmcblk1/' MP2/etc/fstab
+    sed -i 's/mmcblk0/mmcblk1/' MP/etc/fstab
 }  # End of function _install_RPi4_image
 
 _partition_format_mount() {
@@ -79,11 +79,11 @@ _partition_format_mount() {
    mkfs.fat $PARTNAME1   2>> /root/enosARM.log
    PARTNAME2=$DEVICENAME1"2"
    mkfs.ext4 -F $PARTNAME2   2>> /root/enosARM.log
-   # mkdir MP1 MP2
-   mkdir MP2
-   mount $PARTNAME2 MP2
-   mkdir MP2/boot
-   mount $PARTNAME1 MP2/boot
+   # mkdir MP1 MP
+   mkdir MP
+   mount $PARTNAME2 MP
+   mkdir MP/boot
+   mount $PARTNAME1 MP/boot
 
 } # end of function _partition_format_mount
 
@@ -109,21 +109,21 @@ _check_if_root() {
 }  # end of function _check_if_root
 
 _copy_stuff_for_chroot() {
-    cp img-chroot-eos.sh MP2/root/
-    cp config_script.sh MP2/root/
-    mkdir -p MP2/root/
-    cp -r configs/ MP2/root/
+    cp img-chroot-eos.sh MP/root/
+    cp config_script.sh MP/root/
+    mkdir -p MP/root/
+    cp -r configs/ MP/root/
     printf "$PLATFORM\n" > platformname
     printf "$LOCAL\n" > mirrors
-    cp platformname MP2/root/
-    cp mirrors MP2/root/
+    cp platformname MP/root/
+    cp mirrors MP/root/
     rm platformname
     rm mirrors
 }
 
 _arch_chroot(){
-    arch-chroot MP2 /root/img-chroot-eos.sh
-    # arch-chroot MP2 /root/config_script.sh
+    arch-chroot MP /root/img-chroot-eos.sh
+    # arch-chroot MP /root/config_script.sh
 }
 
 _create_image(){
@@ -279,27 +279,27 @@ Main() {
 
     case $PLATFORM in
        OdroidN2)
-          dd if=MP2/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
+          dd if=MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
           ;;
        Pinebook)
-           sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk1p2|g" MP2/boot/extlinux/extlinux.conf
+           sed -i "s|root=LABEL=ROOT_ALARM|root=/dev/mmcblk1p2|g" MP/boot/extlinux/extlinux.conf
            # u-boot
-           # dd if=MP2/boot/idbloader.img of=$DEVICENAME seek=64 conv=notrunc,fsync
-           # dd if=MP2/boot/u-boot.itb of=$DEVICENAME seek=16384 conv=notrunc,fsync
+           # dd if=MP/boot/idbloader.img of=$DEVICENAME seek=64 conv=notrunc,fsync
+           # dd if=MP/boot/u-boot.itb of=$DEVICENAME seek=16384 conv=notrunc,fsync
            # Tow-Boot
-           dd if=MP2/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync
+           dd if=MP/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync
            ;;
     esac
 
     if $CREATE ; then
         printf "\n\n${CYAN}Creating Image${NC}\n\n"
-        cd MP2
+        cd MP
         _create_image
         printf "\n\n${CYAN}Created Image${NC}\n\n"
     fi
 
-    umount MP2/boot MP2
-    rm -rf MP2
+    umount MP/boot MP
+    rm -rf MP
 
     losetup -d /dev/loop0
     # rm ArchLinuxARM*
