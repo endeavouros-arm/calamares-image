@@ -195,13 +195,15 @@ _help() {
    printf "Build EndeavourOS ARM Images\n"
    printf "options:\n"
    printf " -h  Print this Help.\n\n"
-   printf "All these options are required\n"
+   printf "These options are required\n"
    printf " -d  enter device name for ex: sda\n"
    printf " -p  enter platform: rpi or odn or pbp\n"
-   printf " -i  download base image: y or n\n"
-   printf " -c  create image: y or n\n"
-   printf " -l  use local pacman mirrors: y or n\n"
-   printf "example: sudo ./build-image-eos -d sda -p rpi -i y -c y -m l\n\n"
+   printf "These options are optional\n"
+   printf " -i  download base image: (y) or n\n"
+   printf " -c  create image: (y) or n\n"
+   printf " -l  use local pacman mirrors: y or (n)\n"
+   printf "example: sudo ./build-image-eos -d sda -p rpi -i y -c y -l n\nl"
+   printf "Ensure that the directory /home/\$username/endeaouros-arm/images exists\n\n"
 }
 
 _read_options() {

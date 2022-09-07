@@ -49,7 +49,7 @@ _install_RPi4_image() {
 
 _partition_format_mount() {
    # truncate -s 6G test.img
-   fallocate -l 6G test.img
+   fallocate -l 7.5G test.img
    fallocate -d test.img
    # dd if=/dev/zero of=./test.img bs=4MiB count=1500 conv=sparse,sync,noerror
    # dd conv=sparse bs=1MiB count=6000 if=/dev/zero of=./test.img
