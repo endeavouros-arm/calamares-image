@@ -37,7 +37,11 @@ _finish_up() {
     cp getty@.service /usr/lib/systemd/system/getty@.service
     cp clean-up.sh /usr/local/bin/clean-up.sh
     chmod +x /usr/local/bin/clean-up.sh
-    cp clean-up.service /etc/systemd/system/clean-up.service
+    cp resize-fs.service /etc/systemd/system/resize-fs.service
+    cp resize-fs.sh /usr/local/bin/resize-fs.sh
+    chmod +x /usr/local/bin/resize-fs.sh
+    cp resize-fs.service /etc/systemd/system/resize-fs.service
+    systemctl enable resize-fs.service
     ./alarmconfig.sh
     ./calamares.sh
     cd ..

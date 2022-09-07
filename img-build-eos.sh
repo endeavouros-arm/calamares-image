@@ -44,7 +44,13 @@ _install_OdroidN2_image() {
 _install_RPi4_image() { 
     pacstrap -cGM MP - < pkglist-rpi.txt
     _copy_stuff_for_chroot
-    sed -i 's/mmcblk0/mmcblk1/' MP/etc/fstab
+    # sed -i 's/mmcblk0/mmcblk1/' MP/etc/fstab
+    genfstab -L MP2 >> MP2/etc/fstab
+    old=$(awk '{print $1}' MP2/boot/cmdline.txt)
+    new="root=ROOT_EOS"
+    boot_options=" usbhid.mousepoll=8"
+    sed -i "s#$old#$new#" MP2/boot/cmdline.txt
+    sed -i "s/$/$boot_options/" MP2/boot/cmdline.txt
 }  # End of function _install_RPi4_image
 
 _partition_format_mount() {
@@ -76,9 +82,9 @@ _partition_format_mount() {
    DEVICENAME1=$DEVICENAME"p"
    
    PARTNAME1=$DEVICENAME1"1"
-   mkfs.fat $PARTNAME1   2>> /root/enosARM.log
+   mkfs.fat -n BOOT_EOS $PARTNAME1   2>> /root/enosARM.log
    PARTNAME2=$DEVICENAME1"2"
-   mkfs.ext4 -F $PARTNAME2   2>> /root/enosARM.log
+   mkfs.ext4 -F -L ROOT_EOS $PARTNAME2   2>> /root/enosARM.log
    # mkdir MP1 MP
    mkdir MP
    mount $PARTNAME2 MP
