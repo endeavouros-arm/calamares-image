@@ -17,7 +17,7 @@ _finish_up() {
     printf "alias la='ls -al --color=auto'\n" >> /etc/bash.bashrc
     printf "alias lb='lsblk -o NAME,FSTYPE,FSSIZE,LABEL,MOUNTPOINT'\n\n" >> /etc/bash.bashrc
     rm /var/cache/pacman/pkg/*
-    rm /root/img-chroot-eos.sh
+    rm /root/eos-arm-chroot
     rm -rf /etc/pacman.d/gnupg
     # rm -rf /etc/lsb-release
     cp /home/alarm/configs/ORION-sky-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png

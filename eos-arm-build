@@ -197,7 +197,7 @@ _help() {
    printf " -p  enter platform: rpi or odn or pbp\n"
    printf " -t  image type: r (for rootfs) or i (for image) \n"
    printf " -c  create image: y or n\n"
-   printf "example: sudo ./build-image-eos -p rpi -t i -c y \n\n"
+   printf "example: sudo ./eos-arm-build -p rpi -t i -c y \n\n"
 }
 
 _read_options() {
