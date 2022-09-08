@@ -7,7 +7,6 @@ pinebookpro-post-install
 towboot-pinebookpro-bin
 archlinuxarm-keyring
 base
-dhcpcd
 nano
 net-tools
 netctl

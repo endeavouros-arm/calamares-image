@@ -120,11 +120,11 @@ _copy_stuff_for_chroot() {
     mkdir -p MP/root/
     cp -r configs/ MP/root/
     printf "$PLATFORM\n" > platformname
-    printf "$LOCAL\n" > mirrors
     cp platformname MP/root/
-    cp mirrors MP/root/
     rm platformname
-    rm mirrors
+    printf "$TYPE\n" > type
+    cp type MP/root/
+    rm type
 }
 
 _arch_chroot(){
@@ -133,6 +133,32 @@ _arch_chroot(){
 }
 
 _create_image(){
+    case $PLATFORM in
+       OdroidN2)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.tar.zst *
+          zstd -z --sparse --rsyncable -10 -T0 test.img -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.img.zst
+          printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
+          dir=$(pwd)
+          cd /home/$USERNAME/endeavouros-arm/images/
+          sha512sum enosLinuxARM-odroid-n2-latest.img.zst > enosLinuxARM-odroid-n2-latest.img.zst.sha512sum
+          cd $dir ;;
+       Pinebook)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-pbp-latest.tar.zst *
+          zstd -z --sparse --rsyncable -10 -T0 test.img -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-pbp-latest.img.zst
+          printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
+          dir=$(pwd)
+          cd /home/$USERNAME/endeavouros-arm/images/
+          sha512sum enosLinuxARM-pbp-latest.img.zst > enosLinuxARM-pbp-latest.img.zst.sha512sum
+          cd $dir ;;
+       RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
+          zstd -z --sparse --rsyncable -10 -T0 test.img -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.img.zst
+          printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
+          dir=$(pwd)
+          cd /home/$USERNAME/endeavouros-arm/images/
+          sha512sum enosLinuxARM-rpi-aarch64-latest.img.zst > enosLinuxARM-rpi-aarch64-latest.img.zst.sha512sum
+          cd $dir ;;
+    esac
+}
+
+_create_rootfs(){
     case $PLATFORM in
        OdroidN2)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.tar.zst *
           time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.tar.zst
@@ -169,14 +195,14 @@ _help() {
    printf " -h  Print this Help.\n\n"
    printf "All these options are required\n"
    printf " -p  enter platform: rpi or odn or pbp\n"
+   printf " -t  image type: r (for rootfs) or i (for image) \n"
    printf " -c  create image: y or n\n"
-   printf " -l  use local pacman mirrors: y or n\n"
-   printf "example: sudo ./build-image-eos -p rpi -c y -m l\n\n"
+   printf "example: sudo ./build-image-eos -p rpi -t i -c y \n\n"
 }
 
 _read_options() {
     # Available options
-    opt=":p:c:l:h:"
+    opt=":p:t:c:h:"
     local OPTIND
 
     if [[ ! $@ =~ ^\-.+ ]]
@@ -191,11 +217,11 @@ _read_options() {
         p)
           PLAT="${OPTARG}"
           ;;
+        t)
+          TYP="${OPTARG}"
+          ;;
         c)
           CRE="${OPTARG}"
-          ;;
-        l)
-          LOC="${OPTARG}"
           ;;
         \?)
           echo "Option -${OPTARG} is not valid, aborting"
@@ -215,30 +241,24 @@ _read_options() {
     done
     shift $((OPTIND-1))
 
-case $PLAT in
-     rpi) PLATFORM="RPi64" ;;
-     odn) PLATFORM="OdroidN2" ;;
-     pbp) PLATFORM="Pinebook" ;;
-       *) PLAT1=true;;
-esac
+    case $PLAT in
+         rpi) PLATFORM="RPi64" ;;
+         odn) PLATFORM="OdroidN2" ;;
+         pbp) PLATFORM="Pinebook" ;;
+           *) PLAT1=true;;
+    esac
 
-case $DOWN in
-     y) DOWNLOAD=true ;;
-     n) DOWNLOAD=false ;;
-     *) DOWNLOAD=true ;;
-esac
+    case $CRE in
+         y) CREATE=true ;;
+         n) CREATE=false ;;
+         *) CREATE=true ;;
+    esac
 
-case $CRE in
-     y) CREATE=true ;;
-     n) CREATE=false ;;
-     *) CREATE=true ;;
-esac
-
-case $LOC in
-     y) LOCAL=true ;;
-     n) LOCAL=false ;;
-     *) LOCAL=false ;;
-esac
+    case $TYP in
+         r) TYPE="Rootfs" ;;
+         i) TYPE="Image" ;;
+         *) TYPE=" " ;;
+    esac
 
 
 }
@@ -256,11 +276,10 @@ Main() {
     PARTNAME1=" "
     PARTNAME2=" "
     USERNAME=" "
-    DOWN=" "
-    DOWNLOAD=" "
+    CRE=" "
     CREATE=" "
-    LOC=" "
-    LOCAL=" "
+    TYP=" "
+    TYPE=" "
     
     # Declare color variables
     GREEN='\033[0;32m'
@@ -296,12 +315,15 @@ Main() {
            dd if=MP/boot/Tow-Boot.noenv.bin of=$DEVICENAME seek=64 conv=notrunc,fsync
            ;;
     esac
-
+    
     if $CREATE ; then
-        printf "\n\n${CYAN}Creating Image${NC}\n\n"
-        cd MP
-        _create_image
-        printf "\n\n${CYAN}Created Image${NC}\n\n"
+
+        if [ "$TYPE" == "Rootfs" ]; then
+            printf "\n\n${CYAN}Creating Rootfs${NC}\n\n"
+            cd MP
+            _create_rootfs
+            printf "\n\n${CYAN}Created Rootfs${NC}\n\n"
+        fi
     fi
 
     umount MP/boot MP
@@ -309,6 +331,13 @@ Main() {
 
     losetup -d /dev/loop0
     # rm ArchLinuxARM*
+    if $CREATE ; then
+        if [ "$TYPE" == "Image" ]; then
+            printf "\n\n${CYAN}Creating Image${NC}\n\n"
+            _create_image
+            printf "\n\n${CYAN}Created Image${NC}\n\n"
+        fi
+    fi
 
     exit
 }

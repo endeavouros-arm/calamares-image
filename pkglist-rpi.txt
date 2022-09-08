@@ -4,7 +4,6 @@ raspberrypi-bootloader
 raspberrypi-firmware
 archlinuxarm-keyring
 base
-dhcpcd
 nano
 net-tools
 netctl

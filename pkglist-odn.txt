@@ -4,7 +4,6 @@ odroid-n2-post-install
 uboot-odroid-n2plus
 archlinuxarm-keyring
 base
-dhcpcd
 nano
 net-tools
 netctl

@@ -12,15 +12,12 @@ _finish_up() {
     chown alarm:alarm /home/alarm/.xinitrc
     chmod 644 /home/alarm/.xinitrc
     rm -rf /endeavouros*
-    systemctl disable dhcpcd.service
     systemctl enable NetworkManager.service
-    pacman -Rn --noconfirm dhcpcd
     printf "\nalias ll='ls -l --color=auto'\n" >> /etc/bash.bashrc
     printf "alias la='ls -al --color=auto'\n" >> /etc/bash.bashrc
     printf "alias lb='lsblk -o NAME,FSTYPE,FSSIZE,LABEL,MOUNTPOINT'\n\n" >> /etc/bash.bashrc
     rm /var/cache/pacman/pkg/*
     rm /root/img-chroot-eos.sh
-    rm /root/enosARM.log
     rm -rf /etc/pacman.d/gnupg
     # rm -rf /etc/lsb-release
     cp /home/alarm/configs/ORION-sky-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
@@ -37,11 +34,13 @@ _finish_up() {
     cp getty@.service /usr/lib/systemd/system/getty@.service
     cp clean-up.sh /usr/local/bin/clean-up.sh
     chmod +x /usr/local/bin/clean-up.sh
-    cp resize-fs.service /etc/systemd/system/resize-fs.service
-    cp resize-fs.sh /usr/local/bin/resize-fs.sh
-    chmod +x /usr/local/bin/resize-fs.sh
-    cp resize-fs.service /etc/systemd/system/resize-fs.service
-    systemctl enable resize-fs.service
+    if [ "$TYPE" == "Image" ]; then
+        cp resize-fs.service /etc/systemd/system/resize-fs.service
+        cp resize-fs.sh /usr/local/bin/resize-fs.sh
+        chmod +x /usr/local/bin/resize-fs.sh
+        cp resize-fs.service /etc/systemd/system/resize-fs.service
+        systemctl enable resize-fs.service
+    fi
     ./alarmconfig.sh
     ./calamares.sh
     cd ..
@@ -70,8 +69,8 @@ Main() {
    # read in platformname passed by install-image-aarch64.sh
    file="/root/platformname"
    read -d $'\x04' PLATFORM_NAME < "$file"
-   file="/root/mirrors"
-   read -d $'\x04' LOCAL < "$file"
+   file="/root/type"
+   read -d $'\x04' TYPE < "$file"
    sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/g' /etc/pacman.conf
    sed -i "s|#Color|Color\nILoveCandy|g" /etc/pacman.conf
    sed -i "s|#VerbosePkgLists|VerbosePkgLists\nDisableDownloadTimeout|g" /etc/pacman.conf
