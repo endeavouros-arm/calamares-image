@@ -15,8 +15,8 @@ to get help on how to build the image.
 - build-image-chroot.sh : Chroot script run by the above script
 
 ## Experimental method
-- img-build-eos.sh : Script to build eos-arm images using `loop` module
-- img-chroot-eos.sh : Chroot script run by the above script
+- eos-arm-build : Script to build eos-arm images using `loop` module
+- eos-arm-chroot : Chroot script run by the above script
 
 ## Configs
 These are stored in the configs folder

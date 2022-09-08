@@ -115,7 +115,7 @@ _check_if_root() {
 }  # end of function _check_if_root
 
 _copy_stuff_for_chroot() {
-    cp img-chroot-eos.sh MP/root/
+    cp eos-arm-chroot MP/root/
     cp config_script.sh MP/root/
     mkdir -p MP/root/
     cp -r configs/ MP/root/
@@ -128,7 +128,7 @@ _copy_stuff_for_chroot() {
 }
 
 _arch_chroot(){
-    arch-chroot MP /root/img-chroot-eos.sh
+    arch-chroot MP /root/eos-arm-chroot
     # arch-chroot MP /root/config_script.sh
 }
 
