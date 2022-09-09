@@ -29,25 +29,50 @@ _partition_RPi4() {
 }
 
 _install_Pinebook_image() {
-    pacstrap -cGM MP - < pkglist-pbp.txt
+    case $ARCH in
+        aarch64)
+            pacstrap -cGM MP - < $(pwd)/build-configs/pkglist-pbp.txt
+            ;;
+        x86_64)
+            pacstrap -GMC $(pwd)/build-configs/eos-pacman.conf  MP - < $(pwd)/build-configs/pkglist-pbp.txt
+            ;;
+    esac
     _copy_stuff_for_chroot
     rm -rf MP/etc/fstab
     printf "/dev/mmcblk1p1  /boot   vfat    defaults        0       0\n/dev/mmcblk1p2  /   ext4   defaults     0    0\n" >> MP/etc/fstab
 }   # End of function _install_Pinebook_image
 
 _install_OdroidN2_image() {
-    pacstrap -cGM MP - < pkglist-odn.txt
+    case $ARCH in
+        aarch64)
+            pacstrap -cGM MP - < $(pwd)/build-configs/pkglist-odn.txt
+            ;;
+        x86_64)
+            pacstrap -GMC $(pwd)/build-configs/eos-pacman.conf  MP - < $(pwd)/build-configs/pkglist-odn.txt
+            ;;
+    esac
     _copy_stuff_for_chroot
 }   # End of function _install_OdroidN2_image
 
 
 _install_RPi4_image() { 
-    pacstrap -cGM MP - < pkglist-rpi.txt
+    case $ARCH in
+        aarch64)
+            pacstrap -cGM MP - < $(pwd)/build-configs/pkglist-rpi.txt
+            ;;
+        x86_64)
+            ln -s $(pwd)/build-configs/mirrorlist /etc/pacman.d/arch-mirrorlist
+            ln -s $(pwd)/build-configs/eos-mirrorlist /etc/pacman.d/eos-mirrorlist
+            pacstrap -GMC $(pwd)/build-configs/eos-pacman.conf  MP - < $(pwd)/build-configs/pkglist-rpi.txt
+            rm /etc/pacman.d/arch-mirrorlist
+            rm /etc/pacman.d/eos-mirrorlist
+            ;;
+    esac
     _copy_stuff_for_chroot
     # sed -i 's/mmcblk0/mmcblk1/' MP/etc/fstab
     genfstab -L MP2 >> MP2/etc/fstab
     old=$(awk '{print $1}' MP2/boot/cmdline.txt)
-    new="root=ROOT_EOS"
+    new="root=LABEL=ROOT_EOS"
     boot_options=" usbhid.mousepoll=8"
     sed -i "s#$old#$new#" MP2/boot/cmdline.txt
     sed -i "s/$/$boot_options/" MP2/boot/cmdline.txt
@@ -59,8 +84,13 @@ _partition_format_mount() {
    fallocate -d test.img
    # dd if=/dev/zero of=./test.img bs=4MiB count=1500 conv=sparse,sync,noerror
    # dd conv=sparse bs=1MiB count=6000 if=/dev/zero of=./test.img
-   losetup --find --show test.img
-   DEVICENAME="/dev/loop0"
+   # losetup --find --show test.img | read DVN
+   DVN=$(losetup --find --show test.img)
+   DEVICENAME="$DVN"
+   printf "\n${CYAN} DEVICENAME ${NC}\n"
+   echo $DEVICENAME
+   echo $DVN
+   # DEVICENAME="/dev/loop0"
    ##### Determine data device size in MiB and partition ###
    printf "\n${CYAN}Partitioning, & formatting storage device...${NC}\n"
    DEVICESIZE=$(fdisk -l | grep "Disk $DEVICENAME" | awk '{print $5}')
@@ -90,6 +120,10 @@ _partition_format_mount() {
    mount $PARTNAME2 MP
    mkdir MP/boot
    mount $PARTNAME1 MP/boot
+   if [ "$ARCH" == "x86_64" ]; then
+       mkdir -p MP/usr/bin
+       cp /usr/bin/qemu-aarch64-static MP/usr/bin
+   fi
 
 } # end of function _partition_format_mount
 
@@ -280,6 +314,7 @@ Main() {
     CREATE=" "
     TYP=" "
     TYPE=" "
+    ARCH="$(uname -m)"
     
     # Declare color variables
     GREEN='\033[0;32m'
@@ -301,6 +336,10 @@ Main() {
 
     printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
     _arch_chroot
+    
+    if [ "$ARCH" == "x86_64" ]; then
+       rm MP/usr/bin/qemu-aarch64-static
+    fi
 
     case $PLATFORM in
        OdroidN2)
