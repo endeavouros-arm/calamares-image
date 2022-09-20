@@ -38,8 +38,7 @@ _install_Pinebook_image() {
             ;;
     esac
     _copy_stuff_for_chroot
-    rm -rf MP/etc/fstab
-    printf "/dev/mmcblk1p1  /boot   vfat    defaults        0       0\n/dev/mmcblk1p2  /   ext4   defaults     0    0\n" >> MP/etc/fstab
+    genfstab -L MP >> MP/etc/fstab
 }   # End of function _install_Pinebook_image
 
 _install_OdroidN2_image() {
@@ -52,6 +51,7 @@ _install_OdroidN2_image() {
             ;;
     esac
     _copy_stuff_for_chroot
+    genfstab -L MP >> MP/etc/fstab
 }   # End of function _install_OdroidN2_image
 
 
@@ -70,12 +70,12 @@ _install_RPi4_image() {
     esac
     _copy_stuff_for_chroot
     # sed -i 's/mmcblk0/mmcblk1/' MP/etc/fstab
-    genfstab -L MP2 >> MP2/etc/fstab
-    old=$(awk '{print $1}' MP2/boot/cmdline.txt)
+    genfstab -L MP >> MP/etc/fstab
+    old=$(awk '{print $1}' MP/boot/cmdline.txt)
     new="root=LABEL=ROOT_EOS"
     boot_options=" usbhid.mousepoll=8"
-    sed -i "s#$old#$new#" MP2/boot/cmdline.txt
-    sed -i "s/$/$boot_options/" MP2/boot/cmdline.txt
+    sed -i "s#$old#$new#" MP/boot/cmdline.txt
+    sed -i "s/$/$boot_options/" MP/boot/cmdline.txt
 }  # End of function _install_RPi4_image
 
 _partition_format_mount() {

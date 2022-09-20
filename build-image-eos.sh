@@ -162,29 +162,29 @@ _arch_chroot(){
 
 _create_image(){
     case $PLATFORM in
-       OdroidN2)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.tar.zst *
-          time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-odroid-n2-latest.tar.zst
+       OdroidN2)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-odroid-n2-latest.tar.zst *
+          time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-odroid-n2-latest.tar.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
           cd ..
           dir=$(pwd)
-          cd /home/$USERNAME/endeavouros-arm/images/
+          cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-odroid-n2-latest.tar.zst > enosLinuxARM-odroid-n2-latest.tar.zst.sha512sum
           cd $dir ;;
-       Pinebook)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-pbp-latest.tar.zst *
-          time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-pbp-latest.tar.zst
+       Pinebook)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-pbp-latest.tar.zst *
+          time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-pbp-latest.tar.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
           cd ..
           dir=$(pwd)
-          cd /home/$USERNAME/endeavouros-arm/images/
+          cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-pbp-latest.tar.zst > enosLinuxARM-pbp-latest.tar.zst.sha512sum
           cd $dir ;;
-       RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
-          time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/images/enosLinuxARM-rpi-aarch64-latest.tar.zst
+       RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
+          time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.tar.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
           cd ..
           dir=$(pwd)
-          cd /home/$USERNAME/endeavouros-arm/images/
-          sha512sum enosLinuxARM-rpi-aarch64-latest.tar.zst > enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
+          cd /home/$USERNAME/endeavouros-arm/test-images/
+          sha512sum enosLinuxARM-rpi-latest.tar.zst > enosLinuxARM-rpi-latest.tar.zst.sha512sum
           cd $dir ;;
     esac
 }
@@ -203,7 +203,7 @@ _help() {
    printf " -c  create image: (y) or n\n"
    printf " -l  use local pacman mirrors: y or (n)\n"
    printf "example: sudo ./build-image-eos -d sda -p rpi -i y -c y -l n\nl"
-   printf "Ensure that the directory /home/\$username/endeaouros-arm/images exists\n\n"
+   printf "Ensure that the directory /home/\$username/endeaouros-arm/test-images exists\n\n"
 }
 
 _read_options() {
