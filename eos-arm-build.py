@@ -144,9 +144,9 @@ def install_image():
     subprocess.run(cmd, stdin=open(fname))
 
     copy_chroot()
+    subprocess.run('genfstab -L MP >> MP/etc/fstab',shell=True)
     if platform == "rpi":
         cmd = """
-        genfstab -L MP >> MP/etc/fstab;
         old=$(awk \'{print $1}\' MP/boot/cmdline.txt);
         new="root=LABEL=ROOT_EOS";
         boot_options=" usbhid.mousepoll=8";

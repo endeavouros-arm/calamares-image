@@ -150,3 +150,4 @@ flameshot
 calamares_current_arm
 calamares_config_default_arm
 calamares_config_ce_arm
+arch-install-scripts
