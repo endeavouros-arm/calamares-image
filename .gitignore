@@ -6,3 +6,4 @@ MP2/
 *.tar.*
 platformname
 *img*
+test.py

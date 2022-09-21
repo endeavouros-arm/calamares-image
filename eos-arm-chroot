@@ -80,10 +80,10 @@ Main() {
    cp -r /root/configs/ /home/alarm/
 
    case $PLATFORM_NAME in
-     RPi64)    cp /boot/config.txt /boot/config.txt.orig
+     rpi)    cp /boot/config.txt /boot/config.txt.orig
                cp /home/alarm/configs/rpi4-config.txt /boot/config.txt
                ;;
-     Pinebook) sed -i 's|^MODULES=(|MODULES=(btrfs |' /etc/mkinitcpio.conf
+     pbp) sed -i 's|^MODULES=(|MODULES=(btrfs |' /etc/mkinitcpio.conf
                ;;
    esac
 
