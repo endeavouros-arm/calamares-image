@@ -182,12 +182,12 @@ _create_image(){
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-pbp-latest.img.zst > enosLinuxARM-pbp-latest.img.zst.sha512sum
           cd $dir ;;
-       RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
-          zstd -z --sparse --rsyncable -10 -T0 test.img -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-aarch64-latest.img.zst
+       RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.tar.zst *
+          zstd -z --sparse --rsyncable -10 -T0 test.img -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.img.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
           dir=$(pwd)
           cd /home/$USERNAME/endeavouros-arm/test-images/
-          sha512sum enosLinuxARM-rpi-aarch64-latest.img.zst > enosLinuxARM-rpi-aarch64-latest.img.zst.sha512sum
+          sha512sum enosLinuxARM-rpi-latest.img.zst > enosLinuxARM-rpi-latest.img.zst.sha512sum
           cd $dir ;;
     esac
 }
@@ -210,13 +210,13 @@ _create_rootfs(){
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-pbp-latest.tar.zst > enosLinuxARM-pbp-latest.tar.zst.sha512sum
           cd $dir ;;
-       RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-aarch64-latest.tar.zst *
-          time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-aarch64-latest.tar.zst
+       RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.tar.zst *
+          time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.tar.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
           cd ..
           dir=$(pwd)
           cd /home/$USERNAME/endeavouros-arm/test-images/
-          sha512sum enosLinuxARM-rpi-aarch64-latest.tar.zst > enosLinuxARM-rpi-aarch64-latest.tar.zst.sha512sum
+          sha512sum enosLinuxARM-rpi-latest.tar.zst > enosLinuxARM-rpi-latest.tar.zst.sha512sum
           cd $dir ;;
     esac
 }

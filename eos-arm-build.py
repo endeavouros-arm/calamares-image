@@ -228,7 +228,11 @@ def finish_up():
         ]
         for f in files:
             subprocess.run(["rm", f])
-    subprocess.run(["umount", "MP/boot", "MP"])
+    while True:
+        out = subprocess.run(["umount", "MP/boot", "MP"])
+        if out.returncode == 0:
+            break
+
     subprocess.run(["rm", "-rf", "MP"])
     subprocess.run(["losetup", "-d", dev])
 
