@@ -1,9 +1,8 @@
 ArchLinuxARM*
 enosLinuxARM*
 nod*
-MP1/
-MP2/
+MP/
 *.tar.*
 platformname
 *img*
-test.py
+test*

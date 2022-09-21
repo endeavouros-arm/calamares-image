@@ -163,8 +163,9 @@ def create_rootfs():
         img_str = "odroid-n2"
     if platform == "rpi":
         img_str = "rpi"
-    cmd = f"time bsdtar -cf - * | zstd -z --rsyncable -10 -t0 -of {img_dir}enoslinuxarm-{img_str}-latest.tar.zst"
-    out = subprocess.run(cmd, shell=True)
+    # cmd = f"time bsdtar -cf - * | zstd -z --rsyncable -10 -t0 -of {img_dir}enoslinuxarm-{img_str}-latest.tar.zst"
+    cmd = f"time bsdtar --use-compress-program=zstdmt -cf {img_dir}/enosLinuxARM-odroid-n2-latest.tar.zst *"
+    out = subprocess.run(cmd, shell=True, cwd=os.getcwd() + "/MP")
     if out.returncode != 0:
         raise Exception("Failed to create rootfs")
     cmd = f"sha512sum enosLinuxARM-{img_str}-latest.tar.zst > enosLinuxARM-{img_str}-latest.tar.zst.sha512sum"
