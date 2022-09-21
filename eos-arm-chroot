@@ -34,7 +34,7 @@ _finish_up() {
     cp getty@.service /usr/lib/systemd/system/getty@.service
     cp clean-up.sh /usr/local/bin/clean-up.sh
     chmod +x /usr/local/bin/clean-up.sh
-    if [ "$TYPE" == "Image" ]; then
+    if [ "$TYPE" == "ddimg" ]; then
         cp resize-fs.service /etc/systemd/system/resize-fs.service
         cp resize-fs.sh /usr/local/bin/resize-fs.sh
         chmod +x /usr/local/bin/resize-fs.sh

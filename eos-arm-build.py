@@ -34,7 +34,7 @@ def parse_function():
     parser.add_argument(
         "--type",
         "-t",
-        choices=["rootfs", "image"],
+        choices=["rootfs", "ddimg"],
         default="rootfs",
         help="Choose image type",
     )
@@ -190,7 +190,7 @@ def create_rootfs():
         raise Exception("Failed to create sha512sum")
 
 
-def create_image():
+def create_ddimg():
     if platform == "pbp":
         img_str = "pbp"
     elif platform == "odn":
@@ -251,8 +251,8 @@ def main():
 
     finish_up()
 
-    if create_img and itype == "image":
-        create_image()
+    if create_img and itype == "ddimg":
+        create_ddimg()
 
 
 if __name__ == "__main__":
