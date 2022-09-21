@@ -245,7 +245,7 @@ def main():
     if create_img and itype == "rootfs":
         create_rootfs()
 
-    # finish_up()
+    finish_up()
 
     if create_img and itype == "image":
         create_image()
