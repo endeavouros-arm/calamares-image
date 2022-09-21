@@ -144,7 +144,7 @@ def install_image():
     subprocess.run(cmd, stdin=open(fname))
 
     copy_chroot()
-    subprocess.run('genfstab -L MP >> MP/etc/fstab',shell=True)
+    subprocess.run("genfstab -L MP >> MP/etc/fstab", shell=True)
     if platform == "rpi":
         cmd = """
         old=$(awk \'{print $1}\' MP/boot/cmdline.txt);
@@ -164,8 +164,23 @@ def create_rootfs():
     if platform == "rpi":
         img_str = "rpi"
     # cmd = f"time bsdtar -cf - * | zstd -z --rsyncable -10 -t0 -of {img_dir}enoslinuxarm-{img_str}-latest.tar.zst"
-    cmd = f"time bsdtar --use-compress-program=zstdmt -cf {img_dir}/enosLinuxARM-odroid-n2-latest.tar.zst *"
-    out = subprocess.run(cmd, shell=True, cwd=os.getcwd() + "/MP")
+    # cmd = f"time bsdtar --use-compress-program=zstdmt -cf {img_dir}/enosLinuxARM-odroid-n2-latest.tar.zst *"
+    # out = subprocess.run(cmd, shell=True, cwd=os.getcwd() + "/MP")
+    cmdp = "time bsdtar -cf - *"
+    cmd = [
+        "zstd",
+        "-z",
+        "--sparse",
+        "--rsyncable",
+        "-10",
+        "-T0",
+        "-of",
+        f"{img_dir}enosLinuxARM-{img_str}-latest.tar.zst",
+    ]
+    p1 = subprocess.Popen(
+        cmdp, shell=True, stdout=subprocess.PIPE, cwd=os.getcwd() + "/MP"
+    )
+    out = subprocess.run(cmd, stdin=p1.stdout)
     if out.returncode != 0:
         raise Exception("Failed to create rootfs")
     cmd = f"sha512sum enosLinuxARM-{img_str}-latest.tar.zst > enosLinuxARM-{img_str}-latest.tar.zst.sha512sum"
@@ -227,7 +242,7 @@ def main():
     if create_img and itype == "rootfs":
         create_rootfs()
 
-    finish_up()
+    # finish_up()
 
     if create_img and itype == "image":
         create_image()
