@@ -136,7 +136,7 @@ def install_image():
     elif arch == "x86_64":
         pac_conf = conf_dir + "eos-pacman.conf"
         cmd = ["pacstrap", "-GMC", pac_conf, "MP", "-"]
-        mir_dir = "/etc/pacman.d"
+        mir_dir = "/etc/pacman.d/"
         cmd_m1 = ["ln", "-s", conf_dir + "mirrorlist", mir_dir + "arch-mirrorlist"]
         cmd_m2 = ["ln", "-s", conf_dir + "eos-mirrorlist", mir_dir + "eos-mirrorlist"]
         subprocess.run(cmd_m1)
