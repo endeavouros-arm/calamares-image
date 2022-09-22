@@ -206,7 +206,7 @@ def create_ddimg():
     ]
     fname = f"enosLinuxARM-{img_str}-latest.img.xz"
     with open(img_dir + fname, "w") as f:
-        out = subprocess.run(cmd, stdout=f)
+        out = subprocess.run(cmd, stdout=f, check=True)
     cmd = f"sha512sum {fname} > {fname}.sha512sum"
     out = subprocess.run(cmd, shell=True, cwd=img_dir, check=True)
 
