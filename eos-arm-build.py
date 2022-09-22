@@ -5,7 +5,7 @@ import subprocess
 import os
 
 img_name = "test.img"
-img_size = "7.5G"
+img_size = "6G"
 img_dir = f"/home/{os.getlogin()}/endeavouros-arm/test-images/"
 
 
@@ -184,7 +184,8 @@ def create_rootfs():
     out = subprocess.run(cmd, stdin=p1.stdout)
     if out.returncode != 0:
         raise Exception("Failed to create rootfs")
-    cmd = f"sha512sum enosLinuxARM-{img_str}-latest.tar.zst > enosLinuxARM-{img_str}-latest.tar.zst.sha512sum"
+    fname =f"enosLinuxARM-{img_str}-latest.tar.zst" 
+    cmd = f"sha512sum {fname} > {fname}.sha512sum"
     out = subprocess.run(cmd, shell=True, cwd=img_dir)
     if out.returncode != 0:
         raise Exception("Failed to create sha512sum")
@@ -199,21 +200,30 @@ def create_ddimg():
         img_str = "rpi"
 
     subprocess.run(['mkdir','-p',img_dir])
+    # cmd = [
+    #     "zstd",
+    #     "-z",
+    #     "--sparse",
+    #     "--rsyncable",
+    #     "-10",
+    #     "-T0",
+    #     "test.img",
+    #     "-of",
+    #     f"{img_dir}enosLinuxARM-{img_str}-latest.img.zst",
+    # ]
+    # fname =f"enosLinuxARM-{img_str}-latest.img.zst" 
     cmd = [
-        "zstd",
-        "-z",
-        "--sparse",
-        "--rsyncable",
-        "-10",
-        "-T0",
-        "test.img",
-        "-of",
-        f"{img_dir}enosLinuxARM-{img_str}-latest.img.zst",
-    ]
-    out = subprocess.run(cmd)
+            'xz',
+            '-cfT0',
+            '-1',
+            img_name,
+            ]
+    fname =f"enosLinuxARM-{img_str}-latest.img.xz" 
+    with open( img_dir+fname, 'w' ) as f:
+        out = subprocess.run(cmd, stdout=f)
     if out.returncode != 0:
         raise Exception("Failed to create image")
-    cmd = f"sha512sum enosLinuxARM-{img_str}-latest.img.zst > enosLinuxARM-{img_str}-latest.img.zst.sha512sum"
+    cmd = f"sha512sum {fname} > {fname}.sha512sum"
     out = subprocess.run(cmd, shell=True, cwd=img_dir)
     if out.returncode != 0:
         raise Exception("Failed to create sha512sum")
