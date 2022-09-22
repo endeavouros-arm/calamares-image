@@ -7,6 +7,7 @@ import os
 img_name = "test.img"
 img_size = "6G"
 img_dir = f"/home/{os.getlogin()}/endeavouros-arm/test-images/"
+subprocess.run(["mkdir", "-p", img_dir])
 
 
 def init_build_script():
@@ -66,10 +67,9 @@ def partition_device(device: str, boot_partition_start, boot_partition_size):
         ]
         + create_partition_table
         + create_boot_partition
-        + create_root_partition
+        + create_root_partition,
+        check=True,
     )
-    if result.returncode != 0:
-        raise Exception(f"Failed to create partitions on {device}")
 
 
 def mount_image(device):
@@ -163,7 +163,6 @@ def create_rootfs():
         img_str = "odroid-n2"
     if platform == "rpi":
         img_str = "rpi"
-    subprocess.run(['mkdir','-p',img_dir])
     # cmd = f"time bsdtar -cf - * | zstd -z --rsyncable -10 -t0 -of {img_dir}enoslinuxarm-{img_str}-latest.tar.zst"
     # cmd = f"time bsdtar --use-compress-program=zstdmt -cf {img_dir}/enosLinuxARM-odroid-n2-latest.tar.zst *"
     # out = subprocess.run(cmd, shell=True, cwd=os.getcwd() + "/MP")
@@ -181,14 +180,10 @@ def create_rootfs():
     p1 = subprocess.Popen(
         cmdp, shell=True, stdout=subprocess.PIPE, cwd=os.getcwd() + "/MP"
     )
-    out = subprocess.run(cmd, stdin=p1.stdout)
-    if out.returncode != 0:
-        raise Exception("Failed to create rootfs")
-    fname =f"enosLinuxARM-{img_str}-latest.tar.zst" 
+    out = subprocess.run(cmd, stdin=p1.stdout, check=True)
+    fname = f"enosLinuxARM-{img_str}-latest.tar.zst"
     cmd = f"sha512sum {fname} > {fname}.sha512sum"
-    out = subprocess.run(cmd, shell=True, cwd=img_dir)
-    if out.returncode != 0:
-        raise Exception("Failed to create sha512sum")
+    out = subprocess.run(cmd, shell=True, cwd=img_dir, check=True)
 
 
 def create_ddimg():
@@ -199,34 +194,21 @@ def create_ddimg():
     if platform == "rpi":
         img_str = "rpi"
 
-    subprocess.run(['mkdir','-p',img_dir])
-    # cmd = [
-    #     "zstd",
-    #     "-z",
-    #     "--sparse",
-    #     "--rsyncable",
-    #     "-10",
-    #     "-T0",
-    #     "test.img",
-    #     "-of",
-    #     f"{img_dir}enosLinuxARM-{img_str}-latest.img.zst",
-    # ]
-    # fname =f"enosLinuxARM-{img_str}-latest.img.zst" 
+    # cmd = [ "zstd", "-z", "--sparse", "--rsyncable", "-10",
+    #         "-T0", "test.img", "-of",
+    #         f"{img_dir}enosLinuxARM-{img_str}-latest.img.zst"]
+    # fname =f"enosLinuxARM-{img_str}-latest.img.zst"
     cmd = [
-            'xz',
-            '-cfT0',
-            '-1',
-            img_name,
-            ]
-    fname =f"enosLinuxARM-{img_str}-latest.img.xz" 
-    with open( img_dir+fname, 'w' ) as f:
+        "xz",
+        "-cfT0",
+        "-1",
+        img_name,
+    ]
+    fname = f"enosLinuxARM-{img_str}-latest.img.xz"
+    with open(img_dir + fname, "w") as f:
         out = subprocess.run(cmd, stdout=f)
-    if out.returncode != 0:
-        raise Exception("Failed to create image")
     cmd = f"sha512sum {fname} > {fname}.sha512sum"
-    out = subprocess.run(cmd, shell=True, cwd=img_dir)
-    if out.returncode != 0:
-        raise Exception("Failed to create sha512sum")
+    out = subprocess.run(cmd, shell=True, cwd=img_dir, check=True)
 
 
 def finish_up():
@@ -252,9 +234,7 @@ def main():
     init_build_script()
     init_image()
     install_image()
-    out = subprocess.run(["arch-chroot", "MP", "/root/eos-arm-chroot"])
-    if out.returncode != 0:
-        raise Exception("Failed to arch-chroot")
+    out = subprocess.run(["arch-chroot", "MP", "/root/eos-arm-chroot"], check=True)
 
     if create_img and itype == "rootfs":
         create_rootfs()
