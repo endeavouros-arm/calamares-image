@@ -34,11 +34,11 @@ _finish_up() {
     cp getty@.service /usr/lib/systemd/system/getty@.service
     cp clean-up.sh /usr/local/bin/clean-up.sh
     chmod +x /usr/local/bin/clean-up.sh
+    cp clean-up.service /etc/systemd/system/clean-up.service
     if [ "$TYPE" == "ddimg" ]; then
         cp resize-fs.service /etc/systemd/system/resize-fs.service
         cp resize-fs.sh /usr/local/bin/resize-fs.sh
         chmod +x /usr/local/bin/resize-fs.sh
-        cp resize-fs.service /etc/systemd/system/resize-fs.service
         systemctl enable resize-fs.service
     fi
     ./alarmconfig.sh
@@ -46,8 +46,9 @@ _finish_up() {
     cd ..
     chown -R alarm .config Desktop .Xauthority
     printf "[Match]\nName=wlan*\n\n[Network]\nDHCP=yes\nDNSSEC=no\n" > /etc/systemd/network/wlan.network
-    timedatectl set-ntp true
-    timedatectl timesync-status
+    # timedatectl set-ntp true
+    # timedatectl timesync-status
+    systemctl enable systemd-timesyncd
     printf "\n\n${CYAN}Your uSD is ready for creating an image.${NC}\n"
 }   # end of function _finish_up
 

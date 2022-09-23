@@ -145,7 +145,7 @@ def install_image():
 
     copy_chroot()
     subprocess.run("genfstab -L MP >> MP/etc/fstab", shell=True)
-    if platform == "rpi":
+    if platform == "rpi" and itype == "ddimg":
         cmd = """
         old=$(awk \'{print $1}\' MP/boot/cmdline.txt);
         new="root=LABEL=ROOT_EOS";
@@ -221,7 +221,13 @@ def finish_up():
         for f in files:
             subprocess.run(["rm", f])
     while True:
-        out = subprocess.run(["umount", "MP/boot", "MP"])
+        out = subprocess.run(["umount", "MP/boot"])
+        print(out)
+        if out.returncode == 0:
+            break
+    while True:
+        out = subprocess.run(["umount", "MP"])
+        print(out)
         if out.returncode == 0:
             break
 
