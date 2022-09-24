@@ -145,6 +145,12 @@ def install_image():
 
     copy_chroot()
     subprocess.run("genfstab -L MP >> MP/etc/fstab", shell=True)
+    cmd="""
+    sed -i 's/subvolid=.*,//g' MP/etc/fstab
+    sed -i /swap/d MP/etc/fstab
+    sed -i /zram/d MP/etc/fstab
+    """
+    subprocess.run(cmd,shell=True)
     if platform == "rpi" and itype == "ddimg":
         cmd = """
         old=$(awk \'{print $1}\' MP/boot/cmdline.txt);
