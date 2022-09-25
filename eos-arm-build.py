@@ -250,8 +250,7 @@ def main():
     init_build_script()
     init_image()
     install_image()
-    out = subprocess.run(["arch-chroot", "MP", "/root/eos-arm-chroot"],
-                         check=True)
+    subprocess.run(["arch-chroot", "MP", "/root/eos-arm-chroot"], check=True)
 
     if create_img and itype == "rootfs":
         create_rootfs()
