@@ -186,6 +186,7 @@ def create_rootfs():
         "-of",
         f"{img_dir}enosLinuxARM-{img_str}-latest.tar.zst",
     ]
+    print("Creating tar compatible image")
     p1 = subprocess.Popen(cmdp,
                           shell=True,
                           stdout=subprocess.PIPE,
@@ -215,6 +216,7 @@ def create_ddimg():
         img_name,
     ]
     fname = f"enosLinuxARM-{img_str}-latest.img.xz"
+    print("Creating dd compatible image")
     with open(img_dir + fname, "w") as f:
         subprocess.run(cmd, stdout=f, check=True)
     cmd = f"sha512sum {fname} > {fname}.sha512sum"
