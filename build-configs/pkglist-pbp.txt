@@ -2,6 +2,7 @@ ap6256-firmware
 libdrm-pinebookpro
 linux-eos-arm
 linux-eos-arm-headers
+linux-firmware
 pinebookpro-audio
 pinebookpro-post-install
 towboot-pinebookpro-bin

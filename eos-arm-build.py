@@ -3,6 +3,8 @@
 import argparse
 import subprocess
 import os
+import time
+
 
 img_name = "test.img"
 img_size = "6G"
@@ -248,12 +250,13 @@ def finish_up():
 
 
 def main():
+    start_time = time.time()
     parse_function()
     init_build_script()
     init_image()
     install_image()
     subprocess.run(["arch-chroot", "MP", "/root/eos-arm-chroot"], check=True)
-
+    build_time = time.time()
     if create_img and itype == "rootfs":
         create_rootfs()
 
@@ -261,7 +264,13 @@ def main():
 
     if create_img and itype == "ddimg":
         create_ddimg()
-
+    create_time = time.time()
+    build_t = (build_time-start_time)
+    create_t = (create_time-build_time)
+    total_t = (create_time-start_time)
+    print(f"Build Time : {build_t//60:.1f}m{build_t%60:.1f}s")
+    print(f"Create Time: {create_t//60:.1f}m{create_t%60:.1f}s")
+    print(f"Total Time : {total_t//60:.1f}m{total_t%60:.1f}s")
 
 if __name__ == "__main__":
     main()
