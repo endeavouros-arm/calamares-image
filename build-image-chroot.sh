@@ -97,8 +97,7 @@ _finish_up() {
     rm /root/enosARM.log
     rm -rf /etc/pacman.d/gnupg
     # rm -rf /etc/lsb-release
-    cp /home/alarm/configs/ORION-sky-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
-    cp /home/alarm/configs/EOS-PLANETS-ARM.png /usr/share/endeavouros/backgrounds/endeavouros-calamares-wallpaper.png
+    cp /home/alarm/configs/endeavouros-calamares-wallpaper.png /usr/share/endeavouros/backgrounds/endeavouros-calamares-wallpaper.png
     usermod -u 2001 alarm
     groupmod -g 2001 alarm
     # from old config_script.sh
