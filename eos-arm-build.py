@@ -2,6 +2,7 @@
 
 import argparse
 import subprocess
+from subprocess import run, Popen
 import os
 import time
 
@@ -9,7 +10,12 @@ import time
 img_name = "test.img"
 img_size = "6G"
 img_dir = f"/home/{os.getlogin()}/endeavouros-arm/test-images/"
-subprocess.run(["mkdir", "-p", img_dir])
+run(["mkdir", "-p", img_dir])
+out = run(["pacman", "-Qe", "python-termcolor"])
+if out.returncode != 0:
+    run(["pacman", "-S", "--noconfirm", "python-termcolor"])
+
+from termcolor import cprint
 
 
 def init_build_script():
@@ -17,7 +23,7 @@ def init_build_script():
         exit("Error: Run this script as root")
 
     if os.path.exists(img_name):
-        subprocess.run(["rm", "-rf", img_name])
+        run(["rm", "-rf", img_name])
 
 
 def parse_function():
@@ -25,7 +31,8 @@ def parse_function():
     global itype
     global create_img
     parser = argparse.ArgumentParser(
-        description="Python script to create EndeavourOS ARM images/rootfs")
+        description="Python script to create EndeavourOS ARM images/rootfs"
+    )
     parser.add_argument(
         "--platform",
         "-p",
@@ -60,13 +67,15 @@ def partition_device(device: str, boot_partition_start, boot_partition_size):
     create_partition_table = ["mklabel", "msdos"]
     create_boot_partition = ["mkpart", "primary", "fat32", sizes[0], sizes[1]]
     create_root_partition = ["mkpart", "primary", sizes[1], "100%"]
-    result = subprocess.run(
+    result = run(
         [
             "parted",
             "--script",
             device,
-        ] + create_partition_table + create_boot_partition +
-        create_root_partition,
+        ]
+        + create_partition_table
+        + create_boot_partition
+        + create_root_partition,
         check=True,
     )
 
@@ -77,33 +86,31 @@ def mount_image(device):
     dev2 = device + "p2"
     mk_boot = ["mkfs.fat", "-n", "BOOT_EOS", dev1]
     mk_root = ["mkfs.ext4", "-F", "-L", "ROOT_EOS", dev2]
-    subprocess.run(mk_boot)
-    subprocess.run(mk_root)
+    run(mk_boot)
+    run(mk_root)
 
-    subprocess.run(["mkdir", "-p", "MP"])
-    subprocess.run(["mount", dev2, "MP"])
-    subprocess.run(["mkdir", "-p", "MP/boot"])
-    subprocess.run(["mount", dev1, "MP/boot"])
-    out = subprocess.run(["uname", "-m"],
-                         encoding="utf-8",
-                         capture_output=True)
+    run(["mkdir", "-p", "MP"])
+    run(["mount", dev2, "MP"])
+    run(["mkdir", "-p", "MP/boot"])
+    run(["mount", dev1, "MP/boot"])
+    out = run(["uname", "-m"], encoding="utf-8", capture_output=True)
     arch = out.stdout.split("\n")[0]
     if arch == "x86_64":
-        subprocess.run(["mkdir", "-p", "MP/usr/bin"])
-        subprocess.run(["cp", "/usr/bin/qemu-aarch64-static", "MP/usr/bin"])
+        run(["mkdir", "-p", "MP/usr/bin"])
+        run(["cp", "/usr/bin/qemu-aarch64-static", "MP/usr/bin"])
 
 
 def init_image():
     global dev
 
-    subprocess.run(["fallocate", "-l", img_size, img_name])
-    subprocess.run(["fallocate", "-d", img_name])
-    dev_out = subprocess.run(["losetup", "--find", "--show", img_name],
-                             encoding="utf-8",
-                             capture_output=True)
+    run(["fallocate", "-l", img_size, img_name])
+    run(["fallocate", "-d", img_name])
+    dev_out = run(
+        ["losetup", "--find", "--show", img_name], encoding="utf-8", capture_output=True
+    )
     dev = dev_out.stdout.split("\n")[0]
     print("Device: " + dev)
-    size_out = subprocess.run(
+    size_out = run(
         ["ls", "-al", "--block-size=1M", "test.img"],
         encoding="utf-8",
         capture_output=True,
@@ -119,8 +126,8 @@ def init_image():
 
 def copy_chroot():
     chroot_dir = "MP/root/"
-    subprocess.run(["cp", "eos-arm-chroot", chroot_dir])
-    subprocess.run(["cp", "-r", "configs", chroot_dir])
+    run(["cp", "eos-arm-chroot", chroot_dir])
+    run(["cp", "-r", "configs", chroot_dir])
     files = ["platformname", "type"]
     inputs = [platform, itype]
     for i, (fil, inp) in enumerate(zip(files, inputs)):
@@ -138,24 +145,20 @@ def install_image():
         pac_conf = conf_dir + "eos-pacman.conf"
         cmd = ["pacstrap", "-GMC", pac_conf, "MP", "-"]
         mir_dir = "/etc/pacman.d/"
-        cmd_m1 = [
-            "ln", "-s", conf_dir + "mirrorlist", mir_dir + "arch-mirrorlist"
-        ]
-        cmd_m2 = [
-            "ln", "-s", conf_dir + "eos-mirrorlist", mir_dir + "eos-mirrorlist"
-        ]
-        subprocess.run(cmd_m1)
-        subprocess.run(cmd_m2)
-    subprocess.run(cmd, stdin=open(fname))
+        cmd_m1 = ["ln", "-s", conf_dir + "mirrorlist", mir_dir + "arch-mirrorlist"]
+        cmd_m2 = ["ln", "-s", conf_dir + "eos-mirrorlist", mir_dir + "eos-mirrorlist"]
+        run(cmd_m1)
+        run(cmd_m2)
+    run(cmd, stdin=open(fname))
 
     copy_chroot()
-    subprocess.run("genfstab -L MP >> MP/etc/fstab", shell=True)
+    run("genfstab -L MP >> MP/etc/fstab", shell=True)
     cmd = """
     sed -i 's/subvolid=.*,//g' MP/etc/fstab
     sed -i /swap/d MP/etc/fstab
     sed -i /zram/d MP/etc/fstab
     """
-    subprocess.run(cmd, shell=True)
+    run(cmd, shell=True)
     if platform == "rpi" and itype == "ddimg":
         cmd = """
         old=$(awk \'{print $1}\' MP/boot/cmdline.txt);
@@ -164,7 +167,7 @@ def install_image():
         sed -i "s#$old#$new#" MP/boot/cmdline.txt;
         sed -i "s/$/$boot_options/" MP/boot/cmdline.txt
         """
-        subprocess.run(cmd, shell=True)
+        run(cmd, shell=True)
 
 
 def create_rootfs():
@@ -176,7 +179,7 @@ def create_rootfs():
         img_str = "rpi"
     # cmd = f"time bsdtar -cf - * | zstd -z --rsyncable -10 -t0 -of {img_dir}enoslinuxarm-{img_str}-latest.tar.zst"
     # cmd = f"time bsdtar --use-compress-program=zstdmt -cf {img_dir}/enosLinuxARM-odroid-n2-latest.tar.zst *"
-    # out = subprocess.run(cmd, shell=True, cwd=os.getcwd() + "/MP")
+    # out = run(cmd, shell=True, cwd=os.getcwd() + "/MP")
     cmdp = "time bsdtar -cf - *"
     cmd = [
         "zstd",
@@ -189,14 +192,11 @@ def create_rootfs():
         f"{img_dir}enosLinuxARM-{img_str}-latest.tar.zst",
     ]
     print("Creating tar compatible image")
-    p1 = subprocess.Popen(cmdp,
-                          shell=True,
-                          stdout=subprocess.PIPE,
-                          cwd=os.getcwd() + "/MP")
-    subprocess.run(cmd, stdin=p1.stdout, check=True)
+    p1 = Popen(cmdp, shell=True, stdout=subprocess.PIPE, cwd=os.getcwd() + "/MP")
+    run(cmd, stdin=p1.stdout, check=True)
     fname = f"enosLinuxARM-{img_str}-latest.tar.zst"
     cmd = f"sha512sum {fname} > {fname}.sha512sum"
-    subprocess.run(cmd, shell=True, cwd=img_dir, check=True)
+    run(cmd, shell=True, cwd=img_dir, check=True)
 
 
 def create_ddimg():
@@ -220,9 +220,9 @@ def create_ddimg():
     fname = f"enosLinuxARM-{img_str}-latest.img.xz"
     print("Creating dd compatible image")
     with open(img_dir + fname, "w") as f:
-        subprocess.run(cmd, stdout=f, check=True)
+        run(cmd, stdout=f, check=True)
     cmd = f"sha512sum {fname} > {fname}.sha512sum"
-    subprocess.run(cmd, shell=True, cwd=img_dir, check=True)
+    run(cmd, shell=True, cwd=img_dir, check=True)
 
 
 def finish_up():
@@ -233,20 +233,20 @@ def finish_up():
             "/etc/pacman.d/eos-mirrorlist",
         ]
         for f in files:
-            subprocess.run(["rm", f])
+            run(["rm", f])
     while True:
-        out = subprocess.run(["umount", "MP/boot"])
+        out = run(["umount", "MP/boot"])
         print(out)
         if out.returncode == 0:
             break
     while True:
-        out = subprocess.run(["umount", "MP"])
+        out = run(["umount", "MP"])
         print(out)
         if out.returncode == 0:
             break
 
-    subprocess.run(["rm", "-rf", "MP"])
-    subprocess.run(["losetup", "-d", dev])
+    run(["rm", "-rf", "MP"])
+    run(["losetup", "-d", dev])
 
 
 def main():
@@ -255,7 +255,7 @@ def main():
     init_build_script()
     init_image()
     install_image()
-    subprocess.run(["arch-chroot", "MP", "/root/eos-arm-chroot"], check=True)
+    run(["arch-chroot", "MP", "/root/eos-arm-chroot"], check=True)
     build_time = time.time()
     if create_img and itype == "rootfs":
         create_rootfs()
@@ -265,12 +265,13 @@ def main():
     if create_img and itype == "ddimg":
         create_ddimg()
     create_time = time.time()
-    build_t = (build_time-start_time)
-    create_t = (create_time-build_time)
-    total_t = (create_time-start_time)
-    print(f"Build Time : {build_t//60:.1f}m{build_t%60:.1f}s")
-    print(f"Create Time: {create_t//60:.1f}m{create_t%60:.1f}s")
-    print(f"Total Time : {total_t//60:.1f}m{total_t%60:.1f}s")
+    build_t = build_time - start_time
+    create_t = create_time - build_time
+    total_t = create_time - start_time
+    cprint(f"Build Time : {build_t//60:04.1f}m{build_t%60:04.1f}s", "red")
+    cprint(f"Create Time: {create_t//60:04.1f}m{create_t%60:04.1f}s", "red")
+    cprint(f"Total Time : {total_t//60:04.1f}m{total_t%60:04.1f}s", "red")
+
 
 if __name__ == "__main__":
     main()
