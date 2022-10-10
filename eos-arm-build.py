@@ -11,9 +11,6 @@ img_name = "test.img"
 img_size = "6G"
 img_dir = f"/home/{os.getlogin()}/endeavouros-arm/test-images/"
 run(["mkdir", "-p", img_dir])
-out = run(["pacman", "-Qe", "python-termcolor"])
-if out.returncode != 0:
-    run(["pacman", "-S", "--noconfirm", "python-termcolor"])
 
 from termcolor import cprint
 
@@ -268,9 +265,9 @@ def main():
     build_t = build_time - start_time
     create_t = create_time - build_time
     total_t = create_time - start_time
-    cprint(f"Build Time : {build_t//60:04.1f}m{build_t%60:04.1f}s", "red")
-    cprint(f"Create Time: {create_t//60:04.1f}m{create_t%60:04.1f}s", "red")
-    cprint(f"Total Time : {total_t//60:04.1f}m{total_t%60:04.1f}s", "red")
+    print(f"Build Time : {build_t//60:04.1f}m{build_t%60:04.1f}s")
+    print(f"Create Time: {create_t//60:04.1f}m{create_t%60:04.1f}s")
+    print(f"Total Time : {total_t//60:04.1f}m{total_t%60:04.1f}s")
 
 
 if __name__ == "__main__":
