@@ -12,7 +12,8 @@ img_size = "6G"
 img_dir = f"/home/{os.getlogin()}/endeavouros-arm/test-images/"
 run(["mkdir", "-p", img_dir])
 
-from termcolor import cprint
+CRED = "\033[41m"
+CEND = "\033[0m"
 
 
 def init_build_script():
@@ -142,8 +143,10 @@ def install_image():
         pac_conf = conf_dir + "eos-pacman.conf"
         cmd = ["pacstrap", "-GMC", pac_conf, "MP", "-"]
         mir_dir = "/etc/pacman.d/"
-        cmd_m1 = ["ln", "-s", conf_dir + "mirrorlist", mir_dir + "arch-mirrorlist"]
-        cmd_m2 = ["ln", "-s", conf_dir + "eos-mirrorlist", mir_dir + "eos-mirrorlist"]
+        cmd_m1 = ["ln", "-s", conf_dir +
+                  "mirrorlist", mir_dir + "arch-mirrorlist"]
+        cmd_m2 = ["ln", "-s", conf_dir +
+                  "eos-mirrorlist", mir_dir + "eos-mirrorlist"]
         run(cmd_m1)
         run(cmd_m2)
     run(cmd, stdin=open(fname))
@@ -188,8 +191,9 @@ def create_rootfs():
         "-of",
         f"{img_dir}enosLinuxARM-{img_str}-latest.tar.zst",
     ]
-    print("Creating tar compatible image")
-    p1 = Popen(cmdp, shell=True, stdout=subprocess.PIPE, cwd=os.getcwd() + "/MP")
+    print(CRED + "Creating tar compatible image" + CEND)
+    p1 = Popen(cmdp, shell=True, stdout=subprocess.PIPE,
+               cwd=os.getcwd() + "/MP")
     run(cmd, stdin=p1.stdout, check=True)
     fname = f"enosLinuxARM-{img_str}-latest.tar.zst"
     cmd = f"sha512sum {fname} > {fname}.sha512sum"
@@ -215,7 +219,7 @@ def create_ddimg():
         img_name,
     ]
     fname = f"enosLinuxARM-{img_str}-latest.img.xz"
-    print("Creating dd compatible image")
+    print(CRED + "Creating dd compatible image" + CEND)
     with open(img_dir + fname, "w") as f:
         run(cmd, stdout=f, check=True)
     cmd = f"sha512sum {fname} > {fname}.sha512sum"
@@ -268,6 +272,7 @@ def main():
     print(f"Build Time : {build_t//60:04.1f}m{build_t%60:04.1f}s")
     print(f"Create Time: {create_t//60:04.1f}m{create_t%60:04.1f}s")
     print(f"Total Time : {total_t//60:04.1f}m{total_t%60:04.1f}s")
+    print(CRED + "End of image build" + CEND)
 
 
 if __name__ == "__main__":
