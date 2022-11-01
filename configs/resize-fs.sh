@@ -44,7 +44,7 @@ fi
 
 
 # Change fstab to boot partition UUID
-genfstab -U / >> /etc/fstab
+genfstab -U / > /etc/fstab
 # Change boot script to root partition UUID
 ROOT_UUID=$(lsblk -o NAME,UUID | grep $PART_NAME | awk '{print $2}')
 if [ -f /boot/extlinux/extlinux.conf ]; then
