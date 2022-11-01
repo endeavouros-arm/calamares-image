@@ -9,7 +9,10 @@ import time
 
 img_name = "test.img"
 img_size = "6G"
-img_dir = f"/home/{os.getlogin()}/endeavouros-arm/test-images/"
+try:
+    img_dir = f"/home/{os.getlogin()}/endeavouros-arm/test-images/"
+except:
+    img_dir = "/root/test-images/"
 run(["mkdir", "-p", img_dir])
 
 CRED = "\033[41m"
