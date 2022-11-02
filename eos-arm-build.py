@@ -32,7 +32,8 @@ def parse_function():
     global itype
     global create_img
     parser = argparse.ArgumentParser(
-        description="Python script to create EndeavourOS ARM images/rootfs"
+        description="Python script to create EndeavourOS ARM images/rootfs",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
         "--platform",
