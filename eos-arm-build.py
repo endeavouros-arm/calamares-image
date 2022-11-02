@@ -154,6 +154,7 @@ def install_image():
         run(cmd_m2)
     run(cmd, stdin=open(fname))
 
+    print(CRED + "fstab" + CEND)
     copy_chroot()
     run("genfstab -L MP >> MP/etc/fstab", shell=True)
     cmd = """
@@ -161,16 +162,38 @@ def install_image():
     sed -i /swap/d MP/etc/fstab
     sed -i /zram/d MP/etc/fstab
     """
+    print(CRED + "Shell Commands" + CEND)
     run(cmd, shell=True)
     if platform == "rpi" and itype == "ddimg":
         cmd = """
         old=$(awk \'{print $1}\' MP/boot/cmdline.txt);
+        echo $old
         new="root=LABEL=ROOT_EOS";
+        echo $new
         boot_options=" usbhid.mousepoll=8";
         sed -i "s#$old#$new#" MP/boot/cmdline.txt;
         sed -i "s/$/$boot_options/" MP/boot/cmdline.txt
         """
         run(cmd, shell=True)
+    elif platform == "odn" and itype == "ddimg":
+        cmd = """
+        old=$(grep 'setenv bootargs \"root=' MP/boot/boot.ini);
+        echo $old
+        new='setenv bootargs \"root=LABEL=ROOT_EOS rootwait rw\"';
+        echo $new
+        sed -i "s#$old#$new#" MP/boot/boot.ini;
+        """
+        run(cmd, shell=True)
+    elif platform == "pbp" and itype == "ddimg":
+        cmd = """
+        old=$(grep -o 'root=.* ' MP/boot/extlinux/extlinux.conf);
+        echo $old
+        new="root=LABEL=ROOT_EOS rw rootwait";
+        echo $new
+        sed -i "s#$old#$new#" MP/boot/extlinux/extlinux.conf;
+        """
+        run(cmd, shell=True)
+    print(CRED + "End of Pacstrap" + CEND)
 
 
 def create_rootfs():
@@ -259,6 +282,7 @@ def main():
     init_build_script()
     init_image()
     install_image()
+    print(CRED + "Arch Chroot" + CEND)
     run(["arch-chroot", "MP", "/root/eos-arm-chroot"], check=True)
     build_time = time.time()
     if create_img and itype == "rootfs":

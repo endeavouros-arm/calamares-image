@@ -48,7 +48,7 @@ _finish_up() {
     # timedatectl set-ntp true
     # timedatectl timesync-status
     systemctl enable systemd-timesyncd
-    printf "\n\n${CYAN} Chroot Complete${NC}\n"
+    printf "\n${CYAN}Chroot Complete${NC}\n"
 }   # end of function _finish_up
 
 
