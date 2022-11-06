@@ -16,8 +16,8 @@ jobs:
     container:
       image: docker://lopsided/archlinux-arm64v8
       options: --privileged
-      volumes:
-        - /dev:/dev
+      # volumes:
+      #   - /dev:/dev
 
     steps:
       - run: echo "� The job was automatically triggered by a ${{ github.event_name }} event."
