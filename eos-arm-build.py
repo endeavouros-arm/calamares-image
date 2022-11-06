@@ -83,7 +83,7 @@ def partition_device(device: str, boot_partition_start, boot_partition_size):
         + create_root_partition,
     )
     out = run(["partprobe", device], encoding="utf-8", capture_output=True)
-    print(out.stdout)
+    run(f"partprobe {device}",shell=True)
 
 
 def mount_image(device):
