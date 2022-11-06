@@ -81,7 +81,8 @@ def partition_device(device: str, boot_partition_start, boot_partition_size):
         + create_partition_table
         + create_boot_partition
         + create_root_partition,
-        encoding="utf-8", capture_output=True),
+        encoding="utf-8",
+        capture_output=True,
     )
     print(result.stdout)
     run(["partprobe", device])
