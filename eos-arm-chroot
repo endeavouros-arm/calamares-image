@@ -19,6 +19,7 @@ _finish_up() {
     rm /var/cache/pacman/pkg/* 2>/dev/null
     rm /root/eos-arm-chroot
     rm -rf /etc/pacman.d/gnupg
+    rm -rf /var/log/pacman.log
     # rm -rf /etc/lsb-release
     cp /home/alarm/configs/endeavouros-calamares-wallpaper.png /usr/share/endeavouros/backgrounds/endeavouros-calamares-wallpaper.png
     # from old config_script.sh
