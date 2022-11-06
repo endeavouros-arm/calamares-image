@@ -85,6 +85,7 @@ def partition_device(device: str, boot_partition_start, boot_partition_size):
         capture_output=True,
     )
     print(result.stdout)
+    run(["partprobe", device])
     var = "LOOPDEV=" + device
     devp = device + "p"
     cmd = f"""
