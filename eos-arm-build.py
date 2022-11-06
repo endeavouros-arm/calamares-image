@@ -130,11 +130,14 @@ def init_image():
 
     run(["fallocate", "-l", img_size, img_name])
     run(["fallocate", "-d", img_name])
-    dev_out = run(
-        ["losetup", "--find", "--show", "--partscan", img_name], encoding="utf-8", capture_output=True
-    )
-    dev = dev_out.stdout.split("\n")[0]
-    print("Device: " + dev)
+    # dev_out = run(
+    #     ["losetup", "--find", "--show", "--partscan", img_name], encoding="utf-8", capture_output=True
+    # )
+    # dev = dev_out.stdout.split("\n")[0]
+    # print("Device: " + dev)
+    dev = "/dev/loop-arm"
+    run(["mknod", "-m", "0660", dev,"b","7","101"])
+    run(["losetup", dev, img_name])
     size_out = run(
         ["ls", "-al", "--block-size=1M", "test.img"],
         encoding="utf-8",
