@@ -85,20 +85,20 @@ def partition_device(device: str, boot_partition_start, boot_partition_size):
         capture_output=True,
     )
     print(result.stdout)
-    # var = "LOOPDEV=" + device
-    # devp = device + "p"
-    # cmd = f"""
-    # PARTITIONS=$(lsblk --raw --output "MAJ:MIN" --noheadings $LOOPDEV | tail -n +2)
-    # COUNTER=1
-    # for i in $PARTITIONS; do
-    #    MAJ=$(echo $i | cut -d: -f1)
-    #    MIN=$(echo $i | cut -d: -f2)
-    #    if [ ! -e "{devp}$COUNTER" ]; then mknod {devp}$COUNTER b $MAJ $MIN; fi
-    #    COUNTER=$((COUNTER + 1))
-    # done
-    # """
-    # run(var+cmd, shell=True)
-    run(["partprobe", device])
+    var = "LOOPDEV=" + device
+    devp = device + "p"
+    cmd = f"""
+    PARTITIONS=$(lsblk --raw --output "MAJ:MIN" --noheadings $LOOPDEV | tail -n +2)
+    COUNTER=1
+    for i in $PARTITIONS; do
+       MAJ=$(echo $i | cut -d: -f1)
+       MIN=$(echo $i | cut -d: -f2)
+       if [ ! -e "{devp}$COUNTER" ]; then mknod {devp}$COUNTER b $MAJ $MIN; fi
+       COUNTER=$((COUNTER + 1))
+    done
+    """
+    run(var+cmd, shell=True)
+    # run(["partprobe", device])
     # run(f"partprobe {device}",shell=True)
 
 
