@@ -14,7 +14,7 @@ jobs:
       contents: write
 
     container:
-      image: docker://arm64v8/debian:bullseye-slim
+      image: sradjoker/eos-arm:latest
       options: --privileged
       volumes:
         - /dev:/dev
@@ -31,7 +31,7 @@ jobs:
       - run: echo "�️ The workflow is now ready to test your code on the runner."
       - name: List files in the repository
         run: |
-          ls 
+          ls ${{ github.workspace }}
       - run: echo "� This job's status is ${{ job.status }}."
 
 
