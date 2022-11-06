@@ -14,7 +14,7 @@ jobs:
       contents: write
 
     container:
-      image: docker://sradjoker/eos-arm:latest
+      image: docker://lopsided/archlinux-arm64v8
       options: --privileged
       volumes:
         - /dev:/dev
