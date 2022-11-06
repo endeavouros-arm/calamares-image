@@ -6,6 +6,7 @@ from subprocess import Popen
 import os
 import time
 from subprocess import run as run_unsafe
+import logging
 
 def run(*args, **kwargs):
     out = run_unsafe(*args,**(kwargs | {'check': True}))
@@ -136,7 +137,11 @@ def init_image():
     # dev = dev_out.stdout.split("\n")[0]
     # print("Device: " + dev)
     dev = "/dev/loop-arm"
-    run(["mknod", "-m", "0660", dev,"b","7","101"])
+    # dev = (run(["losetup", "-f"], encoding="utf-8").stdout or "/dev/loop-arm").strip()
+    dev = (run(["losetup", "-f"], encoding="utf-8").stdout or "").strip() or "/dev/loop-arm"
+    if not os.path.exists(dev):
+        logging.warning(f"{dev} doesn't exist, creating it")
+        run(["mknod", "-m", "0660", dev,"b","7","101"])
     run(["losetup", dev, img_name])
     size_out = run(
         ["ls", "-al", "--block-size=1M", "test.img"],
