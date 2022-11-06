@@ -14,7 +14,7 @@ jobs:
       contents: write
 
     container:
-      image: sradjoker/eos-arm:latest
+      image: docker://sradjoker/eos-arm:latest
       options: --privileged
       volumes:
         - /dev:/dev
