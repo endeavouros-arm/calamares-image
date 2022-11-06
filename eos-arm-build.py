@@ -82,7 +82,8 @@ def partition_device(device: str, boot_partition_start, boot_partition_size):
         + create_boot_partition
         + create_root_partition,
     )
-    run(["partprobe",device])
+    out = run(["partprobe", device], encoding="utf-8", capture_output=True)
+    print(out.stdout)
 
 
 def mount_image(device):
@@ -91,8 +92,10 @@ def mount_image(device):
     dev2 = device + "p2"
     mk_boot = ["mkfs.fat", "-n", "BOOT_EOS", dev1]
     mk_root = ["mkfs.ext4", "-F", "-L", "ROOT_EOS", dev2]
-    run(mk_boot)
-    run(mk_root)
+    out = run(mk_boot, encoding="utf-8", capture_output=True)
+    print(out.stdout)
+    out = run(mk_root, encoding="utf-8", capture_output=True)
+    print(out.stdout)
 
     run(["mkdir", "-p", "MP"])
     run(["mount", dev2, "MP"])
