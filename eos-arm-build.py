@@ -87,7 +87,6 @@ def partition_device(device: str, boot_partition_start, boot_partition_size):
     print(result.stdout)
     var = "LOOPDEV=" + device
     cmd = f"""
-    LOOPDEV={dev}
     PARTITIONS=$(lsblk --raw --output "MAJ:MIN" --noheadings ${LOOPDEV} | tail -n +2)
     COUNTER=1
     for i in $PARTITIONS; do
