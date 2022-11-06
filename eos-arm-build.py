@@ -5,12 +5,11 @@ import subprocess
 from subprocess import Popen
 import os
 import time
-
 from subprocess import run as run_unsafe
 
 def run(*args, **kwargs):
-     run_unsafe(*args,**(kwargs | {'check': True}))
-
+    out = run_unsafe(*args,**(kwargs | {'check': True}))
+    return out
 img_name = "test.img"
 img_size = "6G"
 try:
@@ -111,9 +110,9 @@ def init_image():
     run(["fallocate", "-l", img_size, img_name])
     run(["fallocate", "-d", img_name])
     dev_out = run(
-        ["losetup", "--find", "--show", "--partscan", img_name], capture_output=True
+        ["losetup", "--find", "--show", "--partscan", img_name], encoding="utf-8", capture_output=True
     )
-    dev = dev_out.stdout.decode().split("\n")[0]
+    dev = dev_out.stdout.split("\n")[0]
     print("Device: " + dev)
     size_out = run(
         ["ls", "-al", "--block-size=1M", "test.img"],
@@ -265,17 +264,19 @@ def finish_up():
         ]
         for f in files:
             run(["rm", f])
-    while True:
-        out = run(["umount", "MP/boot"])
-        print(out)
-        if out.returncode == 0:
-            break
-    while True:
-        out = run(["umount", "MP"])
-        print(out)
-        if out.returncode == 0:
-            break
+    # while True:
+    #     out = run(["umount", "MP/boot"])
+    #     print(out)
+    #     if out.returncode == 0:
+    #         break
+    # while True:
+    #     out = run(["umount", "MP"])
+    #     print(out)
+    #     if out.returncode == 0:
+    #         break
 
+    run(["umount", "MP/boot"])
+    run(["umount", "MP"])
     run(["rm", "-rf", "MP"])
     run(["losetup", "-d", dev])
 
