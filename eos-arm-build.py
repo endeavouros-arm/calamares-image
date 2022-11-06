@@ -2,10 +2,14 @@
 
 import argparse
 import subprocess
-from subprocess import run, Popen
+from subprocess import Popen
 import os
 import time
 
+from subprocess import run as run_unsafe
+
+def run(*args, **kwargs):
+     run_unsafe(*args,**(kwargs | {'check': True}))
 
 img_name = "test.img"
 img_size = "6G"
@@ -78,7 +82,6 @@ def partition_device(device: str, boot_partition_start, boot_partition_size):
         + create_partition_table
         + create_boot_partition
         + create_root_partition,
-        check=True,
     )
 
 
@@ -108,9 +111,9 @@ def init_image():
     run(["fallocate", "-l", img_size, img_name])
     run(["fallocate", "-d", img_name])
     dev_out = run(
-        ["losetup", "--find", "--show", img_name], encoding="utf-8", capture_output=True
+        ["losetup", "--find", "--show", "--partscan", img_name], capture_output=True
     )
-    dev = dev_out.stdout.split("\n")[0]
+    dev = dev_out.stdout.decode().split("\n")[0]
     print("Device: " + dev)
     size_out = run(
         ["ls", "-al", "--block-size=1M", "test.img"],
@@ -221,10 +224,10 @@ def create_rootfs():
     print(CRED + "Creating tar compatible image" + CEND)
     p1 = Popen(cmdp, shell=True, stdout=subprocess.PIPE,
                cwd=os.getcwd() + "/MP")
-    run(cmd, stdin=p1.stdout, check=True)
+    run(cmd, stdin=p1.stdout)
     fname = f"enosLinuxARM-{img_str}-latest.tar.zst"
     cmd = f"sha512sum {fname} > {fname}.sha512sum"
-    run(cmd, shell=True, cwd=img_dir, check=True)
+    run(cmd, shell=True, cwd=img_dir)
 
 
 def create_ddimg():
@@ -248,9 +251,9 @@ def create_ddimg():
     fname = f"enosLinuxARM-{img_str}-latest.img.xz"
     print(CRED + "Creating dd compatible image" + CEND)
     with open(img_dir + fname, "w") as f:
-        run(cmd, stdout=f, check=True)
+        run(cmd, stdout=f)
     cmd = f"sha512sum {fname} > {fname}.sha512sum"
-    run(cmd, shell=True, cwd=img_dir, check=True)
+    run(cmd, shell=True, cwd=img_dir)
 
 
 def finish_up():
@@ -284,7 +287,7 @@ def main():
     init_image()
     install_image()
     print(CRED + "Arch Chroot" + CEND)
-    run(["arch-chroot", "MP", "/root/eos-arm-chroot"], check=True)
+    run(["arch-chroot", "MP", "/root/eos-arm-chroot"])
     build_time = time.time()
     if create_img and itype == "rootfs":
         create_rootfs()
