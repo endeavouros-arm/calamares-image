@@ -86,13 +86,14 @@ def partition_device(device: str, boot_partition_start, boot_partition_size):
     )
     print(result.stdout)
     var = "LOOPDEV=" + device
+    devp = device + "p"
     cmd = f"""
-    PARTITIONS=$(lsblk --raw --output "MAJ:MIN" --noheadings ${LOOPDEV} | tail -n +2)
+    PARTITIONS=$(lsblk --raw --output "MAJ:MIN" --noheadings $LOOPDEV | tail -n +2)
     COUNTER=1
     for i in $PARTITIONS; do
        MAJ=$(echo $i | cut -d: -f1)
        MIN=$(echo $i | cut -d: -f2)
-       if [ ! -e "${LOOPDEV}p${COUNTER}" ]; then mknod ${LOOPDEV}p${COUNTER} b $MAJ $MIN; fi
+       if [ ! -e "{devp}$COUNTER" ]; then mknod {devp}$COUNTER b $MAJ $MIN; fi
        COUNTER=$((COUNTER + 1))
     done
     """
