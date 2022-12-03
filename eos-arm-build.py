@@ -162,7 +162,7 @@ def install_image():
                   "eos-mirrorlist", mir_dir + "eos-mirrorlist"]
         run(cmd_m1)
         run(cmd_m2)
-    run(cmd, stdin=open(fname))
+    run(cmd, stdin=open(fname), stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
     print(CRED + "fstab" + CEND)
     copy_chroot()
