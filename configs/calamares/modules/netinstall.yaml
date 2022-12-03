@@ -212,7 +212,7 @@
         description: "XFCE4 needed packages"
         selected: false
         packages:
-         - blueberry
+         - blueman
          - file-roller
          - galculator
          - gvfs
@@ -255,14 +255,15 @@
     - arandr
     - arc-gtk-theme-eos
     - archlinux-xdg-menu
-    - endeavouros-skel-i3wm
-    - eos-lightdm-slick-theme
-    - eos-qogir-icons
     - awesome-terminal-fonts
     - dex
     - dmenu
     - dunst
+    - endeavouros-skel-i3wm
     - endeavouros-xfce4-terminal-colors
+    - eos-lightdm-slick-theme
+    - eos-qogir-icons
+    - feh
     - file-roller
     - galculator
     - gthumb
@@ -273,8 +274,8 @@
     - gvfs-mtp
     - gvfs-nfs
     - gvfs-smb
-    - i3blocks
     - i3-gaps
+    - i3blocks
     - i3lock
     - i3status
     - jq
@@ -283,9 +284,7 @@
     - lxappearance-gtk3
     - mpv
     - network-manager-applet
-    - nitrogen
     - numlockx
-    - picom
     - playerctl
     - polkit-gnome
     - rofi
