@@ -212,7 +212,7 @@
         description: "XFCE4 needed packages"
         selected: false
         packages:
-         - blueberry
+         - blueman
          - file-roller
          - galculator
          - gvfs
@@ -255,14 +255,15 @@
     - arandr
     - arc-gtk-theme-eos
     - archlinux-xdg-menu
-    - endeavouros-skel-i3wm
-    - eos-lightdm-slick-theme
-    - eos-qogir-icons
     - awesome-terminal-fonts
     - dex
     - dmenu
     - dunst
+    - endeavouros-skel-i3wm
     - endeavouros-xfce4-terminal-colors
+    - eos-lightdm-slick-theme
+    - eos-qogir-icons
+    - feh
     - file-roller
     - galculator
     - gthumb
@@ -273,8 +274,8 @@
     - gvfs-mtp
     - gvfs-nfs
     - gvfs-smb
-    - i3blocks
     - i3-gaps
+    - i3blocks
     - i3lock
     - i3status
     - jq
@@ -283,9 +284,7 @@
     - lxappearance-gtk3
     - mpv
     - network-manager-applet
-    - nitrogen
     - numlockx
-    - picom
     - playerctl
     - polkit-gnome
     - rofi
@@ -348,6 +347,7 @@
   packages:
     - adwaita-icon-theme
     - arc-gtk-theme-eos
+    - eos-settings-gnome
     - eos-qogir-icons
     - eog
     - evince
@@ -384,6 +384,7 @@
   critical: true
   packages:
     - arc-gtk-theme-eos
+    - eos-settings-mate
     - eos-lightdm-slick-theme
     - eos-qogir-icons
     - celluloid
@@ -406,11 +407,12 @@
   critical: true
   packages:
     - arc-gtk-theme-eos
-    - eos-lightdm-slick-theme
-    - eos-qogir-icons
     - celluloid
     - cinnamon
     - cinnamon-translations
+    - eos-lightdm-slick-theme
+    - eos-qogir-icons
+    - eos-settings-cinnamon
     - file-roller
     - gnome-calculator
     - gnome-screenshot
@@ -432,12 +434,13 @@
     - x-apps
     - xdg-user-dirs-gtk
 - name: "Budgie-Desktop"
-  description: "Budgie - I Tawt I Taw A Purdy Desktop"
+  description: "Budgie - an independent, familiar, and modern desktop."
   hidden: false
   selected: false
   critical: true
   packages:
     - arc-gtk-theme-eos
+    - eos-settings-budgie
     - eos-lightdm-slick-theme
     - eos-qogir-icons
     - budgie-control-center
@@ -476,6 +479,7 @@
     - baka-mplayer
     - breeze
     - breeze-gtk
+    - eos-settings-lxqt
     - eos-sddm-theme
     - featherpad
     - gvfs
@@ -501,6 +505,7 @@
   critical: true
   packages:
     - arc-gtk-theme-eos
+    - eos-settings-lxde
     - eos-lxdm-gtk3
     - eos-qogir-icons
     - celluloid
