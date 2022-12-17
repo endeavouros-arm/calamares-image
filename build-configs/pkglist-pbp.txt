@@ -121,7 +121,6 @@ eos-rankmirrors
 eos-update-notifier
 pahis
 welcome
-yad-eos
 duf
 findutils
 fsarchiver

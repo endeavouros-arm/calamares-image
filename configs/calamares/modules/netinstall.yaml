@@ -158,7 +158,6 @@
           - eos-update-notifier
           - pahis
           - welcome
-          - yad-eos
       - name: "EndeavourOS applications selection"
         description: "General tools and applications"
         selected: false
@@ -353,8 +352,8 @@
     - evince
     - file-roller
     - gdm
-    - gedit
     - gnome-calculator
+    - gnome-console
     - gnome-control-center
     - gnome-disk-utility
     - gnome-keyring
@@ -362,7 +361,7 @@
     - gnome-power-manager
     - gnome-screenshot
     - gnome-shell
-    - gnome-terminal
+    - gnome-text-editor
     - gnome-themes-extra
     - gnome-tweaks
     - gnome-usage
@@ -463,8 +462,9 @@
     - gvfs-smb
     - lightdm
     - lightdm-slick-greeter
-    - nautilus
-    - nautilus-sendto
+    - nemo
+    - nemo-fileroller
+    - nemo-preview
     - network-manager-applet
     - sushi
     - totem
