@@ -7,9 +7,12 @@ import os
 import time
 from subprocess import run as run_unsafe
 
+
 def run(*args, **kwargs):
-    out = run_unsafe(*args,**(kwargs | {'check': True}))
+    out = run_unsafe(*args, **(kwargs | {'check': True}))
     return out
+
+
 img_name = "test.img"
 img_size = "6G"
 try:
