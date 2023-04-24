@@ -7,7 +7,7 @@ _base_addons() {
 _finish_up() {
     printf "alarm ALL=(ALL:ALL) NOPASSWD: ALL\n" >> /etc/sudoers
     gpasswd -a alarm wheel
-    printf "exec openbox-session\n" >> /home/alarm/.xinitrc
+    printf "export DISPLAY=':0'\nxhost +SI:localuser:alarm\nxhost +SI:localuser:root\nexec openbox-session\n" >> /home/alarm/.xinitrc
     printf "if [ -z \"\${DISPLAY}\" ] && [ \"\${XDG_VTNR}\" -eq 1 ]; then\n  exec startx\nfi\n" >> /home/alarm/.bash_profile
     chown alarm:alarm /home/alarm/.xinitrc
     chmod 644 /home/alarm/.xinitrc
