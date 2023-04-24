@@ -1,3 +1,4 @@
+xhost +SI:localuser:$(whoami)
 tint2 &
 nm-applet &
 pcmanfm --desktop & 
