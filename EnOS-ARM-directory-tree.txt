@@ -1,0 +1,52 @@
+
+
+calamares-image  build-image-chroot.sh
+                 build-image-eos.sh
+                 config_script.sh
+                 create-image.sh
+                 eos-arm-build
+                 eos-arm-build.py
+                 eos-arm-chroot
+                 install-image-linux-aarch64.sh
+                 local-install-image.sh
+                 switch-kernel-local.sh
+                 switch-kernel.sh
+
+calamares-image/build-configs   eos-mirrorlist
+                                eos-pacman.conf
+                                mirrorlist
+                                pkglist-odn.txt
+                                pkglist-pbp.txt
+                                pkglist-rpi.txt
+
+calamares-image/configs         alarmconfig.sh
+                                calamares.sh
+                                clean-up.service
+                                clean-up.sh
+                                getty@.service
+                                launch.sh
+                                n2-boot.ini
+                                resize-fs.service
+                                resize-fs.sh
+                                rpi4-config.txt
+
+calamares-image/configs/calamares   settings_community.conf
+                                    settings_online.config
+
+calamares-image/configs/calamares/modules       netinstall-ce-base.yaml
+                                                netinstall.yaml
+                                                packagechooser_ce.conf
+                                                shellprocess_disable_autologin.conf
+                                                shellprocess_initialize_pacman.conf
+                                                shellprocess_script_cleaner.conf
+
+calamares-image/configs/calamares/scripts       cleaner_script.sh
+                                                create-pacman-keyring
+                                                disable_autologin.sh
+
+calamares-image/configs/Desktop     calamares.desktop
+                                    pcmanfm.desktop
+                                    xfce4-terminal.desktop
+
+
+

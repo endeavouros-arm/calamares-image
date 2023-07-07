@@ -35,6 +35,7 @@ _finish_up() {
     cp clean-up.sh /usr/local/bin/clean-up.sh
     chmod +x /usr/local/bin/clean-up.sh
     cp clean-up.service /etc/systemd/system/clean-up.service
+    systemctl enable clean-up.service
     if [ "$TYPE" == "ddimg" ]; then
         cp resize-fs.service /etc/systemd/system/resize-fs.service
         cp resize-fs.sh /usr/local/bin/resize-fs.sh
@@ -89,7 +90,7 @@ Main() {
                ;;
    esac
 
-   _base_addons
+#   _base_addons
 
    _finish_up
 }  # end of Main

@@ -31,10 +31,10 @@ _partition_RPi4() {
 _install_Pinebook_image() {
     case $ARCH in
         aarch64)
-            pacstrap -cGM MP - < $(pwd)/build-configs/pkglist-pbp.txt
+            pacstrap -cGM MP - < $WORKDIR/build-configs/pkglist-pbp.txt
             ;;
         x86_64)
-            pacstrap -GMC $(pwd)/build-configs/eos-pacman.conf  MP - < $(pwd)/build-configs/pkglist-pbp.txt
+            pacstrap -GMC $WORKDIR/build-configs/eos-pacman.conf  MP - < $WORKDIR/build-configs/pkglist-pbp.txt
             ;;
     esac
     _copy_stuff_for_chroot
@@ -44,38 +44,55 @@ _install_Pinebook_image() {
 _install_OdroidN2_image() {
     case $ARCH in
         aarch64)
-            pacstrap -cGM MP - < $(pwd)/build-configs/pkglist-odn.txt
+            pacstrap -cGM MP - < $WORKDIR/build-configs/pkglist-odn.txt
             ;;
         x86_64)
-            pacstrap -GMC $(pwd)/build-configs/eos-pacman.conf  MP - < $(pwd)/build-configs/pkglist-odn.txt
+            pacstrap -GMC $WORKDIR/build-configs/eos-pacman.conf  MP - < $WORKDIR/build-configs/pkglist-odn.txt
             ;;
     esac
     _copy_stuff_for_chroot
-    genfstab -L MP >> MP/etc/fstab
+    # change fstab to UUID instead of partition label
+    if [ "$TYPE" == "Image" ]; then
+       mv $WORKDIR/MP/etc/fstab $WORKDIR/MP/etc/fstab-bkup
+       uuidno=$(lsblk -o UUID $PARTNAME1)
+       uuidno=$(echo $uuidno | sed 's/ /=/g')
+       printf "# /etc/fstab: static file system information.\n#\n# Use 'blkid' to print the universally unique identifier for a device; this may\n" >> $WORKDIR/MP/etc/fstab
+       printf "# be used with UUID= as a more robust way to name devices that works even if\n# disks are added and removed. See fstab(5).\n" >> $WORKDIR/MP/etc/fstab
+       printf "#\n# <file system>             <mount point>  <type>  <options>  <dump>  <pass>\n\n"  >> $WORKDIR/MP/etc/fstab
+       printf "$uuidno  /boot  vfat  defaults  0  0\n" >> $WORKDIR/MP/etc/fstab
+       # change boot.ini to UUID instead of partition label.
+       uuidno=$(lsblk -o UUID $PARTNAME2)
+       uuidno=$(echo $uuidno | sed 's/ /=/g')
+       uuidno="\"root="$uuidno
+       old=$(cat $WORKDIR/MP/boot/boot.ini | grep root= | awk '{print $3}')
+       sed -i "s#$old#$uuidno#" $WORKDIR/MP/boot/boot.ini
+    fi
 }   # End of function _install_OdroidN2_image
 
 
 _install_RPi4_image() { 
     case $ARCH in
         aarch64)
-            pacstrap -cGM MP - < $(pwd)/build-configs/pkglist-rpi.txt
+            pacstrap -cGM MP - < $WORKDIR/build-configs/pkglist-rpi.txt
             ;;
         x86_64)
-            ln -s $(pwd)/build-configs/mirrorlist /etc/pacman.d/arch-mirrorlist
-            ln -s $(pwd)/build-configs/eos-mirrorlist /etc/pacman.d/eos-mirrorlist
-            pacstrap -GMC $(pwd)/build-configs/eos-pacman.conf  MP - < $(pwd)/build-configs/pkglist-rpi.txt
+            ln -s $WORKDIR/build-configs/mirrorlist /etc/pacman.d/arch-mirrorlist
+            ln -s $WORKDIR/build-configs/eos-mirrorlist /etc/pacman.d/eos-mirrorlist
+            pacstrap -GMC $WORKDIR/build-configs/eos-pacman.conf  MP - < $WORKDIR/build-configs/pkglist-rpi.txt
             rm /etc/pacman.d/arch-mirrorlist
             rm /etc/pacman.d/eos-mirrorlist
             ;;
     esac
     _copy_stuff_for_chroot
     # sed -i 's/mmcblk0/mmcblk1/' MP/etc/fstab
-    genfstab -L MP >> MP/etc/fstab
-    old=$(awk '{print $1}' MP/boot/cmdline.txt)
-    new="root=LABEL=ROOT_EOS"
-    boot_options=" usbhid.mousepoll=8"
-    sed -i "s#$old#$new#" MP/boot/cmdline.txt
-    sed -i "s/$/$boot_options/" MP/boot/cmdline.txt
+    if [ "$TYPE" == "Image" ]; then
+       genfstab -L MP >> MP/etc/fstab
+       old=$(awk '{print $1}' MP/boot/cmdline.txt)
+       new="root=LABEL=ROOT_EOS"
+       boot_options=" usbhid.mousepoll=8"
+       sed -i "s#$old#$new#" MP/boot/cmdline.txt
+       sed -i "s/$/$boot_options/" MP/boot/cmdline.txt
+    fi
 }  # End of function _install_RPi4_image
 
 _partition_format_mount() {
@@ -168,27 +185,31 @@ _arch_chroot(){
 
 _create_image(){
     case $PLATFORM in
-       OdroidN2)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-odroid-n2-latest.tar.zst *
-          zstd -z --sparse --rsyncable -10 -T0 test.img -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-odroid-n2-latest.img.zst
+       OdroidN2)
+#          zstd -z --sparse --rsyncable -10 -T0 test.img -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-odroid-n2-latest.img.zst
+          xz -kvfT0 -2 $WORKDIR/test.img
+          cp $WORKDIR/test.img.xz /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-odroid-n2-latest.img.xz
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-          dir=$(pwd)
+#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
-          sha512sum enosLinuxARM-odroid-n2-latest.img.zst > enosLinuxARM-odroid-n2-latest.img.zst.sha512sum
-          cd $dir ;;
+          sha512sum enosLinuxARM-odroid-n2-latest.img.xz > enosLinuxARM-odroid-n2-latest.img.xz.sha512sum
+          cd $WORKDIR ;;
        Pinebook)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-pbp-latest.tar.zst *
           zstd -z --sparse --rsyncable -10 -T0 test.img -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-pbp-latest.img.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-          dir=$(pwd)
+#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-pbp-latest.img.zst > enosLinuxARM-pbp-latest.img.zst.sha512sum
-          cd $dir ;;
-       RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.tar.zst *
-          zstd -z --sparse --rsyncable -10 -T0 test.img -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.img.zst
+          cd $WORKDIR ;;
+       RPi64)
+#          zstd -z --sparse --rsyncable -10 -T0 test.img -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.img.zst
+          xz -kvfT0 -2 $WORKDIR/test.img
+          cp $WORKDIR/test.img.xz /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.img.xz
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-          dir=$(pwd)
+#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
-          sha512sum enosLinuxARM-rpi-latest.img.zst > enosLinuxARM-rpi-latest.img.zst.sha512sum
-          cd $dir ;;
+          sha512sum enosLinuxARM-rpi-latest.img.xz > enosLinuxARM-rpi-latest.img.xz.sha512sum
+          cd $WORKDIR ;;
     esac
 }
 
@@ -197,27 +218,24 @@ _create_rootfs(){
        OdroidN2)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-odroid-n2-latest.tar.zst *
           time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-odroid-n2-latest.tar.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-          cd ..
-          dir=$(pwd)
+#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-odroid-n2-latest.tar.zst > enosLinuxARM-odroid-n2-latest.tar.zst.sha512sum
-          cd $dir ;;
+          cd $WORKDIR ;;
        Pinebook)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-pbp-latest.tar.zst *
           time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-pbp-latest.tar.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-          cd ..
-          dir=$(pwd)
+#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-pbp-latest.tar.zst > enosLinuxARM-pbp-latest.tar.zst.sha512sum
-          cd $dir ;;
+          cd $WORKDIR ;;
        RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.tar.zst *
           time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.tar.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-          cd ..
-          dir=$(pwd)
+#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-rpi-latest.tar.zst > enosLinuxARM-rpi-latest.tar.zst.sha512sum
-          cd $dir ;;
+          cd $WORKDIR ;;
     esac
 }
 
@@ -315,6 +333,7 @@ Main() {
     TYP=" "
     TYPE=" "
     ARCH="$(uname -m)"
+    WORKDIR=$(pwd)
     
     # Declare color variables
     GREEN='\033[0;32m'
@@ -326,7 +345,7 @@ Main() {
     _check_if_root
     _read_options "$@"
 
-    rm -rf test.img
+    rm -rf test.img test.img.xz
     _partition_format_mount  # function to partition, format, and mount a uSD card or eMMC card
     case $PLATFORM in
        RPi64)    _install_RPi4_image ;;
