@@ -2,6 +2,6 @@
 haveged -w 1024
 pacman-key --init
 pkill haveged
-pacman-key --populate archlinuxarm endeavouros
+pacman-key --populate archlinuxarm  endeavouros
 #pacman-key --lsign-key EndeavourOS
 pacman -Syyu --noconfirm

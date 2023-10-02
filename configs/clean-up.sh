@@ -63,12 +63,16 @@ Main() {
   cp /home/alarm/endeavour-install.log /var/log/
   userdel -rf alarm
   _remove_packages_ob
-  pacman -Rns --noconfirm calamares_current_arm calamares_config_default_arm calamares_config_ce_arm
-  pacman -Rns flameshot
+  pacman -Rns --noconfirm calamares
+  pacman -Rns --noconfirm flameshot
   rm -rf /etc/calamares/
   rm /usr/local/bin/clean-up.sh
-  rm /etc/systemd/system/clean-up.service
-  rm /etc/systemd/system/multi-user.target.wants/clean-up.sh
+  rm /usr/local/bin/resize-fs.sh
+  rm /etc/systemd/system/multi-user.target.wants/clean-up.service
+  rm -rf /root/configs
+  rm /root/config_script
+  rm /root/platformname
+  rm /root/type
   exit
 }
 

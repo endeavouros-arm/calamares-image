@@ -42,14 +42,7 @@ _install_Pinebook_image() {
 }   # End of function _install_Pinebook_image
 
 _install_OdroidN2_image() {
-    case $ARCH in
-        aarch64)
-            pacstrap -cGM MP - < $WORKDIR/build-configs/pkglist-odn.txt
-            ;;
-        x86_64)
-            pacstrap -GMC $WORKDIR/build-configs/eos-pacman.conf  MP - < $WORKDIR/build-configs/pkglist-odn.txt
-            ;;
-    esac
+    pacstrap -cGM MP - < $WORKDIR/build-configs/pkglist-odn.txt
     _copy_stuff_for_chroot
     # change fstab to UUID instead of partition label
     if [ "$TYPE" == "Image" ]; then
@@ -71,18 +64,8 @@ _install_OdroidN2_image() {
 
 
 _install_RPi4_image() { 
-    case $ARCH in
-        aarch64)
-            pacstrap -cGM MP - < $WORKDIR/build-configs/pkglist-rpi.txt
-            ;;
-        x86_64)
-            ln -s $WORKDIR/build-configs/mirrorlist /etc/pacman.d/arch-mirrorlist
-            ln -s $WORKDIR/build-configs/eos-mirrorlist /etc/pacman.d/eos-mirrorlist
-            pacstrap -GMC $WORKDIR/build-configs/eos-pacman.conf  MP - < $WORKDIR/build-configs/pkglist-rpi.txt
-            rm /etc/pacman.d/arch-mirrorlist
-            rm /etc/pacman.d/eos-mirrorlist
-            ;;
-    esac
+
+     pacstrap -cGM MP - < $WORKDIR/build-configs/pkglist-rpi.txt
     _copy_stuff_for_chroot
     # sed -i 's/mmcblk0/mmcblk1/' MP/etc/fstab
     if [ "$TYPE" == "Image" ]; then
@@ -126,22 +109,15 @@ _partition_format_mount() {
    printf "\n${CYAN}Formatting storage device $DEVICENAME...${NC}\n"
    printf "\n${CYAN}If \"/dev/sdx contains a ext4 file system Labelled XXXX\" or similar appears, Enter: y${NC}\n\n\n"
 
-   DEVICENAME1=$DEVICENAME"p"
-   
-   PARTNAME1=$DEVICENAME1"1"
+   PARTNAME1=$DEVICENAME"p1"
    mkfs.fat -n BOOT_EOS $PARTNAME1   2>> /root/enosARM.log
-   PARTNAME2=$DEVICENAME1"2"
+   PARTNAME2=$DEVICENAME"p2"
    mkfs.ext4 -F -L ROOT_EOS $PARTNAME2   2>> /root/enosARM.log
    # mkdir MP1 MP
-   mkdir MP
-   mount $PARTNAME2 MP
-   mkdir MP/boot
-   mount $PARTNAME1 MP/boot
-   if [ "$ARCH" == "x86_64" ]; then
-       mkdir -p MP/usr/bin
-       cp /usr/bin/qemu-aarch64-static MP/usr/bin
-   fi
-
+   mkdir $WORKDIR/MP
+   mount $PARTNAME2 $WORKDIR/MP
+   mkdir $WORKDIR/MP/boot
+   mount $PARTNAME1 $WORKDIR/MP/boot
 } # end of function _partition_format_mount
 
 _check_if_root() {
@@ -166,21 +142,19 @@ _check_if_root() {
 }  # end of function _check_if_root
 
 _copy_stuff_for_chroot() {
-    cp eos-arm-chroot MP/root/
-    cp config_script.sh MP/root/
-    mkdir -p MP/root/
-    cp -r configs/ MP/root/
+    mkdir $WORKDIR/MP/home/alarm
+    cp $WORKDIR/eos-arm-chroot $WORKDIR/MP/root/
+    cp -r $WORKDIR/configs/ $WORKDIR/MP/root/
     printf "$PLAT\n" > platformname
-    cp platformname MP/root/
+    cp platformname $WORKDIR/MP/root/
     rm platformname
     printf "$TYPE\n" > type
-    cp type MP/root/
+    cp type $WORKDIR/MP/root/
     rm type
 }
 
 _arch_chroot(){
-    arch-chroot MP /root/eos-arm-chroot
-    # arch-chroot MP /root/config_script.sh
+    arch-chroot $WORKDIR/MP /root/eos-arm-chroot
 }
 
 _create_image(){
@@ -190,14 +164,12 @@ _create_image(){
           xz -kvfT0 -2 $WORKDIR/test.img
           cp $WORKDIR/test.img.xz /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-odroid-n2-latest.img.xz
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-odroid-n2-latest.img.xz > enosLinuxARM-odroid-n2-latest.img.xz.sha512sum
           cd $WORKDIR ;;
        Pinebook)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-pbp-latest.tar.zst *
           zstd -z --sparse --rsyncable -10 -T0 test.img -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-pbp-latest.img.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-pbp-latest.img.zst > enosLinuxARM-pbp-latest.img.zst.sha512sum
           cd $WORKDIR ;;
@@ -206,38 +178,36 @@ _create_image(){
           xz -kvfT0 -2 $WORKDIR/test.img
           cp $WORKDIR/test.img.xz /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.img.xz
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-rpi-latest.img.xz > enosLinuxARM-rpi-latest.img.xz.sha512sum
           cd $WORKDIR ;;
     esac
-}
+}   # end of function _create_image
 
 _create_rootfs(){
     case $PLATFORM in
        OdroidN2)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-odroid-n2-latest.tar.zst *
           time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-odroid-n2-latest.tar.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-odroid-n2-latest.tar.zst > enosLinuxARM-odroid-n2-latest.tar.zst.sha512sum
-          cd $WORKDIR ;;
+          ;;
        Pinebook)# time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-pbp-latest.tar.zst *
           time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-pbp-latest.tar.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-pbp-latest.tar.zst > enosLinuxARM-pbp-latest.tar.zst.sha512sum
-          cd $WORKDIR ;;
+          cd $WORKDIR
+          ;;
        RPi64) # time bsdtar --use-compress-program=zstdmt -cf /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.tar.zst *
           time bsdtar -cf - * | zstd -z --rsyncable -10 -T0 -of /home/$USERNAME/endeavouros-arm/test-images/enosLinuxARM-rpi-latest.tar.zst
           printf "\n\nbsdtar is finished creating the image.\nand will calculate a sha512sum\n\n"
-#          cd $WORKDIR
           cd /home/$USERNAME/endeavouros-arm/test-images/
           sha512sum enosLinuxARM-rpi-latest.tar.zst > enosLinuxARM-rpi-latest.tar.zst.sha512sum
-          cd $WORKDIR ;;
+          cd $WORKDIR
+          ;;
     esac
-}
+}   # end of function _create_rootfs
 
 _help() {
    # Display Help
@@ -353,13 +323,9 @@ Main() {
        Pinebook) _install_Pinebook_image ;;
     esac
 
-    printf "\n\n${CYAN}arch-chroot to switch kernel.${NC}\n\n"
+    printf "\n\n${CYAN}arch-chroot to configure image.${NC}\n\n"
     _arch_chroot
     
-    if [ "$ARCH" == "x86_64" ]; then
-       rm MP/usr/bin/qemu-aarch64-static
-    fi
-
     case $PLATFORM in
        OdroidN2)
           dd if=MP/boot/u-boot.bin of=$DEVICENAME conv=fsync,notrunc bs=512 seek=1
@@ -378,7 +344,7 @@ Main() {
 
         if [ "$TYPE" == "Rootfs" ]; then
             printf "\n\n${CYAN}Creating Rootfs${NC}\n\n"
-            cd MP
+#            cd $WORKDIR/MP
             _create_rootfs
             printf "\n\n${CYAN}Created Rootfs${NC}\n\n"
         fi
@@ -387,7 +353,7 @@ Main() {
     umount MP/boot MP
     rm -rf MP
 
-    losetup -d /dev/loop0
+    losetup -d $DEVICENAME
     # rm ArchLinuxARM*
     if $CREATE ; then
         if [ "$TYPE" == "Image" ]; then

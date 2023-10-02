@@ -4,6 +4,20 @@ _base_addons() {
     pacman -U --noconfirm /home/alarm/configs/packages/*.tar.{xz,zst,gz} 2>/dev/null
 }
 
+_clean_up_script() {
+    cp /root/configs/clean-up.sh /usr/local/bin/clean-up.sh
+    chmod +x /usr/local/bin/clean-up.sh
+    cp /root/configs/clean-up.service /etc/systemd/system/clean-up.service
+}   # end of function _clean_up_script
+
+_set_bash_alias() {
+    printf "\nalias ll='ls -l --color=auto'\n" >> /etc/bash.bashrc
+    printf "alias la='ls -al --color=auto'\n" >> /etc/bash.bashrc
+    printf "alias lb='lsblk -o NAME,FSTYPE,FSSIZE,LABEL,MOUNTPOINT'\n\n" >> /etc/bash.bashrc
+}   # end of function _set_bash_alias
+
+
+
 _finish_up() {
     printf "alarm ALL=(ALL:ALL) NOPASSWD: ALL\n" >> /etc/sudoers
     gpasswd -a alarm wheel
@@ -13,42 +27,38 @@ _finish_up() {
     chmod 644 /home/alarm/.xinitrc
     rm -rf /endeavouros*
     systemctl enable NetworkManager.service
-    printf "\nalias ll='ls -l --color=auto'\n" >> /etc/bash.bashrc
-    printf "alias la='ls -al --color=auto'\n" >> /etc/bash.bashrc
-    printf "alias lb='lsblk -o NAME,FSTYPE,FSSIZE,LABEL,MOUNTPOINT'\n\n" >> /etc/bash.bashrc
+    _set_bash_alias
     rm /var/cache/pacman/pkg/* 2>/dev/null
     rm /root/eos-arm-chroot
     rm -rf /etc/pacman.d/gnupg
     rm -rf /var/log/pacman.log
     # rm -rf /etc/lsb-release
-    cp /home/alarm/configs/endeavouros-calamares-wallpaper.png /usr/share/endeavouros/backgrounds/endeavouros-calamares-wallpaper.png
+    cp /root/configs/endeavouros-calamares-wallpaper.png /usr/share/endeavouros/backgrounds/endeavouros-calamares-wallpaper.png
     # from old config_script.sh
-    cd /home/alarm/
-    rm -rf .config
-    mkdir .config
-    mkdir Desktop
-    cd configs/
+    rm -rf /home/alarm/.config
+    mkdir /home/alarm/.config
+    mkdir /home/alarm/Desktop
     # cp /boot/config.txt /boot/config.txt.orig
     # cp rpi4-config.txt /boot/config.txt
     cp /usr/lib/systemd/system/getty@.service /usr/lib/systemd/system/getty@.service.bak
-    cp getty@.service /usr/lib/systemd/system/getty@.service
-    cp clean-up.sh /usr/local/bin/clean-up.sh
-    chmod +x /usr/local/bin/clean-up.sh
-    cp clean-up.service /etc/systemd/system/clean-up.service
-    systemctl enable clean-up.service
-    if [ "$TYPE" == "ddimg" ]; then
-        cp resize-fs.service /etc/systemd/system/resize-fs.service
-        cp resize-fs.sh /usr/local/bin/resize-fs.sh
+    cp /root/configs/getty@.service /usr/lib/systemd/system/getty@.service
+    _clean_up_script
+
+    if [ "$TYPE" == "Image" ]; then
+        cp /root/configs/resize-fs.service /etc/systemd/system/resize-fs.service
+        cp /root/configs/resize-fs.sh /usr/local/bin/resize-fs.sh
         chmod +x /usr/local/bin/resize-fs.sh
         systemctl enable resize-fs.service
     fi
-    ./alarmconfig.sh
-    ./calamares.sh
-    cd ..
-    chown -R alarm .config Desktop .Xauthority
+    cp -r /root/configs/Desktop/* /home/alarm/Desktop/
+    cp -r /root/configs/.config/* /home/alarm/.config/
+    rm /home/alarm/.Xauthority
+    cp /root/configs/calamares/modules/* /etc/calamares/modules/
+    cp /root/configs/calamares/scripts/* /etc/calamares/scripts
+    cp /root/configs/calamares/settings_online.conf  /etc/calamares/
+    cp /root/configs/calamares/settings_community.conf  /etc/calamares/
+    chown -R alarm:alarm  /home/alarm/.config /home/alarm/Desktop
     printf "[Match]\nName=wlan*\n\n[Network]\nDHCP=yes\nDNSSEC=no\n" > /etc/systemd/network/wlan.network
-    # timedatectl set-ntp true
-    # timedatectl timesync-status
     systemctl enable systemd-timesyncd
     printf "\n${CYAN}Chroot Complete${NC}\n"
 }   # end of function _finish_up
@@ -79,20 +89,26 @@ Main() {
    sed -i "s|\[core\]|\[endeavouros\]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n\[core\]|g" /etc/pacman.conf
    # printf "\n[endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n" >> /etc/pacman.conf
 
-   useradd -m "alarm" -p "alarm" -u 2001
+
+   useradd -p "alarm" -G users -s /bin/bash -u 1001 "alarm"
+   printf "\n${CYAN}Setting root user password...${NC}\n"
+   echo "alarm:alarm" | chpasswd -c SHA256
+   echo "root:root" | chpasswd -c SHA256
+   printf "\n${CYAN}Root user password set...${NC}\n\n"
    cp -r /root/configs/ /home/alarm/
 
    case $PLATFORM_NAME in
-     rpi)    cp /boot/config.txt /boot/config.txt.orig
-               cp /home/alarm/configs/rpi4-config.txt /boot/config.txt
-               ;;
+     rpi) cp /boot/config.txt /boot/config.txt.orig
+          cp /root/configs/rpi4-config.txt /boot/config.txt
+          ;;
      pbp) sed -i 's|^MODULES=(|MODULES=(btrfs |' /etc/mkinitcpio.conf
-               ;;
+          ;;
    esac
 
 #   _base_addons
 
    _finish_up
+   chown -R alarm:alarm /home/alarm
 }  # end of Main
 
 Main "$@"
