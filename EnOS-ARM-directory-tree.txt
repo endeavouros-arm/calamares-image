@@ -1,36 +1,38 @@
 
 
-calamares-image  build-image-chroot.sh
-                 build-image-eos.sh
-                 config_script.sh
-                 create-image.sh
+calamares-image  Dir build-configs
+                 Dir configs
+                 Enos-ARM-directory-tree.txt
                  eos-arm-build
-                 eos-arm-build.py
                  eos-arm-chroot
-                 install-image-linux-aarch64.sh
-                 local-install-image.sh
-                 switch-kernel-local.sh
-                 switch-kernel.sh
+                 LICENSE
+                 DIR misc
+                 README.md
 
 calamares-image/build-configs   eos-mirrorlist
                                 eos-pacman.conf
                                 mirrorlist
                                 pkglist-odn.txt
                                 pkglist-pbp.txt
+                                pkglist-radxa.txt
                                 pkglist-rpi.txt
 
-calamares-image/configs         alarmconfig.sh
-                                calamares.sh
+calamares-image/configs         Dir calamares
                                 clean-up.service
                                 clean-up.sh
-                                getty@.service
+                                Dir Desktop
+                                endeavouros-calamares-wallpaper.png
                                 launch.sh
                                 n2-boot.ini
+                                Dir packages
                                 resize-fs.service
                                 resize-fs.sh
+                                rk3588-uboot.img
                                 rpi4-config.txt
 
-calamares-image/configs/calamares   settings_community.conf
+calamares-image/configs/calamares   Dir modules
+                                    Dir scripts
+                                    settings_community.conf
                                     settings_online.config
 
 calamares-image/configs/calamares/modules       netinstall-ce-base.yaml
